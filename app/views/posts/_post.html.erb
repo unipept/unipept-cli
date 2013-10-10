@@ -1,0 +1,19 @@
+<% well = false unless defined? well %>
+<% if well %>
+<div class="well well-small">
+<% end %>
+
+<h3>
+  <%= post.title %>
+  <small> posted on <%= post.date %></small>
+	<% if session[:admin] %>
+		<%= link_to raw("<i class='icon-pencil'></i> Edit"), edit_post_path(post), :class => 'btn btn-mini' %>
+		<%= link_to raw("<i class='icon-trash icon-white'></i> Delete"), post, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-mini btn-danger' %>
+	<% end %>
+</h3>
+
+<%= post.content.html_safe %>
+
+<% if well %>
+</div>
+<% end %>
