@@ -99,10 +99,10 @@ function init_selection_tree(data, taxa) {
         helper: function (event) {
             var returnString = "<tbody class='dragging'>";
             if ($(this).hasClass("leaf")) {
-                returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
             } else {
                 $(this).find(".leaf").each(function () {
-                    returnString += "<tr><td class='handle'><i class='icon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
+                    returnString += "<tr><td class='handle'><i class='glyphicon glyphicon-resize-vertical'></i></td><td class='data name' data-bioproject_id='" + $(this).attr("data-bioproject_id") + "'>" + $(this).text() + "</td><td class='data status'></td><td></td></tr>";
                 });
             }
             returnString += "</tbody>";
@@ -355,36 +355,51 @@ function init_pancore() {
 
     // Set up the fullscreen stuff
     if (fullScreenApi.supportsFullScreen) {
-        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-mini'><i class='icon-resize-full'></i> Enter full screen</button>");
+        $("#buttons-pancore").prepend("<button id='zoom-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-resize-full'></i> Enter full screen</button>");
         $("#zoom-btn").click(function () {
-            // track full screen
-            _gaq.push(['_trackEvent', 'Pancore', 'Full Screen']);
-            window.fullScreenApi.requestFullScreen($("#pancore_graph").get(0));
+            if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'graph']);
+                window.fullScreenApi.requestFullScreen($("#pancore_graph_wrapper").get(0));
+            } else {
+                // GA event tracking
+                _gaq.push(['_trackEvent', 'Pancore', 'Full Screen', 'simmatrix']);
+                window.fullScreenApi.requestFullScreen($("#sim_matrix_wrapper").get(0));
+            }
         });
         $(document).bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', resizeFullScreen);
     }
 
     // Scale the SVG on fullscreen enter and exit
     function resizeFullScreen() {
-        setTimeout(function () {
-            var w = fullWidth,
-                h = fullHeight;
-            if (window.fullScreenApi.isFullScreen()) {
-                w = $(window).width();
-                h = $(window).height();
-            }
-            $("#pancore_graph svg").attr("width", w);
-            $("#pancore_graph svg").attr("height", h);
-        }, 100);
+        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            setTimeout(function () {
+                var w = fullWidth,
+                    h = fullHeight;
+                if (window.fullScreenApi.isFullScreen()) {
+                    w = $(window).width();
+                    h = $(window).height();
+                }
+                $("#pancore_graph svg").attr("width", w);
+                $("#pancore_graph svg").attr("height", h);
+            }, 100);
+        } else {
+            // TODO: add handling code for sim matrix
+        }
     }
 
     // Set up save image stuff
-    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-mini'><i class='icon-download'></i> Save as image</button>");
+    $("#buttons-pancore").prepend("<button id='save-btn' class='btn btn-default btn-xs'><i class='glyphicon glyphicon-download'></i> Save as image</button>");
     $("#save-btn").click(function () {
-        // track save image event
-        _gaq.push(['_trackEvent', 'Pancore', 'Save Image']);
-
-        var svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        var svg = "";
+        if ($(".tab-content .active").attr('id') === "pancore_graph_wrapper") {
+            // track save image event
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'graph']);
+            svg = $("#pancore_graph svg").wrap("<div></div>").parent().html();
+        } else {
+            _gaq.push(['_trackEvent', 'Pancore', 'Save Image', 'sim matrix']);
+            svg = $("#sim_matrix svg").wrap("<div></div>").parent().html();
+        }
         // Send the SVG code to the server for png conversion
         $.post("/convert", { image: svg }, function (data) {
             $("#save-as-modal .modal-body").html("<img src='" + data + "' />");
@@ -399,13 +414,18 @@ function init_pancore() {
     $("#species_id").val(470);
     $("#add_species_peptidome").click();
 
+    // IE10 message
+    if ($.browser.msie && $.browser.version === 10) {
+        info("You're using Internet Explorer 10. Everything should work as expected, but for an optimal experience, please use a recent version of Mozilla Firefox or Google Chrome.");
+    }
+
     // Sends a command and message to the worker
     function sendToWorker(command, message) {
         worker.postMessage({'cmd': command, 'msg': message});
     }
 
     // setup similarity matrix buttons etc
-    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-mini'><i class='icon-refresh'></i>Calculate Similarity Matrix</button>");
+    $("#sim_matrix_buttons").prepend("<button id='calculate-matrix-btn' class='btn btn-default'><i class='glyphicon glyphicon-refresh'></i> Calculate Similarity Matrix</button>");
     $("#calculate-matrix-btn").click(function () {
         sendToWorker('calculateSimilarity', '');
     });
@@ -470,6 +490,7 @@ function init_pancore() {
         if (rank !== request_rank) return;
         dataQueue.push(data);
         tryUpdateGraph();
+        tryUpdateMatrix();
     }
 
     // Removes a genomes from the visualization:
@@ -521,6 +542,10 @@ function init_pancore() {
         clearTable();
     }
 
+    function tryUpdateMatrix() {
+        sendToWorker('newDataAdded');
+    }
+
     // Update the graph with data from the update queue when the previous animation is done.
     function tryUpdateGraph() {
         if (toLoad === 0) {
@@ -554,7 +579,7 @@ function init_pancore() {
 
     // Displays a message above the table
     function setTableMessage(icon, msg) {
-        $("#table-message").html("<i class='icon-" + icon + "'></i> " + msg);
+        $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
     }
 
     // Sets the position property in the tableData
@@ -603,7 +628,7 @@ function init_pancore() {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
-    // Clear the table 
+    // Clear the table
     function clearTable() {
         $("#genomes_table tbody").html("");
         updateTable();
@@ -626,7 +651,7 @@ function init_pancore() {
         tr.sort(function (a, b) { return a.position - b.position; });
 
         // Add cells
-        newRows.append("td").attr("class", "handle").html("<i class='icon-resize-vertical'></i>");
+        newRows.append("td").attr("class", "handle").html("<i class='glyphicon glyphicon-resize-vertical'></i>");
         var td = tr.selectAll("td.data")
             .data(function (d) {
                 return d3.entries(d).filter(function (entry) {
@@ -641,8 +666,8 @@ function init_pancore() {
         newRows.append("td")
             .attr("class", "button")
             .append("a")
-            .html("<i class='icon-trash'></i>")
-            .attr("class", "btn btn-mini")
+            .html("<i class='glyphicon glyphicon-trash'></i>")
+            .attr("class", "btn btn-default btn-xs")
             .attr("title", "remove genome")
             .on("click", removeData);
         newRows.each(function () { highlight(this); });
@@ -661,6 +686,7 @@ function init_pancore() {
             .attr("viewBox", "0 0 " + fullWidth + " " + fullHeight)
             .attr("width", fullWidth)
             .attr("height", fullHeight)
+            .attr("overflow", "hidden")
             .style("font-family", "'Helvetica Neue', Helvetica, Arial, sans-serif")
           .on("click", removePopoversAndHighlights)
           .append("g")
@@ -1108,7 +1134,7 @@ function init_pancore() {
         d3.select(this).attr("x", dragging[d.bioproject_id] - mouseOverWidth / 2);
         svg.selectAll(".dot._" + d.bioproject_id).attr("cx", dragging[d.bioproject_id]);
     }
-    // Recalculates the position of all genomes and update the graph or 
+    // Recalculates the position of all genomes and update the graph or
     // removes the genome when dropped on the trash can
     function dragEnd(d) {
         delete this.__origin__;
@@ -1222,8 +1248,8 @@ function init_pancore() {
     function getPopoverContent(d) {
         var content = getTooltipContent(d);
         content += "<br/><div class='btn-group' id='download-peptides'>" +
-          "<a class='btn dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
-            "<i class='icon-download'></i> " +
+          "<a class='btn btn-default dropdown-toggle' id='download-peptides-toggle' data-toggle='dropdown' data-loading-text='Loading peptides'>" +
+            "<i class='glyphicon glyphicon-download'></i> " +
             "download peptides " +
             "<span class='caret'></span>" +
           "</a>" +
