@@ -273,7 +273,7 @@ function init_graphs() {
             reorderMatrix(data.msg);
             break;
         case 'sim_graph':
-            drawTree(data.msg);
+            drawTree(data.msg.data, data.msg.order);
             break;
         default:
             console.log(data.msg);
@@ -1328,10 +1328,11 @@ function init_graphs() {
         return 0;
     }
 
-    function drawTree(newick) {
+    function drawTree(newick, order) {
         var parsed = Newick.parse(newick);
         console.log(parsed);
-        d3.phylogram.build('#sim_graph', parsed, {width: 300, heigth: 300, skipLabels:true});
+        $("#sim_graph").html("");
+        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
     }
 
 

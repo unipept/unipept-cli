@@ -446,17 +446,13 @@ function clusterMatrix() {
 
     // Create a deep copy and call our recursive cluster function
     var matrix_deep_copy = [];
-    var i = 0, j = 0;
+    var i = 0;
     for (i = 0; i < sim_matrix.length; i++) {
-        matrix_deep_copy[i] = [];
-        for (j = 0; j < sim_matrix[i].length; j++) {
-            matrix_deep_copy[i][j] = sim_matrix[i][j];
-        }
+        matrix_deep_copy[i] = sim_matrix[i].slice(0);
     }
     var result = clusterMatrixRec(matrix_deep_copy, {}, []);
 
     var result_order = result['order'];
-    sendToHost('log', result_order);
     var first = result_order.splice(-1,1)[0];
     var new_order = [first.x,first.y];
 
@@ -468,15 +464,17 @@ function clusterMatrix() {
 
     // constuct newick format of tree
     var tree = [first.x, first.y, first.value];
+    var treeOrder = [];
 
     for (i = result_order.length - 1; i >= 0; i--) {
         var next = result_order[i];
         // find next.x recursively
         findAndReplace(tree, next.x, next.y, next.value);
     }
-    sendToHost('log', JSON.stringify(tree));
-    sendToHost('log', arrayToNewick(tree));
-    sendToHost('sim_graph', arrayToNewick(tree));
+    for (i = 0; i < new_order.length; i++) {
+        treeOrder[new_order[i]] = i;
+    }
+    sendToHost('sim_graph', {'data': arrayToNewick(tree), 'order': treeOrder});
 }
 
 
@@ -496,12 +494,15 @@ function arrayToNewick(array) {
     /* TODO: someday i will write this in a good way */
     addDistance(array);
     var string = JSON.stringify(array).replace(/\[/g, '(').replace(/\]/g, ')').replace(/\"/g, '');
-    string = string.replace(/,([0-9]\.[0-9]*)\)/g, '):$1');
+    string = string.replace(/,([.0-9]*)\)/g, '):$1');
     return string + ';';
 }
 
 function findAndReplace(tree, x, y, val) {
-    var index = tree.indexOf(x);
+    var index = -1;
+    do {
+        index = tree.indexOf(x, index + 1);
+    } while (index % 3 === 2)
     if (index == -1) {
         for (var j = 0; j < tree.length - 1; j ++) {
             if( tree[j] instanceof Array) {
@@ -520,7 +521,7 @@ function clusterMatrixRec(matrix, cluster, order) {
     }
 
     // find highest similarity
-    var x = 0, y = 0, largest = 0;
+    var x = 0, y = 0, largest = -1;
     var i = 0, j = 0;
     for (i = 0 ; i < matrix.length; i++) {
         for (j = 0; j < matrix[i].length; j++) {
@@ -550,8 +551,8 @@ function clusterMatrixRec(matrix, cluster, order) {
 
     // set the value of comparison with y to zero
     for (j = 0 ; j < matrix.length; j++) {
-        matrix[j][y] = 0;
-        matrix[y][j] = 0;
+        matrix[j][y] = -1;
+        matrix[y][j] = -1;
     }
 
     return clusterMatrixRec(matrix, cluster, order);
