@@ -7,8 +7,7 @@ var data = {},
     cores = [],
     unicores = [],
     unicorePresent = false,
-    rank = 0,
-    sim_matrix = [];
+    rank = 0;
 
 // Add an event handler to the worker
 self.addEventListener('message', function (e) {
@@ -52,6 +51,75 @@ self.addEventListener('message', function (e) {
     }
 }, false);
 
+
+/* Write a small class to contain all the variables for the matrix */
+var matrixBackend = function matrixBackend(data) {
+    var matrix = [],
+        order  = [];
+
+    /* this is a reference to the data, read-only! */
+    var data = data;
+
+    /* variable to keep track of dirty state */
+    var needsRecalculating = false;
+
+    var that = {};
+
+    function updateRow(index) {
+        sendToHost('RowUpdated', {'row': index, 'data': matrix[index]});
+    }
+
+    function rowRemoved(index) {
+        sendToHost('RowRemoved', {'row': index});
+    }
+
+    that.addGenome = function (genome_id) {
+        needsRecalculating = true;
+        order.push(genome_id);
+
+        var length = matrix.length;
+        for (var x = 0; x < length; x ++) {
+            // add -1 to the end
+            matrix[x].splice(-1, 0, -1);
+            updateRow(x);
+        }
+
+        var new_row = []
+        for (var x = 0; x < order.length; x ++) {
+            new_row.push(-1);
+        }
+        matrix.push(new_row);
+
+        updateRow(order.length - 1);
+    }
+
+    that.removeGenome = function (genome_id) {
+        var index = order.indexOf(genome_id);
+        order.splice(index, 1);
+
+        matrix.splice(index, 1);
+        for (var x = 0; x < matrix.length; x ++) {
+            // add -1 to the end
+            matrix[x].splice(index, 1);
+            updateRow(x);
+        }
+        rowRemoved(index);
+    }
+
+    that.calculateSimilarity = function () {
+
+    }
+
+    that.clusterMatrix = function () {
+
+    }
+
+    return that;
+}
+
+var matrix = matrixBackend(data);
+
+
 // Sends a response type and message to the host
 function sendToHost(type, message) {
     self.postMessage({'type': type, 'msg': message});
@@ -78,7 +146,6 @@ function addData(bioproject_id, name, set, request_rank) {
     data[bioproject_id].name = name;
     data[bioproject_id].peptide_list = set;
     data[bioproject_id].peptides = set.length;
-    order.push(bioproject_id);
 
     // Calculate pan and core
     core = cores.length === 0 ? set : intersection(cores[cores.length - 1], set);
@@ -90,22 +157,24 @@ function addData(bioproject_id, name, set, request_rank) {
         unicores.push(unicore);
     }
 
+    matrix.addGenome(bioproject_id);
+
     // Return the results to the host
     temp = {};
     temp.bioproject_id = bioproject_id;
     temp.pan = pan.length;
     temp.core = core.length;
+    temp.name = name;
     temp.peptides = set.length;
     if (unicorePresent) {
         temp.unicore = unicore.length;
     }
-    sendToHost("addData", {data: temp, rank: request_rank});
+    sendToHost("processLoadedGenome", {data: temp, rank: request_rank});
 }
 
 // Removes a genomes from the data
 function removeData(bioproject_id, newOrder, start) {
     var l = pans.length;
-    var i = order.indexOf(bioproject_id);
     delete data[bioproject_id];
     pans.splice(l - 1, 1);
     cores.splice(l - 1, 1);
@@ -115,22 +184,8 @@ function removeData(bioproject_id, newOrder, start) {
     recalculatePanCore(newOrder, start, l - 2);
     getUniqueSequences();
 
+    matrix.removeGenome(bioproject_id);
 
-    // Update the matrix without calculating everything again
-    // TODO: move this into a generic method
-    var names = [];
-
-    for (x = 0; x < newOrder.length; x++) {
-        var bioproject_id = newOrder[x];
-        names.push(data[bioproject_id].name);
-    }
-
-    var length = sim_matrix.length;
-    for(var x = 0; x < length; x++) {
-        sim_matrix[x].splice(i, 1);
-    }
-    sim_matrix.splice(i, 1);
-    sendToHost('sim_matrix', {'genomes': names, 'sim_matrix': sim_matrix, 'order': newOrder});
 }
 
 // Recalculates the pan and core data based on a
@@ -170,7 +225,7 @@ function recalculatePanCore(newOrder, start, stop) {
         }
         response.push(temp);
     }
-    sendToHost("setPancoreData", {data : response, lca : lca, rank : rank});
+    sendToHost("processPancoreData", {data : response, lca : lca, rank : rank});
 }
 
 // Sorts the genomes in a given order
@@ -329,7 +384,7 @@ function getSequences(type, bioproject_id) {
         error("Unknown type: " + type);
     }
     getJSONByPost("/pancore/full_sequences/", "sequence_ids=[" + ids + "]", function (d) {
-        sendToHost("sequencesDownloaded", {sequences : d, type : type});
+        sendToHost("processDownloadedSequences", {sequences : d, type : type});
     });
 }
 
