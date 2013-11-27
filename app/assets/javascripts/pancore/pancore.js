@@ -189,7 +189,7 @@ var constructPancore = function constructPancore(args) {
             drawTree(data.msg.data, data.msg.order);
             break;
         default:
-        //    console.log(data.msg);
+            console.log(data.msg);
         }
     }
 
@@ -222,14 +222,9 @@ var constructPancore = function constructPancore(args) {
         // If the rank doesn't match, this is old data
         if (rank !== requestRank) return;
         toLoad--;
-        // TODO do this the right way
-        genomes[genome.bioproject_id].status = "Done";
-        table.update();
+        table.setGenomeStatus(genome.bioproject_id, "Done", false);
 
         graph.addToDataQueue(genome);
-
-
-        //TODO tryUpdateMatrix();
 
         setLoading(toLoad !== 0);
     }
@@ -268,21 +263,19 @@ var constructPancore = function constructPancore(args) {
      * @param <Boolean> loading The new(?) loading status
      */
     function setLoading(loading) {
-        // TODO let the table handle the enabling or disabling
         // don't do anything if the state hasn't changed
         if (isLoading === loading) return;
         isLoading = loading;
         if (loading) {
             $("#add_species_peptidome").button('loading');
-            table.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
+            table.setEnabled(false);
         } else {
             $("#add_species_peptidome").button('reset');
-            table.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
-            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
+            table.setEnabled(true);
 
             // REMOVE THIS LINE
-            //TODO sendToWorker("getUniqueSequences");
+            // dirty hack
+            setTimeout(function () { sendToWorker("getUniqueSequences", {order : table.getOrder() });}, 1000);
         }
     }
 
@@ -299,12 +292,12 @@ var constructPancore = function constructPancore(args) {
             // only add new genomes
             if (genomes[g[i].bioproject_id] === undefined) {
                 toLoad++;
-                // TODO move to table method
-                genomes[g[i].bioproject_id] = {
+                table.addGenome({
                     "bioproject_id" : g[i].bioproject_id,
                     "name" : g[i].name,
                     "status" : "Loading...",
-                    "position" : 100 + i};
+                    "position" : 100 + i
+                });
                 loadData(g[i].bioproject_id, g[i].name);
             }
         }
@@ -347,6 +340,7 @@ var constructPancore = function constructPancore(args) {
      */
     that.updateOrder = function updateOrder(orderData) {
         sendToWorker("recalculatePanCore", orderData);
+        table.setOrder(orderData.order);
     };
 
     /**
@@ -361,7 +355,7 @@ var constructPancore = function constructPancore(args) {
      * Requests a set of sequences to the worker
      *
      * @param <Number> bioprojectId The id of the genome we want data from
-     * @para <String> type The type of sequences we want
+     * @param <String> type The type of sequences we want
      */
     that.requestSequences = function requestSequences(bioprojectId, type) {
         sendToWorker("getSequences", {
@@ -370,62 +364,17 @@ var constructPancore = function constructPancore(args) {
         });
     };
 
+    /**
+     * Send the autoSort command to the worker
+     *
+     * @param <String> type The type of sort we want to run
+     */
+    that.autoSort = function autoSort(type){
+        sendToWorker("autoSort", {type : type});
+    }
 
     // initialize the object
     init();
 
     return that;
 };
-
-
-function removeMe() {
-
-    // Sets the position property in the genomes
-    // based on the position in the graph
-    // returns a list with the order of the genomes
-    function calculateTablePositionsFromGraph() {
-        var order = [],
-            start = -1,
-            stop = 0,
-            i;
-        for (i = 0; i < graphData.length; i++) {
-            var bioproject_id = graphData[i].bioproject_id;
-            if (genomes[bioproject_id].position === i && stop === 0) {
-                start = i;
-            } else if (genomes[bioproject_id].position !== i) {
-                stop = i;
-                genomes[bioproject_id].position = i;
-                genomes[bioproject_id].status = "Processing...";
-            }
-            order[i] = bioproject_id;
-        }
-        start++;
-        return {"order" : order, "start" : start, "stop" : stop};
-    }
-
-    // TODO move to phylotree object
-    function drawTree(newick, order) {
-        var parsed = Newick.parse(newick);
-        console.log(parsed);
-        $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 100, height: 500}, order);
-    }
-
-    // setup similarity matrix buttons etc
-
-    // TODO move to matrix object
-    // Only cluster when the initial data has loaded
-    function clusterIfReady() {
-        if( toLoad === 0 ) {
-            sendToWorker('clusterMatrix', '');
-        } else {
-            setTimeout(clusterIfReady, 200);
-        }
-    }
-    // On click of tab, cluster matrix
-    $("a[href='#sim_matrix_wrapper']").click(clusterIfReady);
-    function showMatrix(g, data, order) {
-        $('#sim_matrix').empty();
-        redrawMatrix(g, data, order);
-    }
-}

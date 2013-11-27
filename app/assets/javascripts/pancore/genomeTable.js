@@ -41,17 +41,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
                 $("#autosort-button").dropdown("toggle");
             }
         });
-        $("#autosort ul a").click(function () {
-            // TODO move to function
-            var i;
-            sendToWorker("autoSort", {type : $(this).attr("data-type")});
-            for (i in genomes) {
-                genomes[i].status = "Processing...";
-            }
-            that.update();
-            $("#autosort").mouseleave();
-            return false;
-        });
+        $("#autosort ul a").click(runAutosort);
         $("#autosort ul a").tooltip({placement : "right", container : "body"});
     }
 
@@ -113,6 +103,21 @@ var constructGenomeTable = function constructGenomeTable(args) {
         return {"order" : order, "start" : start, "stop" : stop};
     }
 
+    /**
+     * This function gets executed when the user clicks one of the autosort
+     * links.
+     */
+    function runAutosort() {
+        var i;
+        pancore.autoSort($(this).attr("data-type"));
+        for (i in genomes) {
+            genomes[i].status = "Processing...";
+        }
+        that.update();
+        $("#autosort").mouseleave();
+        return false;
+    }
+
     /*************** Public methods ***************/
 
     /**
@@ -121,6 +126,15 @@ var constructGenomeTable = function constructGenomeTable(args) {
     that.clear = function clear() {
         $("#genomes_table tbody").html("");
         that.update();
+    };
+
+    /**
+     * Adds the given genome to the table
+     *
+     * @param <Genome> genome The genome we want to add
+     */
+    that.addGenome = function addGenome(genome) {
+        genomes[genome.bioproject_id] = genome;
     };
 
     /**
@@ -154,6 +168,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
     /**
      * Sets the status of a genome in the table
+     *
      * @param <Number> bioprojectId The id of the genome of which we want to
      *          change the status
      * @param <String> status the new status
@@ -169,6 +184,7 @@ var constructGenomeTable = function constructGenomeTable(args) {
 
     /**
      * Sets the order of a genome in the table
+     *
      * @param <Number> bioprojectId The id of the genome of which we want to
      *          change the status
      * @param <Number> position the new position
@@ -180,6 +196,33 @@ var constructGenomeTable = function constructGenomeTable(args) {
         if (updateTable) {
             that.update();
         }
+    };
+
+    /**
+     * Changes the order of the table based on the given order
+     *
+     * @param <Array> order the new order we want to set
+     */
+    that.setOrder = function setOrder(order) {
+        var i;
+        for (i = 0; i < order.length; i++) {
+            genomes[order[i]].position = i;
+        }
+        that.update();
+    };
+
+    /**
+     * Returns the order of the genomes in the table as an array of
+     * bioproject id's
+     *
+     * @return <Array> order An array containing the bioproject id's
+     */
+    that.getOrder = function getOrder() {
+      var order = [];
+      d3.selectAll("#genomes_table tbody tr").each(function (d, i) {
+          order[i] = d.bioproject_id;
+      });
+      return order;
     };
 
     /**
@@ -237,6 +280,22 @@ var constructGenomeTable = function constructGenomeTable(args) {
      */
     that.setTableMessage = function setTableMessage(icon, msg) {
         $("#table-message").html("<i class='glyphicon glyphicon-" + icon + "'></i> " + msg);
+    };
+
+    /**
+     * Enables or disables the dragging of the tables and updates the message
+     * above the table.
+     *
+     * @param <Boolean> enabled True if we want to enable the table
+     */
+    that.setEnabled = function setEnabled(enabled) {
+        if (enabled) {
+            that.setTableMessage("info-sign", "You can drag rows to reorder them or use one of the autosort options.");
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", false);
+        } else {
+            that.setTableMessage("refresh", "Please wait while we load the genomes for this species.");
+            $("#genomes_table tbody.ui-sortable").sortable("option", "disabled", true);
+        }
     };
 
     // initialize the object

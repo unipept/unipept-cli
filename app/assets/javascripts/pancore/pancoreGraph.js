@@ -1,8 +1,6 @@
 /**
  * Creates a pancoreGraph object that includes the graph visualisation
  *
- * TODO: clicking a genome is very laggy
- *
  * @param <Pancore> args.pancore Pancore object
  * @param <GenomeTable> args.table GenomeTable object
  * @param <Number> args.transitionDuration Duration of transitions in ms
@@ -315,7 +313,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
         mouse.hasDragged = false;
         mouse.dragId = d.bioproject_id;
         mouse.dragging[d.bioproject_id] = this.__origin__ = xScale(d.bioproject_id);
-        d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
+        // FIXME This is disabled since it takes 1 second to recalculate the
+        // styles in chrome. Cursor now only changes after moving at least 1px
+        //d3.select("body").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.selectAll(".bar").style("cursor", "url(/closedhand.cur) 7 5, move");
         svg.select("#trash").transition()
             .duration(transitionDuration)
@@ -332,9 +332,9 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function drag(d) {
         mouse.hasDragged = true;
         if (mouse.clickId) {
-            removePopovers();
+            that.removePopovers();
             if (mouse.clickId !== d.bioproject_id) {
-                removeHighlight(mouse.clickId);
+                that.removeHighlight(mouse.clickId);
             }
         }
         that.removeTooltip();
@@ -365,16 +365,14 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
             .duration(transitionDuration)
             .attr("stroke", "#cccccc");
         if (mouse.onTrash) {
-            //TODO removeData(d);
+            pancore.removeGenome(d);
         } else {
             // If we always update the graph, the click event never registers
             // in Chrome due to DOM reordering of the bars.
             if (mouse.hasDragged) {
                 that.update();
                 // If we swapped genomes, update the table to the graph
-                //TODO var r = calculateTablePositionsFromGraph();
-                //TODO updateTable();
-                //TODO sendToWorker("recalculatePanCore", {"order" : r.order, "start" : r.start, "stop" : r.stop});
+                pancore.updateOrder(calculateNewPositions());
             }
         }
         mouse.isDragging = false;
@@ -442,6 +440,32 @@ var constructPancoreGraph = function constructPancoreGraph(args) {
     function position(d) {
         var v = mouse.dragging[d.bioproject_id];
         return v == null ? xScale(d.bioproject_id) : v;
+    }
+
+    /**
+     * Calculates the order of the genomes based on the graph.
+     *
+     * @return <Hash> Contains the new order and the positions from and till it
+     *          was changed
+     */
+    function calculateNewPositions() {
+        var order = [],
+            start = -1,
+            stop = 0,
+            i,
+            bioprojectId;
+        for (i = 0; i < graphData.length; i++) {
+            bioprojectId = graphData[i].bioproject_id;
+            if (genomes[bioprojectId].position === i && stop === 0) {
+                start = i;
+            } else if (genomes[bioprojectId].position !== i) {
+                stop = i;
+                table.setGenomeStatus(bioprojectId, "Processing...", false);
+            }
+            order[i] = bioprojectId;
+        }
+        start++;
+        return {"order" : order, "start" : start, "stop" : stop};
     }
 
     /**
