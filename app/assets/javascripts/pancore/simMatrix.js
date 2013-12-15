@@ -1,7 +1,7 @@
 var constructSimMatrix = function constructSimMatrix(w) {
     /*************** Private variables ***************/
     /* UI variables */
-    var margin = {top: 20, right: 0, bottom: 10, left: 200},
+    var margin = {top: 200, right: 0, bottom: 10, left: 200},
         matrix_padding = 0.03,
         width = 500,
         height = 500;
@@ -149,17 +149,17 @@ var constructSimMatrix = function constructSimMatrix(w) {
         treeOrder = newOrder;
         console.log(treeOrder);
         x.domain(newOrder);
-        var t = svg.transition().duration(2500);
+        var t = svg.transition().duration(1000);
 
         t.selectAll(".row")
-            .delay(function(d, i) { return x(i) * 4; })
+            .delay(function(d, i) { return x(i) * 2; })
             .attr("transform", function(d, i) { return "translate(0," + x(i) + ")"; })
             .selectAll(".cell")
-            .delay(function(d, i) { return x(i) * 4; })
+            .delay(function(d, i) { return x(i) * 2; })
             .attr("x", function(d, i) { return x(i); });
 
         t.selectAll(".column")
-            .delay(function(d, i) { return x(i) * 4; })
+            .delay(function(d, i) { return x(i) * 2; })
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
         that.setClustered(true);
         updated = true;
@@ -224,9 +224,18 @@ var constructSimMatrix = function constructSimMatrix(w) {
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; })
             .attr("y", x.rangeBand() / 2);
 
+        column.selectAll("text").attr('y', x.rangeBand() / 2);
+
         column_enter = column.enter().append("g")
             .attr("class", "column")
             .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+        column_enter.append("text")
+            .attr("x", 6)
+            .attr("y", x.rangeBand() / 2)
+            .attr("dy", ".32em")
+            .attr("text-anchor", "start")
+            .text(function(d, i) { return names[order[i]].name; });
 
         column_enter.append("line")
             .attr("x1", -width)
@@ -261,7 +270,7 @@ var constructSimMatrix = function constructSimMatrix(w) {
         newick = n;
         var parsed = Newick.parse(n);
         $("#sim_graph").html("");
-        d3.phylogram.build('#sim_graph', parsed, {width: 120, height: 500, skipLabels: true}, treeOrder);
+        d3.phylogram.build('#sim_graph', parsed, {width: 180, height: 500, skipLabels: true}, treeOrder);
     }
 
     /* calculate similarity */
