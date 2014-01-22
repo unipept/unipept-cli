@@ -5,6 +5,7 @@
 //= require jquery_ujs
 //= require_self
 //= require_directory .
+//= require_directory ./pancore
 //= require vendor
 
 // highlights the background color
@@ -95,7 +96,7 @@ function triggerDownloadModal(svgSelector, canvasSelector, baseFileName) {
         if (svgSelector) {
             $buttons.append("<button id='download-svg' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as SVG</button>");
             $("#download-svg").click(function () {
-                 downloadDataByForm(svg, baseFileName + ".svg");
+                downloadDataByForm(svg, baseFileName + ".svg");
             });
         }
         $buttons.append("<button id='download-png' class='btn btn-primary'><i class='glyphicon glyphicon-download'></i> Download as PNG</button>");
@@ -267,7 +268,7 @@ var delay = (function () {
     window.fullScreenApi = fullScreenApi;
 })();
 
-/*
+/**
  * requestAnimationFrame shim
  * source: http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
  */
@@ -280,7 +281,7 @@ window.requestAnimFrame = (function(){
             };
 })();
 
-/*
+/**
  * Catches all errors, displays them in console and
  * logs them to Google Analytics
  */
