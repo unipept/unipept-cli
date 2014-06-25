@@ -66,7 +66,7 @@ root_cmd = Cri::Command.new_basic_root.modify do
   option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
 
   # Configuration options
-  option nil, "config-host", "Override host setting", argument: :required
+  option nil, "host", "Override host setting", argument: :required
 
   run do |opts, args, cmd|
     if opts[:version]

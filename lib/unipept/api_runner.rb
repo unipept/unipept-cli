@@ -13,8 +13,8 @@ module Unipept
 
     def set_configuration
       # find host in opts first
-      if options[:'config-host']
-        host = options[:'config-host']
+      if options[:host]
+        host = options[:host]
       else
         host = @configuration['host']
       end
