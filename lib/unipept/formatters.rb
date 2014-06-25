@@ -25,7 +25,7 @@ module Unipept
       'csv'
     end
 
-    def header(sample_data)
+    def header(sample_data, fasta_mapper = nil)
       ""
     end
 
@@ -39,7 +39,8 @@ module Unipept
     require 'json'
     register :json
 
-    def format(data)
+    def format(data, fasta_mapper = nil)
+      # TODO: add fasta header based on fasta_mapper information
       data.to_json
     end
 
@@ -60,7 +61,6 @@ module Unipept
         else
           csv << first.keys.map(&:to_s) if first
         end
-
       end
     end
 
@@ -100,13 +100,13 @@ module Unipept
     end
 
     class ::Array
-      def to_xml( array_name = :array, item_name = :item )
-        %|<#{array_name} size="#{self.size}">|+map{|n|n.to_xml( :item )}.join+"</#{array_name}>"
+      def to_xml(array_name = :array, item_name = :item)
+        %|<#{array_name} size="#{self.size}">| + self.map{|n|n.to_xml( :item )}.join+"</#{array_name}>"
       end
     end
 
     class ::Hash
-      def to_xml( name = nil )
+      def to_xml(name = nil)
         data = to_a.map{|k,v|v.to_xml(k)}.join
         name ? "<#{name}>#{data}</#{name}>" : data
       end
@@ -114,7 +114,8 @@ module Unipept
 
     register :xml
 
-    def format(data)
+    def format(data, fasta_mapper = nil)
+      # TODO: add fasta header based on fasta_mapper information
       data.to_xml
     end
 
