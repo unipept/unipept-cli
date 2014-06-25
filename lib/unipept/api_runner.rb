@@ -86,8 +86,8 @@ module Unipept
       peptides = input_iterator
 
       filter_list = options[:select] ? options[:select] : []
-      filter_list = filter_list.map {|f| glob_to_regex(f) }
-      output = STDOUT.tty? ? STDOUT : STDERR
+      # Parse filter list: convert to regex and split on commas
+      filter_list = filter_list.map { |f| f.include?(",") ? f.split(",") : f }.flatten.map { |f| glob_to_regex(f) }
 
       batch_order = Unipept::BatchOrder.new
 
@@ -214,9 +214,9 @@ module Unipept
 
     private
 
-    def glob_to_regex(glob_string)
-      # only implement * -> . for now
-      Regexp.new glob_string.gsub("*", ".*")
+    def glob_to_regex(string)
+      /^#{string.gsub('*','.*')}$/
     end
+
   end
 end
