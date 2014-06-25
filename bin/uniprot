@@ -16,14 +16,18 @@ def get_uniprot_entry(arg, fasta = false)
   end
 end
 
-fasta = ARGV.delete "--fasta"
-
-if ARGV.empty?
-  STDIN.each_line do |pept|
-    get_uniprot_entry(pept.chomp, fasta)
-  end
-else
-  ARGV.each do |pept|
-    get_uniprot_entry(pept, fasta)
+root_cmd = Cri::Command.new_basic_root.modify do
+  name 'uniprot'
+  description 'Download protein sequence from uniprot.org'
+  required :f, :format, "specify output format (available: fasta, plain)"
+  run do |opts, args, cmd|
+    fasta = opts[:format] == 'fasta'
+    iterator = args.empty? ? $stdin.each_line : args
+    iterator.each do |pept|
+      get_uniprot_entry(pept.chomp, fasta)
+    end
   end
 end
+
+# run_this runs this command without subcommands! Absolutely needed here
+root_cmd.run_this(ARGV)
