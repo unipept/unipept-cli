@@ -182,7 +182,7 @@ module Unipept
     end
 
     def peptide_iterator(peptides, &block)
-      first = peptides.next
+      first = peptides.next rescue return
       if first.start_with? '>'
         # FASTA MODE ENGAGED
         fasta_header = first.chomp
