@@ -147,13 +147,26 @@ end
 root_cmd.define_command('pept2prot') do
   usage       'pept2prot [options]'
   aliases     :p
-  summary     'Give protein information for given peptides'
-  description 'Search Unipept for the given peptides and return the lowest common ancestor'
+  summary     'Fetch Uniprot records that match tryptic peptides.'
+  description <<-EOS
+  For each tryptic peptide the unipept pept2prot command retrieves from Unipept all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
-  flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :x, :xml, "download uniprot record in specified directory", :argument => :required
-  flag :a, :extra, "include all information. WARNING: will take much longer!"
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+
+  The unipept pept2prot subcommand yields Uniprot records as output.
+  EOS
+
+  flag :e, :equate, "equate isoleucine (I) and leucine (L) when matching peptides"
+  option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
+  option :x, :xml, "download XML-formatted Uniprot records into the specified download-directory. ", :argument => :required
+  flag :a, :all, "report all information fields of Uniprot records available in Unipept. Note that this may have a performance penalty.
+"
 
   runner Unipept::Pept2prot
 end
