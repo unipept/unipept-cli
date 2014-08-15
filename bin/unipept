@@ -210,11 +210,23 @@ end
 root_cmd.define_command('taxonomy') do
   usage       'taxonomy [options]'
   aliases     :tax
-  summary     'Give NCBI taxonomy information on given input taxon ids'
-  description 'Returns information for each input taxon id'
+  summary     'Fetch taxonomic information from Unipept Taxonomy.'
+  description <<-EOS
+  The unipept taxonomy command yields information from the Unipept Taxonomy records for a given list of NCBI Taxonomy Identifiers. The Unipept Taxonomy is a cleaned up version of the NCBI Taxonomy, and its records are also records of the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
+
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
+
+  The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
+  EOS
 
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
-  flag :a, :all, "include all information. WARNING: will take much longer!"
+  flag :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
   runner Unipept::Taxonomy
 end
