@@ -134,12 +134,24 @@ end
 root_cmd.define_command('pept2lca') do
   usage       'pept2lca [options]'
   aliases     :l
-  summary     'Give lowest common ancestor for given peptide'
-  description 'Search Unipept for the given peptide and return the lowest common ancestor'
+  summary     'Fetch taxonomic lowest common ancestor of Uniprot records that match tryptic peptides.'
+  description <<-EOS
+  For each tryptic peptide the unipept pept2lca command retrieves from Unipept the lowest common ancestor of the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of tryptic peptides that are passed
+
+   - as separate command line arguments
+
+   - in one or more text files that are passed as an argument to the -i option
+
+   - to standard input
+
+  The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+
+  The unipept pept2lca subcommand yields an NCBI Taxonomy record as output.
+  EOS
 
   flag :e, :equate, "equate isoleucine (I) and leucine (L) when matching peptides"
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
-  option :a, :all, "Show full lineage"
+  option :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
   runner Unipept::ApiRunner
 end
