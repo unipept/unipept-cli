@@ -58,15 +58,30 @@ module Unipept
 end
 
 root_cmd = Cri::Command.new_basic_root.modify do
-  name 'unipept'
-  flag :v, :version, "print version"
-  flag :q, :quiet, "don't show update messages"
-  option :i, :input, "input file", :argument => :required
-  option :o, :output, "output file", :argument => :required
-  option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
+  name        'unipept'
+  summary     'Command line interface to Unipept web services.'
+  usage       'unipept subcommand [options]'
+  description <<-EOS
+  The unipept subcommands are command line wrappers around the Unipept web services.
+
+  Subcommands that start with pept expect a list of tryptic peptides as input. Subcommands that start with tax expect a list of NCBI Taxonomy Identifiers as input. Input is passed
+
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way the input is passed, in the order as listed above. Text files and standard input should have one tryptic peptide or one NCBI Taxonomy Identifier per line.
+  EOS
+  flag :v, :version, "displays the version"
+  flag :q, :quiet, "disable service messages"
+  option :i, :input, "read input from file", :argument => :required
+  option :o, :output, "write output to file", :argument => :required
+  option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
 
   # Configuration options
-  option nil, "host", "Override host setting", argument: :required
+  option nil, "host", "specify the server running the Unipept web service", argument: :required
 
   run do |opts, args, cmd|
     if opts[:version]
