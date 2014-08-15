@@ -159,11 +159,23 @@ end
 root_cmd.define_command('taxa2lca') do
   usage       'taxa2lca [options]'
   aliases     :t
-  summary     'Give lowest common ancestor for taxon ids'
-  description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
+  summary     'Compute taxonomic lowest common ancestor for given list of taxa.'
+  description <<-EOS
+  The unipept taxa2lca command computes the lowest common ancestor of a given list of NCBI Taxonomy Identifiers. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
+
+   - as separate command line arguments
+
+   - in one or more text files that are passed as an argument to the -i option
+
+   - to standard input
+
+  The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
+
+  The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
+  EOS
 
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
-  option :a, :all, "Show full lineage"
+  option :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
   runner Unipept::Taxa2lca
 end
