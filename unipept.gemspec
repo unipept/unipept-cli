@@ -10,10 +10,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
-  s.authors = ["Toon Willems"]
-  s.date = "2014-06-25"
-  s.description = "CLI interface to unipept"
-  s.email = "willemstoon@gmail.com"
+  s.authors = ["Toon Willems", "Bart Mesuere"]
+  s.date = "2014-08-16"
+  s.description = "Command line interface to Unipept web services."
+  s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -40,10 +40,10 @@ Gem::Specification.new do |s|
     "test/test_unipept.rb",
     "unipept.gemspec"
   ]
-  s.homepage = "http://github.ugent.be/bmesuere/unipept/"
+  s.homepage = "https://github.com/unipept/unipept/"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.2.2"
-  s.summary = "CLI interface to unipept"
+  s.summary = "Command line interface to Unipept web services."
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
