@@ -17,14 +17,13 @@ Gem::Specification.new do |s|
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.rdoc"
+    "README.md"
   ]
   s.files = [
     ".document",
     "Gemfile",
     "Gemfile.lock",
     "LICENSE.txt",
-    "README.rdoc",
     "Rakefile",
     "VERSION",
     "bin/peptfilter",
