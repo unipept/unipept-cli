@@ -71,7 +71,7 @@ module Unipept
       return unless STDOUT.tty?
       last_fetched = @configuration['last_fetch_date']
       if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
-        version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
+        version = Unipept::VERSION
         resp = Typhoeus.get(@message_url, params: {version: version})
         puts resp.body unless resp.body.chomp.empty?
         @configuration['last_fetch_date'] = Time.now
