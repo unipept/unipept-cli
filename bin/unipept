@@ -114,7 +114,7 @@ root_cmd.define_command('pept2lca') do
   option :s, :select, "select the attributes", :argument => :required, :multiple => true
   option :a, :extra, "Show full lineage"
 
-  runner Unipept::ApiRunner
+  runner Unipept::Commands::Pept2lca
 end
 
 root_cmd.define_command('taxa2lca') do
