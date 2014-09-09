@@ -2,10 +2,6 @@ require_relative 'api_runner'
 
 module Unipept::Commands
   class Pept2prot < ApiRunner
-    def mapping
-      {"pept2prot" => "pept2prot"}
-    end
-
     def download_xml(result)
       if options[:xml]
         FileUtils.mkdir_p(options[:xml])

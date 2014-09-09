@@ -7,7 +7,7 @@ module Unipept::Commands
 
       set_configuration
 
-      @url = "#{@host}/api/v1/#{mapping[cmd.name]}.json"
+      @url = "#{@host}/api/v1/#{cmd.name}.json"
       @message_url = "#{@host}/api/v1/messages.json"
     end
 
@@ -29,10 +29,6 @@ module Unipept::Commands
       end
 
       @host = host
-    end
-
-    def mapping
-      {'pept2taxa' => 'pept2taxa', 'pept2lca' => 'pept2lca'}
     end
 
     def input_iterator
