@@ -1,4 +1,4 @@
-module Unipept
+module Unipept::Commands
   class ApiRunner < Cri::CommandRunner
 
     def initialize(args, opts, cmd)
