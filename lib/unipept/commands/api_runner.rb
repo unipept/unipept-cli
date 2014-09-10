@@ -1,4 +1,4 @@
-module Unipept
+module Unipept::Commands
   class ApiRunner < Cri::CommandRunner
 
     def initialize(args, opts, cmd)
@@ -7,7 +7,7 @@ module Unipept
 
       set_configuration
 
-      @url = "#{@host}/api/v1/#{mapping[cmd.name]}.json"
+      @url = "#{@host}/api/v1/#{cmd.name}.json"
       @message_url = "#{@host}/api/v1/messages.json"
     end
 
@@ -29,10 +29,6 @@ module Unipept
       end
 
       @host = host
-    end
-
-    def mapping
-      {'pept2taxa' => 'pept2taxa', 'pept2lca' => 'pept2lca'}
     end
 
     def input_iterator
@@ -71,7 +67,7 @@ module Unipept
       return unless STDOUT.tty?
       last_fetched = @configuration['last_fetch_date']
       if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
-        version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
+        version = Unipept::VERSION
         resp = Typhoeus.get(@message_url, params: {version: version})
         puts resp.body unless resp.body.chomp.empty?
         @configuration['last_fetch_date'] = Time.now
