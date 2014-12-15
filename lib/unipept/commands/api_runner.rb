@@ -190,7 +190,8 @@ module Unipept::Commands
             if sub[j].start_with? '>'
               fasta_header = sub[j]
             else
-              fasta_mapper[sub[j]] = fasta_header
+              fasta_mapper[sub[j]] ||= []
+              fasta_mapper[sub[j]] << fasta_header
             end
             j += 1
           end
