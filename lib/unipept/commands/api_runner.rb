@@ -195,7 +195,7 @@ module Unipept::Commands
             end
             j += 1
           end
-          sub -= fasta_mapper.values.uniq
+          sub -= fasta_mapper.values.flatten.uniq
           block.call(sub, i, fasta_mapper)
         end
       else
