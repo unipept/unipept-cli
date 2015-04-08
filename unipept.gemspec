@@ -6,12 +6,12 @@
 
 Gem::Specification.new do |s|
   s.name = "unipept"
-  s.version = "0.5.7"
+  s.version = "0.6.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
-  s.authors = ["Toon Willems", "Bart Mesuere"]
-  s.date = "2014-08-16"
+  s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
+  s.date = "2015-04-08"
   s.description = "Command line interface to Unipept web services."
   s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
@@ -31,10 +31,17 @@ Gem::Specification.new do |s|
     "bin/unipept",
     "bin/uniprot",
     "lib/unipept.rb",
-    "lib/unipept/api_runner.rb",
     "lib/unipept/batch_order.rb",
+    "lib/unipept/commands.rb",
+    "lib/unipept/commands/api_runner.rb",
+    "lib/unipept/commands/pept2lca.rb",
+    "lib/unipept/commands/pept2prot.rb",
+    "lib/unipept/commands/pept2taxa.rb",
+    "lib/unipept/commands/taxa2lca.rb",
+    "lib/unipept/commands/taxonomy.rb",
     "lib/unipept/configuration.rb",
     "lib/unipept/formatters.rb",
+    "lib/unipept/version.rb",
     "test/helper.rb",
     "test/test_unipept.rb",
     "unipept.gemspec"
