@@ -70,7 +70,7 @@ module Unipept
           if o.kind_of? Array
             o.each do |h|
               if fasta_mapper
-                extra_key = [fasta_mapper[h.values.first]]
+                extra_key = [fasta_mapper[h.values.first].shift]
                 csv << (extra_key + h.values).map { |v| v == ""  ? nil : v }
               else
                 csv << h.values.map { |v| v == ""  ? nil : v }
@@ -78,7 +78,7 @@ module Unipept
             end
           else
             if fasta_mapper
-              extra_key = [fasta_mapper[o.values.first]]
+              extra_key = [fasta_mapper[o.values.first].shift]
               csv << (extra_key + o.values).map { |v| v == ""  ? nil : v }
             else
               csv << o.values.map { |v| v == ""  ? nil : v }
