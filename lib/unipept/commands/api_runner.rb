@@ -184,17 +184,20 @@ module Unipept::Commands
         fasta_header = first.chomp
         peptides.each_slice(batch_size).with_index do |sub,i|
           fasta_mapper = {}
+          fasta_headers = []
           sub.map! {|s| s.chomp}
           j = 0
           while j < sub.size
             if sub[j].start_with? '>'
               fasta_header = sub[j]
+              fasta_headers << fasta_header
             else
-              fasta_mapper[sub[j]] = fasta_header
+              fasta_mapper[sub[j]] ||= []
+              fasta_mapper[sub[j]] << fasta_header
             end
             j += 1
           end
-          sub -= fasta_mapper.values.uniq
+          sub -= fasta_headers
           block.call(sub, i, fasta_mapper)
         end
       else
