@@ -50,13 +50,13 @@ module Unipept
 
     register :csv
 
-    def header(data, fasta_mapper = nil)
+    def header(data, fasta_input = nil)
       CSV.generate do |csv|
         first = data.first
         if first.kind_of? Array
           first = first.first
         end
-        if fasta_mapper
+        if fasta_input
           csv << (['fasta_header'] + first.keys).map(&:to_s) if first
         else
           csv << first.keys.map(&:to_s) if first
@@ -64,44 +64,31 @@ module Unipept
       end
     end
 
-    def format(data, fasta_mapper = nil)
+    def format(data, fasta_input = nil)
       CSV.generate do |csv|
 
-        if fasta_mapper
-          occurence_map = {}
-          occurences_in_data = Hash.new(0)
-          data.each { |d| occurences_in_data[d.values.first.to_s] += 1 }
-          occurences_in_data.each { |id, c| occurences_in_data[id] = c/fasta_mapper[id].length }
-        end
+        if fasta_input
+          data_dict = {}
+          data.each { |d| data_dict[d.values.first.to_s] = d }
 
-        data.each do |o|
-          if o.kind_of? Array
-            o.each do |h|
-              if fasta_mapper
-                id = h.values.first.to_s
-                occurence_map[id] ||= 0
-                occurence_map[id] += 1
+          fasta_input.each do |input_pair|
+            unless data_dict[input_pair[1]].nil?
+              csv << (input_pair + data_dict[input_pair[1]].values).map { |v| v == "" ? nil : v }
+            end
+          end
 
-                extra_key = [fasta_mapper[id][(occurence_map[id] - 1) / occurences_in_data[id]]]
+        else
 
-                csv << (extra_key + h.values).map { |v| v == ""  ? nil : v }
-              else
+          data.each do |o|
+            if o.kind_of? Array
+              o.each do |h|
                 csv << h.values.map { |v| v == ""  ? nil : v }
               end
-            end
-          else
-            if fasta_mapper
-              id = o.values.first.to_s
-              occurence_map[id] ||= 0
-              occurence_map[id] += 1
-
-              extra_key = [fasta_mapper[id][(occurence_map[id] - 1) / occurences_in_data[id]]]
-
-              csv << (extra_key + o.values).map { |v| v == ""  ? nil : v }
             else
               csv << o.values.map { |v| v == ""  ? nil : v }
             end
           end
+
         end
       end
     end
