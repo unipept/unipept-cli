@@ -74,10 +74,11 @@ module Unipept
             data_dict[d.values.first.to_s] << d
           end
 
-
           fasta_input.each do |input_pair|
-            data_dict[input_pair[1]].each do |r|
-              csv << (input_pair + r.values).map { |v| v == "" ? nil : v }
+            unless data_dict[input_pair[1]].nil?
+              data_dict[input_pair[1]].each do |r|
+                csv << (input_pair + r.values).map { |v| v == "" ? nil : v }
+              end
             end
           end
 
