@@ -66,11 +66,24 @@ module Unipept
 
     def format(data, fasta_mapper = nil)
       CSV.generate do |csv|
+
+        if fasta_mapper
+          occurence_map = {}
+          occurences_in_data = Hash.new(0)
+          data.each { |d| occurences_in_data[d.values.first.to_s] += 1 }
+          occurences_in_data.each { |id, c| occurences_in_data[id] = c/fasta_mapper[id].length }
+        end
+
         data.each do |o|
           if o.kind_of? Array
             o.each do |h|
               if fasta_mapper
-                extra_key = [fasta_mapper[h.values.first].shift]
+                id = h.values.first.to_s
+                occurence_map[id] ||= 0
+                occurence_map[id] += 1
+
+                extra_key = [fasta_mapper[id][(occurence_map[id] - 1) / occurences_in_data[id]]]
+
                 csv << (extra_key + h.values).map { |v| v == ""  ? nil : v }
               else
                 csv << h.values.map { |v| v == ""  ? nil : v }
@@ -78,7 +91,12 @@ module Unipept
             end
           else
             if fasta_mapper
-              extra_key = [fasta_mapper[o.values.first].shift]
+              id = o.values.first.to_s
+              occurence_map[id] ||= 0
+              occurence_map[id] += 1
+
+              extra_key = [fasta_mapper[id][(occurence_map[id] - 1) / occurences_in_data[id]]]
+
               csv << (extra_key + o.values).map { |v| v == ""  ? nil : v }
             else
               csv << o.values.map { |v| v == ""  ? nil : v }
