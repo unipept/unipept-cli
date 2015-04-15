@@ -68,16 +68,22 @@ module Unipept
       CSV.generate do |csv|
 
         if fasta_input
+          # Process the output from {key1: value1, key2: value2, ...}
+          # to {value => {key1: value1, key2: value2, ...}}
           data_dict = {}
           data.each do |d|
             data_dict[d.values.first.to_s] ||= []
             data_dict[d.values.first.to_s] << d
           end
 
+          # Iterate over the input
           fasta_input.each do |input_pair|
-            unless data_dict[input_pair[1]].nil?
-              data_dict[input_pair[1]].each do |r|
-                csv << (input_pair + r.values).map { |v| v == "" ? nil : v }
+            fasta_header, id = input_pair
+
+            # Retrieve the corresponding API result (if any)
+            unless data_dict[id].nil?
+              data_dict[id].each do |r|
+                csv << ([fasta_header] + r.values).map { |v| v == "" ? nil : v }
               end
             end
           end
@@ -85,13 +91,7 @@ module Unipept
         else
 
           data.each do |o|
-            if o.kind_of? Array
-              o.each do |h|
-                csv << h.values.map { |v| v == ""  ? nil : v }
-              end
-            else
-              csv << o.values.map { |v| v == ""  ? nil : v }
-            end
+            csv << o.values.map { |v| v == ""  ? nil : v }
           end
 
         end
