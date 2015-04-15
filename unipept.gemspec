@@ -6,12 +6,12 @@
 
 Gem::Specification.new do |s|
   s.name = "unipept"
-  s.version = "0.6.0"
+  s.version = "0.6.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
-  s.date = "2015-04-08"
+  s.date = "2015-04-15"
   s.description = "Command line interface to Unipept web services."
   s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]

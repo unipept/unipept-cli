@@ -186,13 +186,17 @@ module Unipept::Commands
         fasta_header = first.chomp
         peptides.each_slice(batch_size).with_index do |sub,i|
           fasta_input = []
+          # Use a set so we don't ask data twice
           newsub = Set.new
 
+          # Iterate to find fasta headers
           sub.each do |s|
             s.chomp!
             if s.start_with? '>'
+              # Save the FASTA header when found
               fasta_header = s
             else
+              # Add the input pair to our input list
               fasta_input << [fasta_header, s]
               newsub << s
             end
