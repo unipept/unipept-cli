@@ -22,7 +22,6 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
   # Configuration options
   option nil, "host", "Override host setting", argument: :required
-  option :b, "batch_size", "Override batch_size setting", argument: :required
 
   run do |opts, args, cmd|
     if opts[:version]

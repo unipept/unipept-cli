@@ -182,7 +182,7 @@ module Unipept::Commands
       if first.start_with? '>'
         # FASTA MODE ENGAGED
         fasta_header = first.chomp
-        peptides.each_slice(options[:batch_size] || batch_size).with_index do |sub,i|
+        peptides.each_slice(batch_size).with_index do |sub,i|
           fasta_mapper = {}
           fasta_headers = []
           sub.map! {|s| s.chomp}
@@ -207,7 +207,7 @@ module Unipept::Commands
           loop do
             y << peptides.next
           end
-        end.each_slice(options[:batch_size] || batch_size).with_index(&block)
+        end.each_slice(batch_size).with_index(&block)
       end
     end
 
