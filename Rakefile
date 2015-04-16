@@ -21,7 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.summary = %Q{Command line interface to Unipept web services.}
   gem.description = %Q{Command line interface to Unipept web services.}
   gem.email = "unipept@ugent.be"
-  gem.authors = ["Toon Willems", "Bart Mesuere"]
+  gem.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
   # dependencies defined in Gemfile
   gem.add_dependency 'typhoeus', '~> 0.6'
   gem.add_dependency 'cri', '~> 2.6'
