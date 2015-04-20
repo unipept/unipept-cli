@@ -1,3 +1,5 @@
+require 'set'
+
 module Unipept::Commands
   class ApiRunner < Cri::CommandRunner
 
@@ -93,7 +95,7 @@ module Unipept::Commands
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       num_req = 0
 
-      peptide_iterator(peptides) do |sub_division, i, fasta_mapper|
+      peptide_iterator(peptides) do |sub_division, i, fasta_input|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -119,10 +121,10 @@ module Unipept::Commands
               batch_order.wait(i) do
                 if ! sub_result.empty?
                   if ! printed_header
-                    write_to_output formatter.header(sub_result, fasta_mapper)
+                    write_to_output formatter.header(sub_result, fasta_input)
                     printed_header = true
                   end
-                  write_to_output formatter.format(sub_result, fasta_mapper)
+                  write_to_output formatter.format(sub_result, fasta_input)
                 end
               end
             else
@@ -183,22 +185,24 @@ module Unipept::Commands
         # FASTA MODE ENGAGED
         fasta_header = first.chomp
         peptides.each_slice(batch_size).with_index do |sub,i|
-          fasta_mapper = {}
-          fasta_headers = []
-          sub.map! {|s| s.chomp}
-          j = 0
-          while j < sub.size
-            if sub[j].start_with? '>'
-              fasta_header = sub[j]
-              fasta_headers << fasta_header
+          fasta_input = []
+          # Use a set so we don't ask data twice
+          newsub = Set.new
+
+          # Iterate to find fasta headers
+          sub.each do |s|
+            s.chomp!
+            if s.start_with? '>'
+              # Save the FASTA header when found
+              fasta_header = s
             else
-              fasta_mapper[sub[j]] ||= []
-              fasta_mapper[sub[j]] << fasta_header
+              # Add the input pair to our input list
+              fasta_input << [fasta_header, s]
+              newsub << s
             end
-            j += 1
           end
-          sub -= fasta_headers
-          block.call(sub, i, fasta_mapper)
+
+          block.call(newsub.to_a, i, fasta_input)
         end
       else
         # shame we have to be this explicit, but it appears to be the only way
