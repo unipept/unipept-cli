@@ -103,35 +103,54 @@ module Unipept::Commands
           accept_encoding: "gzip"
         )
         request.on_complete do |resp|
-          if resp.timed_out?
-            $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
-          else
-            if resp.success?
-              # if JSON parsing goes wrong
-              sub_result = JSON[resp.response_body] rescue []
-              sub_result = [sub_result] if not sub_result.kind_of? Array
 
-              sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
+          if resp.success?
+            # if JSON parsing goes wrong
+            sub_result = JSON[resp.response_body] rescue []
+            sub_result = [sub_result] if not sub_result.kind_of? Array
 
-              if options[:xml]
-                result << sub_result
-              end
+            sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
 
-              # wait till it's our turn to write
-              batch_order.wait(i) do
-                if ! sub_result.empty?
-                  if ! printed_header
-                    write_to_output formatter.header(sub_result, fasta_input)
-                    printed_header = true
-                  end
-                  write_to_output formatter.format(sub_result, fasta_input)
-                end
-              end
-            else
-              save_error(resp.response_body)
+            if options[:xml]
+              result << sub_result
             end
+
+            # wait till it's our turn to write
+            batch_order.wait(i) do
+              if ! sub_result.empty?
+                if ! printed_header
+                  write_to_output formatter.header(sub_result, fasta_input)
+                  printed_header = true
+                end
+                write_to_output formatter.format(sub_result, fasta_input)
+              end
+            end
+
+          elsif resp.timed_out?
+
+            batch_order.wait(i) do
+              $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
+              save_error("request timed out, continuing anyway, but results might be incomplete")
+            end
+
+          elsif resp.code == 0
+
+            batch_order.wait(i) do
+              $stderr.puts "could not get an http response, continuing anyway, but results might be incomplete"
+              save_error(resp.return_message)
+            end
+
+          else
+
+            batch_order.wait(i) do
+              $stderr.puts "received a non-successful http response #{resp.code.to_s}, continuing anyway, but results might be incomplete"
+              save_error("Got #{resp.code.to_s}: #{resp.response_body}")
+            end
+
           end
+
         end
+
         hydra.queue request
 
         num_req += 1
