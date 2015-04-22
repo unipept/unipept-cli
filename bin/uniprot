@@ -5,13 +5,19 @@ require 'cri'
 Signal.trap("PIPE", "EXIT")
 Signal.trap("INT", "EXIT")
 
-def get_uniprot_entry(arg, fasta = false)
-  resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
-  if resp.success?
-    if fasta
-      puts resp.response_body
-    else
+valid_formats = Set.new ["fasta", "txt", "xml", "rdf", "gff"]
+
+def get_uniprot_entry(arg, format)
+  if format.nil? || format.empty?
+    resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
+    if resp.success?
       puts resp.response_body.lines.map(&:chomp)[1..-1].join("")
+    end
+  else
+    # other format has been specified, just download and output
+    resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{arg}.#{format}")
+    if resp.success?
+      puts resp.response_body
     end
   end
 end
@@ -19,12 +25,15 @@ end
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'uniprot'
   description 'Download protein sequence from uniprot.org'
-  required :f, :format, "specify output format (available: fasta, plain)"
+  required :f, :format, "specify output format (available: " + valid_formats.to_a.join(", ") + ")"
   run do |opts, args, cmd|
-    fasta = opts[:format] == 'fasta'
+    if !opts[:format].nil? and !valid_formats.include? opts[:format]
+      $stderr.puts opts[:format] + " is not a valid output format. Available formats are: " + valid_formats.to_a.join(", ")
+      exit 1
+    end
     iterator = args.empty? ? $stdin.each_line : args
     iterator.each do |pept|
-      get_uniprot_entry(pept.chomp, fasta)
+      get_uniprot_entry(pept.chomp, opts[:format])
     end
   end
 end
