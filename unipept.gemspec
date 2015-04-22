@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
-  s.date = "2015-04-21"
+  s.date = "2015-04-22"
   s.description = "Command line interface to Unipept web services."
   s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
   s.homepage = "https://github.com/unipept/unipept/"
   s.licenses = ["MIT"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
-  s.rubygems_version = "2.4.5"
+  s.rubygems_version = "2.2.2"
   s.summary = "Command line interface to Unipept web services."
 
   if s.respond_to? :specification_version then
