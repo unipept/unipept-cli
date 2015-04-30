@@ -23,9 +23,6 @@ Jeweler::Tasks.new do |gem|
   gem.email = "unipept@ugent.be"
   gem.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
   gem.required_ruby_version = '>= 1.9.3'
-  # dependencies defined in Gemfile
-  gem.add_dependency 'typhoeus', '~> 0.6'
-  gem.add_dependency 'cri', '~> 2.6'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
