@@ -16,15 +16,13 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "unipept"
   gem.executables = ['unipept', 'prot2pept', 'peptfilter', 'uniprot']
-  gem.homepage = "http://github.ugent.be/bmesuere/unipept/"
+  gem.homepage = "https://github.com/unipept/unipept/"
   gem.license = "MIT"
-  gem.summary = %Q{CLI interface to unipept}
-  gem.description = %Q{CLI interface to unipept}
-  gem.email = "willemstoon@gmail.com"
-  gem.authors = ["Toon Willems"]
-  # dependencies defined in Gemfile
-  gem.add_dependency 'typhoeus', '~> 0.6'
-  gem.add_dependency 'cri', '~> 2.6'
+  gem.summary = %Q{Command line interface to Unipept web services.}
+  gem.description = %Q{Command line interface to Unipept web services.}
+  gem.email = "unipept@ugent.be"
+  gem.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
+  gem.required_ruby_version = '>= 1.9.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
 

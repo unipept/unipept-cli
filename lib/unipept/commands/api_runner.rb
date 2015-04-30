@@ -1,4 +1,6 @@
-module Unipept
+require 'set'
+
+module Unipept::Commands
   class ApiRunner < Cri::CommandRunner
 
     def initialize(args, opts, cmd)
@@ -7,7 +9,7 @@ module Unipept
 
       set_configuration
 
-      @url = "#{@host}/api/v1/#{mapping[cmd.name]}.json"
+      @url = "#{@host}/api/v1/#{cmd.name}.json"
       @message_url = "#{@host}/api/v1/messages.json"
     end
 
@@ -29,10 +31,6 @@ module Unipept
       end
 
       @host = host
-    end
-
-    def mapping
-      {'pept2taxa' => 'pept2taxa', 'pept2lca' => 'pept2lca'}
     end
 
     def input_iterator
@@ -71,7 +69,7 @@ module Unipept
       return unless STDOUT.tty?
       last_fetched = @configuration['last_fetch_date']
       if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
-        version = File.read(File.join(File.dirname(__FILE__), "..", "..", "VERSION"))
+        version = Unipept::VERSION
         resp = Typhoeus.get(@message_url, params: {version: version})
         puts resp.body unless resp.body.chomp.empty?
         @configuration['last_fetch_date'] = Time.now
@@ -97,7 +95,7 @@ module Unipept
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       num_req = 0
 
-      peptide_iterator(peptides) do |sub_division, i, fasta_mapper|
+      peptide_iterator(peptides) do |sub_division, i, fasta_input|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -105,35 +103,54 @@ module Unipept
           accept_encoding: "gzip"
         )
         request.on_complete do |resp|
-          if resp.timed_out?
-            $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
-          else
-            if resp.success?
-              # if JSON parsing goes wrong
-              sub_result = JSON[resp.response_body] rescue []
-              sub_result = [sub_result] if not sub_result.kind_of? Array
 
-              sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
+          if resp.success?
+            # if JSON parsing goes wrong
+            sub_result = JSON[resp.response_body] rescue []
+            sub_result = [sub_result] if not sub_result.kind_of? Array
 
-              if options[:xml]
-                result << sub_result
-              end
+            sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
 
-              # wait till it's our turn to write
-              batch_order.wait(i) do
-                if ! sub_result.empty?
-                  if ! printed_header
-                    write_to_output formatter.header(sub_result, fasta_mapper)
-                    printed_header = true
-                  end
-                  write_to_output formatter.format(sub_result, fasta_mapper)
-                end
-              end
-            else
-              save_error(resp.response_body)
+            if options[:xml]
+              result << sub_result
             end
+
+            # wait till it's our turn to write
+            batch_order.wait(i) do
+              if ! sub_result.empty?
+                if ! printed_header
+                  write_to_output formatter.header(sub_result, fasta_input)
+                  printed_header = true
+                end
+                write_to_output formatter.format(sub_result, fasta_input)
+              end
+            end
+
+          elsif resp.timed_out?
+
+            batch_order.wait(i) do
+              $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
+              save_error("request timed out, continuing anyway, but results might be incomplete")
+            end
+
+          elsif resp.code == 0
+
+            batch_order.wait(i) do
+              $stderr.puts "could not get an http response, continuing anyway, but results might be incomplete"
+              save_error(resp.return_message)
+            end
+
+          else
+
+            batch_order.wait(i) do
+              $stderr.puts "received a non-successful http response #{resp.code.to_s}, continuing anyway, but results might be incomplete"
+              save_error("Got #{resp.code.to_s}: #{resp.response_body}")
+            end
+
           end
+
         end
+
         hydra.queue request
 
         num_req += 1
@@ -187,19 +204,24 @@ module Unipept
         # FASTA MODE ENGAGED
         fasta_header = first.chomp
         peptides.each_slice(batch_size).with_index do |sub,i|
-          fasta_mapper = {}
-          sub.map! {|s| s.chomp}
-          j = 0
-          while j < sub.size
-            if sub[j].start_with? '>'
-              fasta_header = sub[j]
+          fasta_input = []
+          # Use a set so we don't ask data twice
+          newsub = Set.new
+
+          # Iterate to find fasta headers
+          sub.each do |s|
+            s.chomp!
+            if s.start_with? '>'
+              # Save the FASTA header when found
+              fasta_header = s
             else
-              fasta_mapper[sub[j]] = fasta_header
+              # Add the input pair to our input list
+              fasta_input << [fasta_header, s]
+              newsub << s
             end
-            j += 1
           end
-          sub -= fasta_mapper.values.uniq
-          block.call(sub, i, fasta_mapper)
+
+          block.call(newsub.to_a, i, fasta_input)
         end
       else
         # shame we have to be this explicit, but it appears to be the only way

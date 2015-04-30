@@ -8,54 +8,9 @@ require 'fileutils'
 
 require_relative '../lib/unipept'
 
+# Prevent broken pipe errors
 Signal.trap("PIPE", "EXIT")
 Signal.trap("INT", "EXIT")
-
-module Unipept
-  class Taxa2lca < ApiRunner
-
-    def mapping
-      {"taxa2lca" => "taxa2lca"}
-    end
-
-    def peptide_iterator(peptides, &block)
-      block.call(peptides.to_a, 0)
-    end
-
-    def batch_size
-      raise "NOT NEEDED FOR TAXA2LCA"
-    end
-
-  end
-
-  class Pept2prot < ApiRunner
-
-    def mapping
-      {"pept2prot" => "pept2prot"}
-    end
-
-    def download_xml(result)
-      if options[:xml]
-        FileUtils.mkdir_p(options[:xml])
-        result.first.each do |prot|
-          File.open(options[:xml] + "/#{prot['uniprot_id']}.xml", "wb") do |f|
-            f.write Typhoeus.get("http://www.uniprot.org/uniprot/#{prot['uniprot_id']}.xml").response_body
-          end
-        end
-      end
-    end
-
-    def batch_size
-      10
-    end
-  end
-
-  class Taxonomy < ApiRunner
-    def mapping
-      {"taxonomy" => "taxonomy"}
-    end
-  end
-end
 
 root_cmd = Cri::Command.new_basic_root.modify do
   name        'unipept'
@@ -128,7 +83,7 @@ root_cmd.define_command('pept2taxa') do
   option :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
   option :x, :xml, "Download the matched records from the NCBI web service as an xml-formatted file (specify output filename)", :argument => :required
 
-  runner Unipept::ApiRunner
+  runner Unipept::Commands::Pept2taxa
 end
 
 root_cmd.define_command('pept2lca') do
@@ -153,7 +108,7 @@ root_cmd.define_command('pept2lca') do
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
   option :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
-  runner Unipept::ApiRunner
+  runner Unipept::Commands::Pept2lca
 end
 
 root_cmd.define_command('taxa2lca') do
@@ -177,7 +132,7 @@ root_cmd.define_command('taxa2lca') do
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
   option :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
-  runner Unipept::Taxa2lca
+  runner Unipept::Commands::Taxa2lca
 end
 
 root_cmd.define_command('pept2prot') do
@@ -204,7 +159,7 @@ root_cmd.define_command('pept2prot') do
   flag :a, :all, "report all information fields of Uniprot records available in Unipept. Note that this may have a performance penalty.
 "
 
-  runner Unipept::Pept2prot
+  runner Unipept::Commands::Pept2prot
 end
 
 root_cmd.define_command('taxonomy') do
@@ -228,7 +183,7 @@ root_cmd.define_command('taxonomy') do
   option :s, :select, "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.", :argument => :required, :multiple => true
   flag :a, :all, "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty."
 
-  runner Unipept::Taxonomy
+  runner Unipept::Commands::Taxonomy
 end
 
 root_cmd.run(ARGV)

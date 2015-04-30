@@ -50,13 +50,13 @@ module Unipept
 
     register :csv
 
-    def header(data, fasta_mapper = nil)
+    def header(data, fasta_input = nil)
       CSV.generate do |csv|
         first = data.first
         if first.kind_of? Array
           first = first.first
         end
-        if fasta_mapper
+        if fasta_input
           csv << (['fasta_header'] + first.keys).map(&:to_s) if first
         else
           csv << first.keys.map(&:to_s) if first
@@ -64,26 +64,36 @@ module Unipept
       end
     end
 
-    def format(data, fasta_mapper = nil)
+    def format(data, fasta_input = nil)
       CSV.generate do |csv|
-        data.each do |o|
-          if o.kind_of? Array
-            o.each do |h|
-              if fasta_mapper
-                extra_key = [fasta_mapper[h.values.first]]
-                csv << (extra_key + h.values).map { |v| v == ""  ? nil : v }
-              else
-                csv << h.values.map { |v| v == ""  ? nil : v }
+
+        if fasta_input
+          # Process the output from {key1: value1, key2: value2, ...}
+          # to {value => {key1: value1, key2: value2, ...}}
+          data_dict = {}
+          data.each do |d|
+            data_dict[d.values.first.to_s] ||= []
+            data_dict[d.values.first.to_s] << d
+          end
+
+          # Iterate over the input
+          fasta_input.each do |input_pair|
+            fasta_header, id = input_pair
+
+            # Retrieve the corresponding API result (if any)
+            unless data_dict[id].nil?
+              data_dict[id].each do |r|
+                csv << ([fasta_header] + r.values).map { |v| v == "" ? nil : v }
               end
             end
-          else
-            if fasta_mapper
-              extra_key = [fasta_mapper[o.values.first]]
-              csv << (extra_key + o.values).map { |v| v == ""  ? nil : v }
-            else
-              csv << o.values.map { |v| v == ""  ? nil : v }
-            end
           end
+
+        else
+
+          data.each do |o|
+            csv << o.values.map { |v| v == ""  ? nil : v }
+          end
+
         end
       end
     end
