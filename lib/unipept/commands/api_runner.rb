@@ -6,8 +6,9 @@ module Unipept::Commands
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
-
       set_configuration
+
+      @user_agent = "Unipept CLI - unipept " + Unipept::VERSION
 
       @url = "#{@host}/api/v1/#{cmd.name}.json"
       @message_url = "#{@host}/api/v1/messages.json"
@@ -100,7 +101,8 @@ module Unipept::Commands
           @url,
           method: :post,
           body: url_options(sub_division),
-          accept_encoding: "gzip"
+          accept_encoding: "gzip",
+          headers: {"User-Agent" => @user_agent}
         )
         request.on_complete do |resp|
 
