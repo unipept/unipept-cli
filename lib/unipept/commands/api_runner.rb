@@ -105,13 +105,12 @@ module Unipept::Commands
           headers: {"User-Agent" => @user_agent}
         )
         request.on_complete do |resp|
-
           if resp.success?
             # if JSON parsing goes wrong
             sub_result = JSON[resp.response_body] rescue []
-            sub_result = [sub_result] if not sub_result.kind_of? Array
+            sub_result = [sub_result] unless sub_result.is_a? Array
 
-            sub_result.map! {|r| r.select! {|k,v| filter_list.any? {|f| f.match k } } } if ! filter_list.empty?
+            sub_result.map! { |r| r.select! { |k, _v| filter_list.any? { |f| f.match k } } } unless filter_list.empty?
 
             if options[:xml]
               result << sub_result
@@ -119,8 +118,8 @@ module Unipept::Commands
 
             # wait till it's our turn to write
             batch_order.wait(i) do
-              if ! sub_result.empty?
-                if ! printed_header
+              unless sub_result.empty?
+                unless printed_header
                   write_to_output formatter.header(sub_result, fasta_input)
                   printed_header = true
                 end
@@ -131,26 +130,25 @@ module Unipept::Commands
           elsif resp.timed_out?
 
             batch_order.wait(i) do
-              $stderr.puts "request timed out, continuing anyway, but results might be incomplete"
-              save_error("request timed out, continuing anyway, but results might be incomplete")
+              $stderr.puts 'request timed out, continuing anyway, but results might be incomplete'
+              save_error('request timed out, continuing anyway, but results might be incomplete')
             end
 
           elsif resp.code == 0
 
             batch_order.wait(i) do
-              $stderr.puts "could not get an http response, continuing anyway, but results might be incomplete"
+              $stderr.puts 'could not get an http response, continuing anyway, but results might be incomplete'
               save_error(resp.return_message)
             end
 
           else
 
             batch_order.wait(i) do
-              $stderr.puts "received a non-successful http response #{resp.code.to_s}, continuing anyway, but results might be incomplete"
-              save_error("Got #{resp.code.to_s}: #{resp.response_body}")
+              $stderr.puts "received a non-successful http response #{resp.code}, continuing anyway, but results might be incomplete"
+              save_error("Got #{resp.code}: #{resp.response_body}\nRequest headers: #{resp.request.options}\nRequest body:\n#{resp.request.encoded_body}\n\n")
             end
 
           end
-
         end
 
         hydra.queue request
@@ -173,9 +171,9 @@ module Unipept::Commands
     end
 
     def save_error(message)
-      path = File.expand_path(File.join(Dir.home, ".unipept", "unipept-#{Time.now.strftime("%F-%T")}.log"))
+      path = File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, "w") do |f|
+      File.open(path, 'w') do |f|
         f.write message
       end
       $stderr.puts "API request failed! log can be found in #{path}"
