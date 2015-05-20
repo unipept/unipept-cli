@@ -21,8 +21,8 @@ The Unipept CLI is available as a *gem*. This means it can easily be installed w
 
 ```bash
 $ gem install unipept
-Successfully installed unipept-0.7.0
-Parsing documentation for unipept-0.7.0
+Successfully installed unipept-0.7.1
+Parsing documentation for unipept-0.7.1
 Done installing documentation for unipept after 0 seconds
 1 gem installed
 ```
@@ -31,7 +31,7 @@ After successful installation, the unipept command should be available:
 
 ```bash
 $ unipept -v
-0.7.0
+0.7.1
 ```
 
 The help can be accessed by running `unipept -h`.
