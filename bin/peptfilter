@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 require 'cri'
 
-Signal.trap("PIPE", "EXIT")
-Signal.trap("INT", "EXIT")
+Signal.trap('PIPE', 'EXIT')
+Signal.trap('INT', 'EXIT')
 root_cmd = Cri::Command.new_basic_root.modify do
-  name        'peptfilter'
-  summary     'Filter peptides based on specific criteria.'
-  usage       'peptfilter [options]'
+  name 'peptfilter'
+  summary 'Filter peptides based on specific criteria.'
+  usage 'peptfilter [options]'
   description <<-EOS
   The peptfilter command filters a list of peptides according to specific criteria. The command expects a list of peptides that are passed
 
@@ -18,16 +18,16 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
   The command will give priority to the first way peptides are passed, in the order as listed above. Text files and standard input should have one peptide per line. FASTA headers are preserved in the output, so that peptides remain bundled.
   EOS
-  flag :i, :unique, "filter duplicate peptides."
-  required :l, :minlen, "only retain tryptic peptides that have at least min (default: 5) amino acids."
-  required :u, :maxlen, "only retain tryptic peptides that have at most max (default: 50) amino acids."
-  required :a, :lacks, "only retain tryptic peptides that lack all amino acids from the string of residues."
-  required :c, :contains, "only retain tryptic peptides that contain all amino acids from the string of residues."
-  run do |opts, args, cmd|
-    minlen = opts.fetch(:minlen, "5").to_i
-    maxlen = opts.fetch(:maxlen, "50").to_i
-    lacks = opts.fetch(:lacks, "").chars.to_a
-    contains = opts.fetch(:contains, "").chars.to_a
+  # flag :u, :unique, "filter duplicate peptides."
+  required nil, :minlen, 'only retain tryptic peptides that have at least min (default: 5) amino acids.'
+  required nil, :maxlen, 'only retain tryptic peptides that have at most max (default: 50) amino acids.'
+  required :l, :lacks, 'only retain tryptic peptides that lack all amino acids from the string of residues.'
+  required :c, :contains, 'only retain tryptic peptides that contain all amino acids from the string of residues.'
+  run do |opts, _args, _cmd|
+    minlen = opts.fetch(:minlen, '5').to_i
+    maxlen = opts.fetch(:maxlen, '50').to_i
+    lacks = opts.fetch(:lacks, '').chars.to_a
+    contains = opts.fetch(:contains, '').chars.to_a
     $stdin.each_line do |pept|
       # FASTA headers
       if pept.start_with? '>'
