@@ -6,7 +6,7 @@ begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
   $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
+  $stderr.puts 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 require 'rake'
@@ -14,14 +14,18 @@ require 'rake'
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = "unipept"
-  gem.executables = ['unipept', 'prot2pept', 'peptfilter', 'uniprot']
-  gem.homepage = "https://github.com/unipept/unipept/"
-  gem.license = "MIT"
-  gem.summary = %Q{Command line interface to Unipept web services.}
-  gem.description = %Q{Command line interface to Unipept web services.}
-  gem.email = "unipept@ugent.be"
-  gem.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
+  gem.name = 'unipept'
+  gem.executables = %w(unipept prot2pept peptfilter uniprot)
+  gem.homepage = 'https://github.com/unipept/unipept-cli/'
+  gem.license = 'MIT'
+  gem.summary = 'Command line interface to Unipept web services.'
+  gem.description = <<-EOS
+  Command line interface to the Unipept (http://unipept.ugent.be) web services
+  (pept2lca, taxa2lca, pept2taxa and taxonomy) and some utility commands for
+  handling proteins using the command line.
+  EOS
+  gem.email = 'unipept@ugent.be'
+  gem.authors = ['Toon Willems', 'Bart Mesuere', 'Tom Naessens']
   gem.required_ruby_version = '>= 1.9.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
@@ -33,17 +37,17 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-desc "Code coverage detail"
+desc 'Code coverage detail'
 task :simplecov do
-  ENV['COVERAGE'] = "true"
+  ENV['COVERAGE'] = 'true'
   Rake::Task['test'].execute
 end
 
-task :default => :test
+task default: :test
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+  version = File.exist?('VERSION') ? File.read('VERSION') : ''
 
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "unipept #{version}"

@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
-  s.date = "2015-05-17"
-  s.description = "Command line interface to Unipept web services."
+  s.date = "2015-05-20"
+  s.description = "  Command line interface to the Unipept (http://unipept.ugent.be) web services\n  (pept2lca, taxa2lca, pept2taxa and taxonomy) and some utility commands for\n  handling proteins using the command line.\n"
   s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
   s.extra_rdoc_files = [
@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
     "test/test_unipept.rb",
     "unipept.gemspec"
   ]
-  s.homepage = "https://github.com/unipept/unipept/"
+  s.homepage = "https://github.com/unipept/unipept-cli/"
   s.licenses = ["MIT"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
   s.rubygems_version = "2.2.2"
