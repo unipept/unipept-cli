@@ -60,7 +60,7 @@ module Unipept::Commands
       end
       {:input => sub_part,
        :equate_il => options[:equate],
-       :extra => options[:extra],
+       :extra => options[:all],
        :names => names,
       }
     end
