@@ -1,7 +1,5 @@
 module Unipept
-
   class BatchOrder
-
     attr_reader :order
 
     def initialize
@@ -22,7 +20,5 @@ module Unipept
         @order[i] = block
       end
     end
-
   end
-
 end

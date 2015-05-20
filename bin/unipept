@@ -41,7 +41,7 @@ root_cmd = Cri::Command.new_basic_root.modify do
   run do |opts, _args, _cmd|
     if opts[:version]
       puts File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))
-    elsif
+    else
       root_cmd.run(['help'])
     end
   end

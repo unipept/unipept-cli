@@ -1,12 +1,11 @@
 module Unipept
   class Configuration
-
     attr_reader :config
     attr_reader :file_name
 
     def initialize
-      @file_name = File.join(Dir.home, ".unipeptrc")
-      if !File.exists? file_name
+      @file_name = File.join(Dir.home, '.unipeptrc')
+      if !File.exist? file_name
         @config = {}
       else
         @config = YAML.load_file file_name
@@ -24,6 +23,5 @@ module Unipept
     def []=(*args)
       config.[]=(*args)
     end
-
   end
 end

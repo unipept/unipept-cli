@@ -2,16 +2,16 @@
 require 'typhoeus'
 require 'cri'
 
-Signal.trap("PIPE", "EXIT")
-Signal.trap("INT", "EXIT")
+Signal.trap('PIPE', 'EXIT')
+Signal.trap('INT', 'EXIT')
 
-valid_formats = Set.new ["fasta", "txt", "xml", "rdf", "gff"]
+valid_formats = Set.new %w(fasta txt xml rdf gff)
 
 def get_uniprot_entry(arg, format)
   if format.nil? || format.empty?
     resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{arg}.fasta")
     if resp.success?
-      puts resp.response_body.lines.map(&:chomp)[1..-1].join("")
+      puts resp.response_body.lines.map(&:chomp)[1..-1].join('')
     end
   else
     # other format has been specified, just download and output
@@ -23,9 +23,9 @@ def get_uniprot_entry(arg, format)
 end
 
 root_cmd = Cri::Command.new_basic_root.modify do
-  name        'uniprot'
-  summary     'Command line interface to Uniprot web services.'
-  usage       'uniprot [options]'
+  name 'uniprot'
+  summary 'Command line interface to Uniprot web services.'
+  usage 'uniprot [options]'
   description <<-EOS
   The uniprot command is a command line wrapper around the Uniprot web services. The command expects a list of Uniprot Accession Numbers that are passed
 
@@ -39,10 +39,10 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
   The uniprot command yields Uniprot records as output.
   EOS
-  required :f, :format, "specify output format (available: " + valid_formats.to_a.join(", ") + ")"
-  run do |opts, args, cmd|
-    if !opts[:format].nil? and !valid_formats.include? opts[:format]
-      $stderr.puts opts[:format] + " is not a valid output format. Available formats are: " + valid_formats.to_a.join(", ")
+  required :f, :format, 'specify output format (available: ' + valid_formats.to_a.join(', ') + ')'
+  run do |opts, args, _cmd|
+    if (!opts[:format].nil?) && (!valid_formats.include? opts[:format])
+      $stderr.puts opts[:format] + ' is not a valid output format. Available formats are: ' + valid_formats.to_a.join(', ')
       exit 1
     end
     iterator = args.empty? ? $stdin.each_line : args

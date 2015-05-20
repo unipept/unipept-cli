@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 require 'cri'
 
-Signal.trap("PIPE", "EXIT")
-Signal.trap("INT", "EXIT")
+Signal.trap('PIPE', 'EXIT')
+Signal.trap('INT', 'EXIT')
 root_cmd = Cri::Command.new_basic_root.modify do
-  name        'prot2pept'
-  summary     'Split protein sequences into peptides.'
-  usage       'prot2pept [options]'
+  name 'prot2pept'
+  summary 'Split protein sequences into peptides.'
+  usage 'prot2pept [options]'
   description <<-EOS
   The prot2pept command splits each protein sequence into a list of peptides according to a given cleavage-pattern. The command expects a list of protein sequences that are passed
 
@@ -20,30 +20,30 @@ root_cmd = Cri::Command.new_basic_root.modify do
 
   EOS
   required :p, :pattern, 'specify cleavage-pattern (regex) as the pattern after which the next peptide will be cleaved (default: ([KR])([^P]) for tryptic peptides).'
-  run do |opts, args, cmd|
-    pattern = opts.fetch(:pattern, "([KR])([^P])")
+  run do |opts, _args, _cmd|
+    pattern = opts.fetch(:pattern, '([KR])([^P])')
     # decide if we have FASTA input
     fasta_header = $stdin.gets
     if fasta_header.start_with? '>'
       # fasta input, need to join lines
-      while !$stdin.eof?
-        prot = ""
+      until $stdin.eof?
+        prot = ''
         # Sometimes you just got to accept this weird and ugly code
         until $stdin.eof? || (line = gets).start_with?('>')
           prot += line.chomp
         end
         puts fasta_header
-        puts prot.gsub(/#{pattern}/,"\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+        puts prot.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
 
         fasta_header = line
       end
     else
       # handle our already read line
-      puts fasta_header.gsub(/#{pattern}/,"\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+      puts fasta_header.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
 
       # we no longer have to join lines as input is now more sane
-      $stdin.each_line do |prot|
-        puts prot.gsub(/#{pattern}/,"\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+      $stdin.each_line do |protein|
+        puts protein.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
       end
     end
   end

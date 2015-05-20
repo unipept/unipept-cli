@@ -3,4 +3,3 @@ module Unipept::Commands
   class Pept2lca < ApiRunner
   end
 end
-

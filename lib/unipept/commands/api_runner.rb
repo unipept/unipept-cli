@@ -68,13 +68,12 @@ module Unipept::Commands
       return if options[:quiet]
       return unless STDOUT.tty?
       last_fetched = @configuration['last_fetch_date']
-      if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
-        version = Unipept::VERSION
-        resp = Typhoeus.get(@message_url, params: { version: version })
-        puts resp.body unless resp.body.chomp.empty?
-        @configuration['last_fetch_date'] = Time.now
-        @configuration.save
-      end
+      return unless last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
+      version = Unipept::VERSION
+      resp = Typhoeus.get(@message_url, params: { version: version })
+      puts resp.body unless resp.body.chomp.empty?
+      @configuration['last_fetch_date'] = Time.now
+      @configuration.save
     end
 
     def run
@@ -187,10 +186,9 @@ module Unipept::Commands
     end
 
     def download_xml(result)
-      if options[:xml]
-        File.open(options[:xml] + '.xml', 'wb') do |f|
-          f.write Typhoeus.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map { |h| h['taxon_id'] }.join(',')}&retmode=xml").response_body
-        end
+      return unless options[:xml]
+      File.open(options[:xml] + '.xml', 'wb') do |f|
+        f.write Typhoeus.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map { |h| h['taxon_id'] }.join(',')}&retmode=xml").response_body
       end
     end
 

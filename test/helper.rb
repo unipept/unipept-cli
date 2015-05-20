@@ -14,7 +14,6 @@ require 'minitest/autorun'
 module Unipept
   class TestCase < Minitest::Test
     # add helper methods here
-
   end
 end
 

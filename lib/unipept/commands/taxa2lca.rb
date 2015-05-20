@@ -6,7 +6,7 @@ module Unipept::Commands
     end
 
     def batch_size
-      raise "NOT NEEDED FOR TAXA2LCA"
+      fail 'NOT NEEDED FOR TAXA2LCA'
     end
   end
 end
