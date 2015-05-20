@@ -10,6 +10,8 @@ rescue Bundler::BundlerError => e
   exit e.status_code
 end
 require 'rake'
+require 'rake/testtask'
+require 'rubocop/rake_task'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
@@ -30,18 +32,17 @@ Jeweler::Tasks.new do |gem|
 end
 Jeweler::RubygemsDotOrgTasks.new
 
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+task :test_unit do
+  require './test/helper.rb'
+
+  FileList['./test/**/test_*.rb', './test/**/*_spec.rb'].each do |fn|
+    require fn
+  end
 end
 
-desc 'Code coverage detail'
-task :simplecov do
-  ENV['COVERAGE'] = 'true'
-  Rake::Task['test'].execute
-end
+RuboCop::RakeTask.new(:test_style)
+
+task test: [:test_unit, :test_style]
 
 task default: :test
 
