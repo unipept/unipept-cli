@@ -2,13 +2,12 @@ require 'set'
 
 module Unipept::Commands
   class ApiRunner < Cri::CommandRunner
-
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
       set_configuration
 
-      @user_agent = "Unipept CLI - unipept " + Unipept::VERSION
+      @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
 
       @url = "#{@host}/api/v1/#{cmd.name}.json"
       @message_url = "#{@host}/api/v1/messages.json"
@@ -24,10 +23,10 @@ module Unipept::Commands
 
       # No host has been set?
       if host.nil? || host.empty?
-        puts "WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`"
+        puts 'WARNING: no host has been set, you can set the host with `unipept config host http://localhost:3000/`'
         exit 1
       end
-      if !host.start_with? "http://"
+      unless host.start_with? 'http://'
         host = "http://#{host}"
       end
 
@@ -56,12 +55,12 @@ module Unipept::Commands
       if filter.empty?
         names = true
       else
-        names = filter.any? {|f| /.*name.*/.match f}
+        names = filter.any? { |f| /.*name.*/.match f }
       end
-      {:input => sub_part,
-       :equate_il => options[:equate],
-       :extra => options[:all],
-       :names => names,
+      { input: sub_part,
+        equate_il: options[:equate],
+        extra: options[:all],
+        names: names
       }
     end
 
@@ -71,7 +70,7 @@ module Unipept::Commands
       last_fetched = @configuration['last_fetch_date']
       if last_fetched.nil? || (last_fetched + 60 * 60 * 24) < Time.now
         version = Unipept::VERSION
-        resp = Typhoeus.get(@message_url, params: {version: version})
+        resp = Typhoeus.get(@message_url, params: { version: version })
         puts resp.body unless resp.body.chomp.empty?
         @configuration['last_fetch_date'] = Time.now
         @configuration.save
@@ -86,7 +85,7 @@ module Unipept::Commands
 
       filter_list = options[:select] ? options[:select] : []
       # Parse filter list: convert to regex and split on commas
-      filter_list = filter_list.map { |f| f.include?(",") ? f.split(",") : f }.flatten.map { |f| glob_to_regex(f) }
+      filter_list = filter_list.map { |f| f.include?(',') ? f.split(',') : f }.flatten.map { |f| glob_to_regex(f) }
 
       batch_order = Unipept::BatchOrder.new
 
@@ -101,8 +100,8 @@ module Unipept::Commands
           @url,
           method: :post,
           body: url_options(sub_division),
-          accept_encoding: "gzip",
-          headers: {"User-Agent" => @user_agent}
+          accept_encoding: 'gzip',
+          headers: { 'User-Agent' => @user_agent }
         )
         request.on_complete do |resp|
           if resp.success?
@@ -157,7 +156,6 @@ module Unipept::Commands
         if num_req % 200 == 0
           hydra.run
         end
-
       end
 
       hydra.run
@@ -165,9 +163,8 @@ module Unipept::Commands
       begin
         download_xml(result)
       rescue
-        STDERR.puts "Something went wrong while downloading xml information! please check the output"
+        STDERR.puts 'Something went wrong while downloading xml information! please check the output'
       end
-
     end
 
     def save_error(message)
@@ -189,11 +186,10 @@ module Unipept::Commands
       end
     end
 
-
     def download_xml(result)
       if options[:xml]
-        File.open(options[:xml] + ".xml", "wb") do |f|
-          f.write Typhoeus.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map{|h| h['taxon_id'] }.join(",")}&retmode=xml").response_body
+        File.open(options[:xml] + '.xml', 'wb') do |f|
+          f.write Typhoeus.get("http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=#{result.first.map { |h| h['taxon_id'] }.join(',')}&retmode=xml").response_body
         end
       end
     end
@@ -203,7 +199,7 @@ module Unipept::Commands
       if first.start_with? '>'
         # FASTA MODE ENGAGED
         fasta_header = first.chomp
-        peptides.each_slice(batch_size).with_index do |sub,i|
+        peptides.each_slice(batch_size).with_index do |sub, i|
           fasta_input = []
           # Use a set so we don't ask data twice
           newsub = Set.new
@@ -237,8 +233,7 @@ module Unipept::Commands
     private
 
     def glob_to_regex(string)
-      /^#{string.gsub('*','.*')}$/
+      /^#{string.gsub('*', '.*')}$/
     end
-
   end
 end
