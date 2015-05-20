@@ -69,6 +69,8 @@ root_cmd.define_command('config') do
       config.save
     elsif args.size == 1
       puts config[args.first]
+    elsif args.size == 0
+      root_cmd.run(['config', '-h'])
     end
   end
 end
