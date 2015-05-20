@@ -9,103 +9,193 @@ require 'fileutils'
 require_relative '../lib/unipept'
 
 # Prevent broken pipe errors
-Signal.trap("PIPE", "EXIT")
-Signal.trap("INT", "EXIT")
+Signal.trap('PIPE', 'EXIT')
+Signal.trap('INT', 'EXIT')
 
 root_cmd = Cri::Command.new_basic_root.modify do
   name 'unipept'
-  flag :v, :version, "print version"
-  flag :q, :quiet, "don't show update messages"
-  option :i, :input, "input file", :argument => :required
-  option :o, :output, "output file", :argument => :required
-  option :f, :format, "output format (available: #{Unipept::Formatter.available.join "," }) (default: #{Unipept::Formatter.default})", :argument => :required
+  summary 'Command line interface to Unipept web services.'
+  usage 'unipept subcommand [options]'
+  description <<-EOS
+  The unipept subcommands are command line wrappers around the Unipept web services.
+
+  Subcommands that start with pept expect a list of tryptic peptides as input. Subcommands that start with tax expect a list of NCBI Taxonomy Identifiers as input. Input is passed
+
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way the input is passed, in the order as listed above. Text files and standard input should have one tryptic peptide or one NCBI Taxonomy Identifier per line.
+  EOS
+  flag :v, :version, 'displays the version'
+  flag :q, :quiet, 'disable service messages'
+  option :i, :input, 'read input from file', argument: :required
+  option :o, :output, 'write output to file', argument: :required
+  option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join ', ' }) (default: #{Unipept::Formatter.default})", argument: :required
 
   # Configuration options
-  option nil, "host", "Override host setting", argument: :required
+  option nil, 'host', 'specify the server running the Unipept web service', argument: :required
 
-  run do |opts, args, cmd|
+  run do |opts, _args, _cmd|
     if opts[:version]
-      puts File.read(File.join(File.dirname(__FILE__), "..", "VERSION"))
+      puts File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))
+    elsif
+      root_cmd.run(['help'])
     end
   end
 end
 
 root_cmd.define_command('config') do
-  usage 'config attr [value]'
+  summary 'Set configuration options.'
+  usage 'config option [value]'
+  description <<-EOS
+  Sets or shows the value for configuration options. All settings are stored in the .unipeptrc file in the home directory of the user.
 
-  run do |opts, args, cmd|
+  Running the command with a value will set that value for the given option, running it without will show the current value.
+
+  These options are currently supported:
+
+  - host: Set the default host for api calls.
+
+  Example: "unipept config host http://api.unipept.ugent.be" will set the default host to the public unipept server.
+  EOS
+
+  run do |_opts, args, _cmd|
     config = Unipept::Configuration.new
     if args.size > 1
       config[args.first] = args[1]
       config.save
     elsif args.size == 1
       puts config[args.first]
+    elsif args.size == 0
+      root_cmd.run(['config', '-h'])
     end
   end
-
 end
 
 root_cmd.define_command('pept2taxa') do
-  usage       'pept2taxa [options]'
-  aliases     :s
-  summary     'Single Peptide Search'
-  description 'Search Unipept for the given peptide and return taxons'
+  usage 'pept2taxa [options]'
+  aliases :pt
+  summary 'Fetch taxa of Uniprot records that match tryptic peptides.'
+  description <<-EOS
+  For each tryptic peptide the unipept pept2taxa command retrieves from Unipept the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
-  flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :a, :extra, "Show full lineage"
-  option :x, :xml, "Download taxonomy from NCBI as xml (specify output filename)", :argument => :required
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+
+  The unipept pept2taxa subcommand yields NCBI Taxonomy records as output.
+  EOS
+
+  flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+  flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+  option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+  option :x, :xml, 'Download the matched records from the NCBI web service as an xml-formatted file (specify output filename)', argument: :required
 
   runner Unipept::Commands::Pept2taxa
 end
 
 root_cmd.define_command('pept2lca') do
-  usage       'pept2lca [options]'
-  aliases     :l
-  summary     'Give lowest common ancestor for given peptide'
-  description 'Search Unipept for the given peptide and return the lowest common ancestor'
+  usage 'pept2lca [options]'
+  aliases :pl
+  summary 'Fetch taxonomic lowest common ancestor of Uniprot records that match tryptic peptides.'
+  description <<-EOS
+  For each tryptic peptide the unipept pept2lca command retrieves from Unipept the lowest common ancestor of the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of tryptic peptides that are passed
 
-  flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :a, :extra, "Show full lineage"
+   - as separate command line arguments
+
+   - in one or more text files that are passed as an argument to the -i option
+
+   - to standard input
+
+  The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+
+  The unipept pept2lca subcommand yields an NCBI Taxonomy record as output.
+  EOS
+
+  flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+  flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+  option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
   runner Unipept::Commands::Pept2lca
 end
 
 root_cmd.define_command('taxa2lca') do
-  usage       'taxa2lca [options]'
-  aliases     :t
-  summary     'Give lowest common ancestor for taxon ids'
-  description 'Search Unipept for the given taxon ids and return the lowest common ancestor'
+  usage 'taxa2lca [options]'
+  aliases :tl
+  summary 'Compute taxonomic lowest common ancestor for given list of taxa.'
+  description <<-EOS
+  The unipept taxa2lca command computes the lowest common ancestor of a given list of NCBI Taxonomy Identifiers. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
 
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :a, :extra, "Show full lineage"
+   - as separate command line arguments
+
+   - in one or more text files that are passed as an argument to the -i option
+
+   - to standard input
+
+  The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
+
+  The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
+  EOS
+
+  flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+  option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
   runner Unipept::Commands::Taxa2lca
 end
 
 root_cmd.define_command('pept2prot') do
-  usage       'pept2prot [options]'
-  aliases     :p
-  summary     'Give protein information for given peptides'
-  description 'Search Unipept for the given peptides and return the lowest common ancestor'
+  usage 'pept2prot [options]'
+  aliases :pp
+  summary 'Fetch Uniprot records that match tryptic peptides.'
+  description <<-EOS
+  For each tryptic peptide the unipept pept2prot command retrieves from Unipept all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
-  flag :e, :equate, "equate I and L"
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  option :x, :xml, "download uniprot record in specified directory", :argument => :required
-  flag :a, :extra, "include all information. WARNING: will take much longer!"
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+
+  The unipept pept2prot subcommand yields Uniprot records as output.
+  EOS
+
+  flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+  flag :a, :all, 'report all information fields of Uniprot records available in Unipept. Note that this may have a performance penalty.'
+  option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+  option :x, :xml, 'download XML-formatted Uniprot records into the specified download-directory. ', argument: :required
 
   runner Unipept::Commands::Pept2prot
 end
 
 root_cmd.define_command('taxonomy') do
-  usage       'taxonomy [options]'
-  aliases     :tax
-  summary     'Give NCBI taxonomy information on given input taxon ids'
-  description 'Returns information for each input taxon id'
+  usage 'taxonomy [options]'
+  aliases :tax
+  summary 'Fetch taxonomic information from Unipept Taxonomy.'
+  description <<-EOS
+  The unipept taxonomy command yields information from the Unipept Taxonomy records for a given list of NCBI Taxonomy Identifiers. The Unipept Taxonomy is a cleaned up version of the NCBI Taxonomy, and its records are also records of the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
 
-  option :s, :select, "select the attributes", :argument => :required, :multiple => true
-  flag :a, :extra, "include all information. WARNING: will take much longer!"
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
+
+  The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
+  EOS
+
+  flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+  option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
   runner Unipept::Commands::Taxonomy
 end

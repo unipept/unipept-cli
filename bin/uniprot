@@ -23,8 +23,22 @@ def get_uniprot_entry(arg, format)
 end
 
 root_cmd = Cri::Command.new_basic_root.modify do
-  name 'uniprot'
-  description 'Download protein sequence from uniprot.org'
+  name        'uniprot'
+  summary     'Command line interface to Uniprot web services.'
+  usage       'uniprot [options]'
+  description <<-EOS
+  The uniprot command is a command line wrapper around the Uniprot web services. The command expects a list of Uniprot Accession Numbers that are passed
+
+  - as separate command line arguments
+
+  - in one or more text files that are passed as an argument to the -i option
+
+  - to standard input
+
+  The command will give priority to the first way Uniprot Accession Numbers are passed, in the order as listed above. Text files and standard input should have one Uniprot Accession Number per line.
+
+  The uniprot command yields Uniprot records as output.
+  EOS
   required :f, :format, "specify output format (available: " + valid_formats.to_a.join(", ") + ")"
   run do |opts, args, cmd|
     if !opts[:format].nil? and !valid_formats.include? opts[:format]
