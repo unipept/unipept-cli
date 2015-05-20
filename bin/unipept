@@ -48,9 +48,21 @@ root_cmd = Cri::Command.new_basic_root.modify do
 end
 
 root_cmd.define_command('config') do
-  usage 'config attr [value]'
+  summary 'Set configuration options.'
+  usage 'config option [value]'
+  description <<-EOS
+  Sets or shows the value for configuration options. All settings are stored in the .unipeptrc file in the home directory of the user.
 
-  run do |opts, args, cmd|
+  Running the command with a value will set that value for the given option, running it without will show the current value.
+
+  These options are currently supported:
+
+  - host: Set the default host for api calls.
+
+  Example: "unipept config host http://api.unipept.ugent.be" will set the default host to the public unipept server.
+  EOS
+
+  run do |_opts, args, _cmd|
     config = Unipept::Configuration.new
     if args.size > 1
       config[args.first] = args[1]
@@ -59,13 +71,12 @@ root_cmd.define_command('config') do
       puts config[args.first]
     end
   end
-
 end
 
 root_cmd.define_command('pept2taxa') do
   usage       'pept2taxa [options]'
   aliases     :s
-  summary     'Fetch taxa of Uniprot records that match tryptic peptides'
+  summary     'Fetch taxa of Uniprot records that match tryptic peptides.'
   description <<-EOS
   For each tryptic peptide the unipept pept2taxa command retrieves from Unipept the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
