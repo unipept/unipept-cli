@@ -59,28 +59,25 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<cri>, ["~> 2.7"])
       s.add_runtime_dependency(%q<typhoeus>, ["~> 0.6"])
-      s.add_development_dependency(%q<shoulda>, ["~> 3.5"])
-      s.add_development_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 2.0"])
-      s.add_development_dependency(%q<simplecov>, ["~> 0.8"])
+      s.add_development_dependency(%q<rake>, [">= 0"])
+      s.add_development_dependency(%q<minitest>, [">= 0"])
+      s.add_development_dependency(%q<rubocop>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
       s.add_dependency(%q<cri>, ["~> 2.7"])
       s.add_dependency(%q<typhoeus>, ["~> 0.6"])
-      s.add_dependency(%q<shoulda>, ["~> 3.5"])
-      s.add_dependency(%q<rdoc>, ["~> 3.12"])
-      s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, ["~> 2.0"])
-      s.add_dependency(%q<simplecov>, ["~> 0.8"])
+      s.add_dependency(%q<rake>, [">= 0"])
+      s.add_dependency(%q<minitest>, [">= 0"])
+      s.add_dependency(%q<rubocop>, [">= 0"])
+      s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
     s.add_dependency(%q<cri>, ["~> 2.7"])
     s.add_dependency(%q<typhoeus>, ["~> 0.6"])
-    s.add_dependency(%q<shoulda>, ["~> 3.5"])
-    s.add_dependency(%q<rdoc>, ["~> 3.12"])
-    s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, ["~> 2.0"])
-    s.add_dependency(%q<simplecov>, ["~> 0.8"])
+    s.add_dependency(%q<rake>, [">= 0"])
+    s.add_dependency(%q<minitest>, [">= 0"])
+    s.add_dependency(%q<rubocop>, [">= 0"])
+    s.add_dependency(%q<jeweler>, [">= 0"])
   end
 end
 
