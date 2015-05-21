@@ -1,0 +1,31 @@
+AllCops:
+  Exclude:
+    - 'unipept.gemspec'
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+  Enabled: false
+
+# disable for now
+Style/AccessorMethodName:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
+Style/RescueModifier:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
