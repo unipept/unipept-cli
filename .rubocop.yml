@@ -3,7 +3,7 @@ AllCops:
     -
   Exclude:
     - 'unipept.gemspec'
-    - 'vendor/*'
+    - 'vendor/**/*'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
