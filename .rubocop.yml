@@ -1,6 +1,9 @@
 AllCops:
+  Include:
+    -
   Exclude:
     - 'unipept.gemspec'
+    - 'vendor/*'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
