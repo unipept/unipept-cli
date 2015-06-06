@@ -1,49 +1,7 @@
 #!/usr/bin/env ruby
-require 'cri'
+require_relative '../lib/peptfilter'
 
 Signal.trap('PIPE', 'EXIT')
 Signal.trap('INT', 'EXIT')
-root_cmd = Cri::Command.new_basic_root.modify do
-  name 'peptfilter'
-  summary 'Filter peptides based on specific criteria.'
-  usage 'peptfilter [options]'
-  description <<-EOS
-  The peptfilter command filters a list of peptides according to specific criteria. The command expects a list of peptides that are passed
 
-  - as separate command line arguments
-
-  - in one or more text files that are passed as an argument to the -i option
-
-  - to standard input
-
-  The command will give priority to the first way peptides are passed, in the order as listed above. Text files and standard input should have one peptide per line. FASTA headers are preserved in the output, so that peptides remain bundled.
-  EOS
-  # flag :u, :unique, "filter duplicate peptides."
-  required nil, :minlen, 'only retain tryptic peptides that have at least min (default: 5) amino acids.'
-  required nil, :maxlen, 'only retain tryptic peptides that have at most max (default: 50) amino acids.'
-  required :l, :lacks, 'only retain tryptic peptides that lack all amino acids from the string of residues.'
-  required :c, :contains, 'only retain tryptic peptides that contain all amino acids from the string of residues.'
-  run do |opts, _args, _cmd|
-    minlen = opts.fetch(:minlen, '5').to_i
-    maxlen = opts.fetch(:maxlen, '50').to_i
-    lacks = opts.fetch(:lacks, '').chars.to_a
-    contains = opts.fetch(:contains, '').chars.to_a
-    $stdin.each_line do |pept|
-      # FASTA headers
-      if pept.start_with? '>'
-        puts pept
-        next
-      end
-      pept = pept.chomp
-      length_ok = pept.length >= minlen && pept.length <= maxlen
-      lacks_ok = (pept.chars.to_a & lacks).size == 0
-      contains_ok = (pept.chars.to_a & contains).size == contains.size
-
-      if length_ok && lacks_ok && contains_ok
-        puts pept
-      end
-    end
-  end
-end
-
-root_cmd.run(ARGV)
+Unipept::Peptfilter.run(ARGV)
