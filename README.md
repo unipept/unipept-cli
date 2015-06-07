@@ -2,6 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/unipept.svg)](http://badge.fury.io/rb/unipept)
 [![Build Status](https://api.travis-ci.org/unipept/unipept-cli.svg)](https://travis-ci.org/unipept/unipept-cli)
+[![Coverage Status](https://coveralls.io/repos/unipept/unipept-cli/badge.svg)](https://coveralls.io/r/unipept/unipept-cli)
 [![Code Climate](https://codeclimate.com/github/unipept/unipept-cli/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept-cli)
 
 Unipept-cli offers a command line interface to the [Unipept](http://unipept.ugent.be) web service.
