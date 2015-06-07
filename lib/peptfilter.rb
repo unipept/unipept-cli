@@ -4,7 +4,7 @@ module Unipept
   class Peptfilter
     attr_reader :root_command
 
-    @root_command = Cri::Command.new_basic_root.modify do
+    @root_command = Cri::Command.define do
       name 'peptfilter'
       summary 'Filter peptides based on specific criteria.'
       usage 'peptfilter [options]'

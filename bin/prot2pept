@@ -3,7 +3,7 @@ require 'cri'
 
 Signal.trap('PIPE', 'EXIT')
 Signal.trap('INT', 'EXIT')
-root_cmd = Cri::Command.new_basic_root.modify do
+root_cmd = Cri::Command.define do
   name 'prot2pept'
   summary 'Split protein sequences into peptides.'
   usage 'prot2pept [options]'

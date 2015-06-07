@@ -7,7 +7,7 @@ module Unipept
     attr_reader :valid_formats
 
     valid_formats = Set.new %w(fasta txt xml rdf gff sequence)
-    @root_command = Cri::Command.new_basic_root.modify do
+    @root_command = Cri::Command.define do
       name 'uniprot'
       summary 'Command line interface to Uniprot web services.'
       usage 'uniprot [options]'
