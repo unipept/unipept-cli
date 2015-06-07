@@ -23,6 +23,10 @@ module Unipept
       The uniprot command yields just the protein sequences as a default, but can return several formats.
       EOS
       required :f, :format, 'specify output format (available: ' + valid_formats.to_a.join(', ') + ') (default: sequence)'
+      flag :h, :help, 'show help for this command' do |_value, cmd|
+        puts cmd.help
+        exit 0
+      end
       run do |opts, args, _cmd|
         format = opts.fetch(:format, 'sequence')
         unless valid_formats.include? format

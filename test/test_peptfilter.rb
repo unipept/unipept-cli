@@ -157,5 +157,14 @@ module Unipept
       end
       assert_equal('CCCCCA', out.chomp)
     end
+
+    def test_help
+      out, _err = capture_io_while do
+        assert_raises SystemExit do
+          Peptfilter.run(%w(-h))
+        end
+      end
+      assert(out.include? 'show help for this command')
+    end
   end
 end

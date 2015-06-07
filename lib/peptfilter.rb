@@ -18,6 +18,10 @@ module Unipept
       required nil, :maxlen, 'only retain tryptic peptides that have at most max (default: 50) amino acids.'
       required :l, :lacks, 'only retain tryptic peptides that lack all amino acids from the string of residues.'
       required :c, :contains, 'only retain tryptic peptides that contain all amino acids from the string of residues.'
+      flag :h, :help, 'show help for this command' do |_value, cmd|
+        puts cmd.help
+        exit 0
+      end
       run do |opts, _args, _cmd|
         minlen = opts.fetch(:minlen, '5').to_i
         maxlen = opts.fetch(:maxlen, '50').to_i
@@ -37,6 +41,8 @@ module Unipept
         end
       end
     end
+
+    @root_command.add_command(Cri::Command.new_basic_help)
 
     # Invokes the peptfilter command-line tool with the given arguments.
     #
