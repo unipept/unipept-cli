@@ -22,6 +22,10 @@ module Unipept
       'csv'
     end
 
+    def type
+      ''
+    end
+
     def header(_sample_data, _fasta_mapper = nil)
       ''
     end
@@ -36,6 +40,10 @@ module Unipept
     require 'json'
     register :json
 
+    def type
+      'json'
+    end
+
     def format(data, _fasta_mapper = nil)
       # TODO: add fasta header based on fasta_mapper information
       data.to_json
@@ -43,8 +51,11 @@ module Unipept
   end
   class CSVFormatter < Formatter
     require 'csv'
-
     register :csv
+
+    def type
+      'csv'
+    end
 
     def header(data, fasta_input = nil)
       CSV.generate do |csv|
@@ -117,6 +128,10 @@ module Unipept
     end
 
     register :xml
+
+    def type
+      'xml'
+    end
 
     def format(data, _fasta_mapper = nil)
       # TODO: add fasta header based on fasta_mapper information
