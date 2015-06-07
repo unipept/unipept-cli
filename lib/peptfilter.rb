@@ -2,20 +2,16 @@ require 'cri'
 
 module Unipept
   class Peptfilter
+    attr_reader :root_command
+
     @root_command = Cri::Command.new_basic_root.modify do
       name 'peptfilter'
       summary 'Filter peptides based on specific criteria.'
       usage 'peptfilter [options]'
       description <<-EOS
-      The peptfilter command filters a list of peptides according to specific criteria. The command expects a list of peptides that are passed
+      The peptfilter command filters a list of peptides according to specific criteria. The command expects a list of peptides that are passed to standard input.
 
-      - as separate command line arguments
-
-      - in one or more text files that are passed as an argument to the -i option
-
-      - to standard input
-
-      The command will give priority to the first way peptides are passed, in the order as listed above. Text files and standard input should have one peptide per line. FASTA headers are preserved in the output, so that peptides remain bundled.
+      The input should have one peptide per line. FASTA headers are preserved in the output, so that peptides remain bundled.
       EOS
       # flag :u, :unique, "filter duplicate peptides."
       required nil, :minlen, 'only retain tryptic peptides that have at least min (default: 5) amino acids.'
@@ -48,12 +44,7 @@ module Unipept
     #
     # @return [void]
     def self.run(args)
-      root_command.run(args)
-    end
-
-    # @return [Unipept::Command] The root command
-    class << self
-      attr_reader :root_command
+      @root_command.run(args)
     end
 
     # Checks if a peptide satisfies the min length, max length, lacks and contains requirements.
