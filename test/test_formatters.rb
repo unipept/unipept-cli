@@ -3,7 +3,10 @@ require_relative '../lib/formatters'
 module Unipept
   class FormattersTestCase < Unipept::TestCase
     def test_available_formatters
-      assert_equal(%w(json csv xml).sort, Formatter.available.sort)
+      formatters = Formatter.available
+      assert(formatters.include? 'json')
+      assert(formatters.include? 'csv')
+      assert(formatters.include? 'xml')
     end
 
     def test_default_formatter
@@ -11,9 +14,9 @@ module Unipept
     end
 
     def test_formatter_registration
-      assert_equal(%w(json csv xml).sort, Formatter.available.sort)
+      assert(!(Formatter.available.include? 'test'))
       Formatter.register(:test)
-      assert_equal(%w(json csv xml test).sort, Formatter.available.sort)
+      assert(Formatter.available.include? 'test')
     end
 
     def test_new_for_format
