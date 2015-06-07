@@ -127,7 +127,7 @@ module Unipept
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Peptfilter.run(%w(-h))
+          Uniprot.run(%w(-h))
         end
       end
       assert(out.include? 'show help for this command')
