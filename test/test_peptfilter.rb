@@ -42,10 +42,12 @@ module Unipept
         Peptfilter.run(%w())
       end
       assert_equal('A' * 6, out.chomp)
+
       out, _err = capture_io_with_input('A' * 5) do
         Peptfilter.run(%w())
       end
       assert_equal('A' * 5, out.chomp)
+
       out, _err = capture_io_with_input('A' * 4) do
         Peptfilter.run(%w())
       end
@@ -57,10 +59,12 @@ module Unipept
         Peptfilter.run(%w())
       end
       assert_equal('A' * 49, out.chomp)
+
       out, _err = capture_io_with_input('A' * 50) do
         Peptfilter.run(%w())
       end
       assert_equal('A' * 50, out.chomp)
+
       out, _err = capture_io_with_input('A' * 51) do
         Peptfilter.run(%w())
       end
@@ -72,6 +76,7 @@ module Unipept
         Peptfilter.run(%w(--minlen 7))
       end
       assert_equal('', out.chomp)
+
       out, _err = capture_io_with_input('A' * 4) do
         Peptfilter.run(%w(--minlen 3))
       end
@@ -83,6 +88,7 @@ module Unipept
         Peptfilter.run(%w(--maxlen 40))
       end
       assert_equal('', out.chomp)
+
       out, _err = capture_io_with_input('A' * 55) do
         Peptfilter.run(%w(--maxlen 60))
       end
@@ -94,14 +100,17 @@ module Unipept
         Peptfilter.run(%w(--lacks B))
       end
       assert_equal('A' * 10, out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(-l B))
       end
       assert_equal('A' * 10, out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(--lacks A))
       end
       assert_equal('', out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(-l A))
       end
@@ -113,14 +122,17 @@ module Unipept
         Peptfilter.run(%w(--contains A))
       end
       assert_equal('A' * 10, out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(-c A))
       end
       assert_equal('A' * 10, out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(--contains B))
       end
       assert_equal('', out.chomp)
+
       out, _err = capture_io_with_input('A' * 10) do
         Peptfilter.run(%w(-c B))
       end
@@ -132,6 +144,7 @@ module Unipept
         Peptfilter.run(%w())
       end
       assert_equal('>', out.chomp)
+
       out, _err = capture_io_with_input(['>', 'A', 'AALTER', '>']) do
         Peptfilter.run(%w())
       end
