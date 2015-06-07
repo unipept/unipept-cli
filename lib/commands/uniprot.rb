@@ -1,7 +1,6 @@
-require 'cri'
 require 'typhoeus'
 
-module Unipept
+module Unipept::Commands
   class Uniprot
     attr_reader :root_command
     attr_reader :valid_formats

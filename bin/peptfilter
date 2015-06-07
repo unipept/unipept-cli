@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-require_relative '../lib/peptfilter'
+require_relative '../lib/commands'
 
 Signal.trap('PIPE', 'EXIT')
 Signal.trap('INT', 'EXIT')
 
-Unipept::Peptfilter.run(ARGV)
+Unipept::Commands::Peptfilter.run(ARGV)

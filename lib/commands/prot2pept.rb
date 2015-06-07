@@ -1,6 +1,4 @@
-require 'cri'
-
-module Unipept
+module Unipept::Commands
   class Prot2pept
     attr_reader :root_command
     attr_reader :valid_formats

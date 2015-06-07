@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
-require_relative '../lib/uniprot'
+require_relative '../lib/commands'
 
 Signal.trap('PIPE', 'EXIT')
 Signal.trap('INT', 'EXIT')
 
-Unipept::Uniprot.run(ARGV)
+Unipept::Commands::Uniprot.run(ARGV)

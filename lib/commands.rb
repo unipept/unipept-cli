@@ -1,0 +1,9 @@
+require 'cri'
+
+module Unipept
+  module Commands
+    require_relative 'commands/peptfilter'
+    require_relative 'commands/prot2pept'
+    require_relative 'commands/uniprot'
+  end
+end

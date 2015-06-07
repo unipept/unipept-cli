@@ -1,6 +1,4 @@
-require 'cri'
-
-module Unipept
+module Unipept::Commands
   class Peptfilter
     attr_reader :root_command
 
