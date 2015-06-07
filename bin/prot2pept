@@ -1,52 +1,7 @@
 #!/usr/bin/env ruby
-require 'cri'
+require_relative '../lib/prot2pept'
 
 Signal.trap('PIPE', 'EXIT')
 Signal.trap('INT', 'EXIT')
-root_cmd = Cri::Command.define do
-  name 'prot2pept'
-  summary 'Split protein sequences into peptides.'
-  usage 'prot2pept [options]'
-  description <<-EOS
-  The prot2pept command splits each protein sequence into a list of peptides according to a given cleavage-pattern. The command expects a list of protein sequences that are passed
 
-  - as separate command line arguments
-
-  - in one or more text files that are passed as an argument to the -i option
-
-  - to standard input
-
-  The command will give priority to the first way protein sequences are passed, in the order as listed above. Text files and standard input should have either one protein sequence per line or contain a FASTA formatted list of protein sequences. FASTA headers are preserved in the output, so that peptides can be bundled per protein sequence.
-
-  EOS
-  required :p, :pattern, 'specify cleavage-pattern (regex) as the pattern after which the next peptide will be cleaved (default: ([KR])([^P]) for tryptic peptides).'
-  run do |opts, _args, _cmd|
-    pattern = opts.fetch(:pattern, '([KR])([^P])')
-    # decide if we have FASTA input
-    fasta_header = $stdin.gets
-    if fasta_header.start_with? '>'
-      # fasta input, need to join lines
-      until $stdin.eof?
-        prot = ''
-        # Sometimes you just got to accept this weird and ugly code
-        until $stdin.eof? || (line = gets).start_with?('>')
-          prot += line.chomp
-        end
-        puts fasta_header
-        puts prot.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
-
-        fasta_header = line
-      end
-    else
-      # handle our already read line
-      puts fasta_header.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
-
-      # we no longer have to join lines as input is now more sane
-      $stdin.each_line do |protein|
-        puts protein.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
-      end
-    end
-  end
-end
-
-root_cmd.run(ARGV)
+Unipept::Prot2pept.run(ARGV)
