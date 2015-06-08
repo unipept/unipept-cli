@@ -37,16 +37,8 @@ module Unipept
       Formatter.new
     end
 
-    def object
-      "{list : ['a', 'b', 'c'], key : 'value'}"
-    end
-
-    def object
-      "{list : ['a', 'b', 'c'], key : 'value'}"
-    end
-
     def test_header
-      assert_equal('', formatter.header(object))
+      assert_equal('', formatter.header(TestObject.get_object))
     end
 
     def test_type
@@ -54,7 +46,7 @@ module Unipept
     end
 
     def test_format
-      assert_equal(object, formatter.format(object))
+      assert_equal(TestObject.get_object, formatter.format(TestObject.get_object))
     end
   end
 
@@ -63,12 +55,8 @@ module Unipept
       Formatter.new_for_format('json')
     end
 
-    def object
-      "{list : ['a', 'b', 'c'], key : 'value'}"
-    end
-
     def test_header
-      assert_equal('', formatter.header(object))
+      assert_equal('', formatter.header(TestObject.get_object))
     end
 
     def test_type
@@ -76,7 +64,7 @@ module Unipept
     end
 
     def test_format
-      assert_equal(object.to_json, formatter.format(object))
+      assert_equal(TestObject.as_json, formatter.format(TestObject.get_object))
     end
   end
 
@@ -91,12 +79,8 @@ module Unipept
       Formatter.new_for_format('xml')
     end
 
-    def object
-      "{list : ['a', 'b', 'c'], key : 'value'}"
-    end
-
     def test_header
-      assert_equal('', formatter.header(object))
+      assert_equal('', formatter.header(TestObject.get_object))
     end
 
     def test_type
@@ -104,7 +88,21 @@ module Unipept
     end
 
     def test_format
-      assert_equal(object.to_xml, formatter.format(object))
+      assert_equal(TestObject.as_xml, formatter.format(TestObject.get_object))
+    end
+  end
+
+  class TestObject
+    def self.get_object
+      JSON.parse('{"integer": 5, "string": "string", "list": ["a", 2, false]}')
+    end
+
+    def self.as_json
+      '{"integer":5,"string":"string","list":["a",2,false]}'
+    end
+
+    def self.as_xml
+      '<integer>5</integer><string>string</string><list size="3"><item>a</item><item>2</item><item>false</item></list>'
     end
   end
 end
