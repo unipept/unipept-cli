@@ -32,6 +32,30 @@ module Unipept
       formatter = Formatter.new_for_format('blah')
       assert_equal('csv', formatter.type)
     end
+
+    def formatter
+      Formatter.new
+    end
+
+    def object
+      "{list : ['a', 'b', 'c'], key : 'value'}"
+    end
+
+    def object
+      "{list : ['a', 'b', 'c'], key : 'value'}"
+    end
+
+    def test_header
+      assert_equal('', formatter.header(object))
+    end
+
+    def test_type
+      assert_equal('', formatter.type)
+    end
+
+    def test_format
+      assert_equal(object, formatter.format(object))
+    end
   end
 
   class JSONFormatterTestCase < Unipept::TestCase
@@ -65,6 +89,22 @@ module Unipept
   class XMLFormatterTestCase < Unipept::TestCase
     def formatter
       Formatter.new_for_format('xml')
+    end
+
+    def object
+      "{list : ['a', 'b', 'c'], key : 'value'}"
+    end
+
+    def test_header
+      assert_equal('', formatter.header(object))
+    end
+
+    def test_type
+      assert_equal('xml', formatter.type)
+    end
+
+    def test_format
+      assert_equal(object.to_xml, formatter.format(object))
     end
   end
 end
