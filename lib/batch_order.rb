@@ -7,17 +7,13 @@ module Unipept
       @current = 0
     end
 
+    # Executes block if it's its turn, queues the block in the other case.
     def wait(i, &block)
-      if i == @current
-        # start writing + those who have been waiting as well
-        block.call
+      @order[i] = block
+      return unless i == @current
+      while order[@current]
+        order.delete(@current).call
         @current += 1
-        while order[@current]
-          order.delete(@current).call
-          @current += 1
-        end
-      else
-        @order[i] = block
       end
     end
   end
