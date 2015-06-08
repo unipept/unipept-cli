@@ -72,6 +72,30 @@ module Unipept
     def formatter
       Formatter.new_for_format('csv')
     end
+
+    def test_header
+      fasta = [["peptide", ">test"]]
+      object = [TestObject.get_object, TestObject.get_object]
+      assert_equal(TestObject.as_csv_header, formatter.header(object))
+      assert_equal("fasta_header," + TestObject.as_csv_header, formatter.header(object, fasta))
+    end
+
+    def test_type
+      assert_equal('csv', formatter.type)
+    end
+
+    def test_format
+      object = [TestObject.get_object, TestObject.get_object]
+      csv = [TestObject.as_csv, TestObject.as_csv, ''].join("\n")
+      assert_equal(csv, formatter.format(object))
+    end
+
+    def test_format_with_fasta
+      fasta = [[">test", '5']]
+      object = [TestObject.get_object, TestObject.get_object]
+      csv = ['>test,' + TestObject.as_csv, '>test,' + TestObject.as_csv, ''].join("\n")
+      assert_equal(csv, formatter.format(object, fasta))
+    end
   end
 
   class XMLFormatterTestCase < Unipept::TestCase
@@ -103,6 +127,14 @@ module Unipept
 
     def self.as_xml
       '<integer>5</integer><string>string</string><list size="3"><item>a</item><item>2</item><item>false</item></list>'
+    end
+
+    def self.as_csv
+      '5,string,"[""a"", 2, false]"'
+    end
+
+    def self.as_csv_header
+      "integer,string,list\n"
     end
   end
 end
