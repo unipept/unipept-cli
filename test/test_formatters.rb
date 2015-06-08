@@ -38,6 +38,22 @@ module Unipept
     def formatter
       Formatter.new_for_format('json')
     end
+
+    def object
+      "{list : ['a', 'b', 'c'], key : 'value'}"
+    end
+
+    def test_header
+      assert_equal('', formatter.header(object))
+    end
+
+    def test_type
+      assert_equal('json', formatter.type)
+    end
+
+    def test_format
+      assert_equal(object.to_json, formatter.format(object))
+    end
   end
 
   class CSVFormatterTestCase < Unipept::TestCase
