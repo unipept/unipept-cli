@@ -74,10 +74,10 @@ module Unipept
     end
 
     def test_header
-      fasta = [["peptide", ">test"]]
+      fasta = [['peptide', '>test']]
       object = [TestObject.get_object, TestObject.get_object]
       assert_equal(TestObject.as_csv_header, formatter.header(object))
-      assert_equal("fasta_header," + TestObject.as_csv_header, formatter.header(object, fasta))
+      assert_equal('fasta_header,' + TestObject.as_csv_header, formatter.header(object, fasta))
     end
 
     def test_type
@@ -91,7 +91,7 @@ module Unipept
     end
 
     def test_format_with_fasta
-      fasta = [[">test", '5']]
+      fasta = [['>test', '5']]
       object = [TestObject.get_object, TestObject.get_object]
       csv = ['>test,' + TestObject.as_csv, '>test,' + TestObject.as_csv, ''].join("\n")
       assert_equal(csv, formatter.format(object, fasta))

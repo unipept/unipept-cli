@@ -198,7 +198,7 @@ module Unipept
     #
     # @return [Hash] The input data grouped by the first key
     def group_by_first_key(data)
-      data.group_by{|el| el.values.first.to_s}
+      data.group_by { |el| el.values.first.to_s }
     end
   end
 
