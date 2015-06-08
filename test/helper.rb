@@ -17,11 +17,20 @@ require 'minitest/autorun'
 module Unipept
   class TestCase < Minitest::Test
     def setup
+      # Enter tmp
+      @tmp_dir = Dir.mktmpdir('unipept-test')
+      @orig_wd = FileUtils.pwd
+      FileUtils.cd(@tmp_dir)
+
       @orig_io = capture_io
     end
 
     def teardown
       uncapture_io(*@orig_io)
+
+      # Exit tmp
+      FileUtils.cd(@orig_wd)
+      FileUtils.rm_rf(@tmp_dir)
     end
 
     def capture_io_with_input(input, &block)
