@@ -7,7 +7,7 @@ module Unipept
       assert_equal({}, config.config)
     end
 
-    def test_load_without_file
+    def test_load_with_file
       hash = { 'key' => 'value' }
       File.open('new_file', 'w') { |f| f.write hash.to_yaml }
       config = Configuration.new('new_file')
