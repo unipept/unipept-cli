@@ -1,18 +1,31 @@
 module Unipept
   class Commands::Config < Cri::CommandRunner
     def run
-      config = Unipept::Configuration.new
-      key = arguments[0]
-      value = arguments[1]
-      if arguments.size == 2
-        config[key] = value
-        config.save
-        puts key +  ' was set to ' + value
-      elsif arguments.size == 1
-        puts config[key]
-      else
-        puts command.help
+      if arguments.size == 0 || arguments.size > 2
+        abort command.help
       end
+
+      key, value = *arguments
+
+      if arguments.size == 2
+        set_config(key, value)
+        puts key +  ' was set to ' + value
+      else
+        puts get_config(key)
+      end
+    end
+
+    def config
+      Unipept::Configuration.new
+    end
+
+    def set_config(key, value)
+      config[key] = value
+      config.save
+    end
+
+    def get_config(key)
+      config[key]
     end
   end
 end
