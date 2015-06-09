@@ -16,8 +16,7 @@ module Unipept
     end
 
     def config
-      @config = Unipept::Configuration.new unless @config
-      @config
+      @config ||= Unipept::Configuration.new
     end
 
     def set_config(key, value)

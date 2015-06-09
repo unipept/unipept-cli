@@ -57,7 +57,7 @@ module Unipept
 
         run do |opts, _args, cmd|
           if opts[:version]
-            puts File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))
+            puts Unipept::VERSION
           else
             abort cmd.help
           end

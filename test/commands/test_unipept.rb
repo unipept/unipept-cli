@@ -26,5 +26,12 @@ module Unipept
       end
       assert(err.include? 'show help for this command')
     end
+
+    def test_version
+      out, _err = capture_io_while do
+        Commands::Unipept.run(%w(-v))
+      end
+      assert_equal(VERSION, out.chomp)
+    end
   end
 end
