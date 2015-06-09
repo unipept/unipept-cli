@@ -94,7 +94,7 @@ module Unipept
       selected_fields = options[:select] ? options[:select] : []
       selected_fields = selected_fields.map { |f| f.include?(',') ? f.split(',') : f }.flatten.map { |f| glob_to_regex(f) }
 
-      line_iterator(input) do |input_slice, batch_id, fasta_input|
+      line_iterator(input) do |input_slice, batch_id, fasta_mapper|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -111,8 +111,8 @@ module Unipept
             # wait till it's our turn to write
             batch_order.wait(batch_id) do
               unless result.empty?
-                write_to_output formatter.header(result, fasta_input) if batch_id == 0
-                write_to_output formatter.format(result, fasta_input)
+                write_to_output formatter.header(result, fasta_mapper) if batch_id == 0
+                write_to_output formatter.format(result, fasta_mapper)
               end
             end
 
@@ -190,7 +190,6 @@ module Unipept
             y << lines.next
           end
         end.each_slice(batch_size).with_index(&block)
-
       end
     end
 

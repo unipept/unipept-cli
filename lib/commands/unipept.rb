@@ -106,7 +106,6 @@ module Unipept
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
         flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
-        option :x, :xml, 'Download the matched records from the NCBI web service as an xml-formatted file (specify output filename)', argument: :required
 
         runner Commands::Pept2taxa
       end
@@ -184,7 +183,6 @@ module Unipept
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
         flag :a, :all, 'report all information fields of Uniprot records available in Unipept. Note that this may have a performance penalty.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
-        option :x, :xml, 'download XML-formatted Uniprot records into the specified download-directory. ', argument: :required
 
         runner Commands::Pept2prot
       end
