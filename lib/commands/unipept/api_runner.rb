@@ -1,7 +1,7 @@
 require 'set'
 
-module Unipept::Commands
-  class ApiRunner < Cri::CommandRunner
+module Unipept
+  class Commands::ApiRunner < Cri::CommandRunner
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new

@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Unipept
   class Configuration
     attr_reader :config

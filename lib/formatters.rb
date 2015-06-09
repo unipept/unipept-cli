@@ -1,3 +1,5 @@
+require 'json'
+
 module Unipept
   class Formatter
     # The Hash of available formatters
