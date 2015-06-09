@@ -1,5 +1,3 @@
-require 'set'
-
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
     def initialize(args, opts, cmd)
@@ -66,7 +64,7 @@ module Unipept
 
     # Returns an array of regular expressions containing all the selected fields
     def selected_fields
-      @selected_fields ||= [*options[:select]].map { |f| f.include?(',') ? f.split(',') : f }.flatten.map { |f| glob_to_regex(f) }
+      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
     end
 
     # Checks if the server has a message and prints it if not empty.
@@ -95,8 +93,9 @@ module Unipept
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       formatter = Unipept::Formatter.new_for_format(options[:format])
       batch_order = Unipept::BatchOrder.new
+      batch_iterator = Unipept::BatchIterator.new(batch_size)
 
-      line_iterator(input_iterator) do |input_slice, batch_id, fasta_mapper|
+      batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -157,53 +156,6 @@ module Unipept
       else
         puts string
       end
-    end
-
-    # Splits the input lines into slices, based on the batch_size of the current
-    # command. Executes the given block for each of the batches.
-    #
-    # Supports both normal input and input in the fasta format.
-    def line_iterator(lines, &block)
-      first_line = lines.next rescue return
-      if first_line.start_with? '>'
-        fasta_iterator(first_line, lines, &block)
-      else
-        normal_iterator(first_line, lines, &block)
-      end
-    end
-
-    # Splits the input lines in fasta format into slices, based on the
-    # batch_size of the current command. Executes the given block for each of
-    # the batches.
-    def fasta_iterator(first_line, next_lines, &block)
-      current_fasta_header = first_line.chomp
-      next_lines.each_slice(batch_size).with_index do |slice, i|
-        fasta_mapper = []
-        input_set = Set.new
-
-        slice.each do |line|
-          line.chomp!
-          if line.start_with? '>'
-            current_fasta_header = line
-          else
-            fasta_mapper << [current_fasta_header, line]
-            input_set << line
-          end
-        end
-
-        block.call(input_set.to_a, i, fasta_mapper)
-      end
-    end
-
-    # Splits the input lines into slices, based on the batch_size of the current
-    # command. Executes the given block for each of the batches.
-    def normal_iterator(first_line, next_lines, &block)
-      Enumerator.new do |y|
-        y << first_line
-        loop do
-          y << next_lines.next
-        end
-      end.each_slice(batch_size).with_index(&block)
     end
 
     private
