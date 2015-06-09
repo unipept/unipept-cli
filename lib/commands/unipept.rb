@@ -5,6 +5,7 @@ require_relative '../configuration'
 require_relative '../batch_order'
 require_relative '../version'
 
+require_relative 'unipept/config'
 require_relative 'unipept/pept2lca'
 require_relative 'unipept/pept2prot'
 require_relative 'unipept/pept2taxa'
@@ -54,11 +55,11 @@ module Unipept
         # Configuration options
         option nil, 'host', 'specify the server running the Unipept web service', argument: :required
 
-        run do |opts, _args, _cmd|
+        run do |opts, _args, cmd|
           if opts[:version]
             puts File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))
           else
-            Commands::Unipept.run(['help'])
+            puts cmd.help
           end
         end
       end
@@ -80,17 +81,7 @@ module Unipept
         Example: "unipept config host http://api.unipept.ugent.be" will set the default host to the public unipept server.
         EOS
 
-        run do |_opts, args, _cmd|
-          config = Unipept::Configuration.new
-          if args.size > 1
-            config[args.first] = args[1]
-            config.save
-          elsif args.size == 1
-            puts config[args.first]
-          elsif args.size == 0
-            Commands::Unipept.run(['config', '-h'])
-          end
-        end
+        runner Commands::Config
       end
     end
 
