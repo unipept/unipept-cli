@@ -42,7 +42,7 @@ module Unipept
     # - if arguments are given, uses arguments
     # - if the input file option is given, uses file input
     # - if none of the previous are given, uses stdin
-    def get_input_iterator
+    def input_iterator
       return arguments.each unless arguments.empty?
       return IO.foreach(options[:input]) if options[:input]
       $stdin.each_line
@@ -56,12 +56,17 @@ module Unipept
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
     def get_request_body(input, selected_fields)
-      names = selected_fields.empty? || selected_fields.any? { |f| /.*name.*/.match f }
+      names = selected_fields.empty? || selected_fields.any? { |f| /name/.match f.to_s }
       { input: input,
         equate_il: options[:equate],
         extra: options[:all],
         names: options[:all] && names
       }
+    end
+
+    # Returns an array of regular expressions containing all the selected fields
+    def selected_fields
+      @selected_fields ||= [*options[:select]].map { |f| f.include?(',') ? f.split(',') : f }.flatten.map { |f| glob_to_regex(f) }
     end
 
     # Checks if the server has a message and prints it if not empty.
@@ -91,11 +96,7 @@ module Unipept
       formatter = Unipept::Formatter.new_for_format(options[:format])
       batch_order = Unipept::BatchOrder.new
 
-      input = get_input_iterator
-      selected_fields = options[:select] ? options[:select] : []
-      selected_fields = selected_fields.map { |f| f.include?(',') ? f.split(',') : f }.flatten.map { |f| glob_to_regex(f) }
-
-      line_iterator(input) do |input_slice, batch_id, fasta_mapper|
+      line_iterator(input_iterator) do |input_slice, batch_id, fasta_mapper|
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -133,10 +134,7 @@ module Unipept
         end
 
         hydra.queue request
-
-        if batch_id % 200 == 0
-          hydra.run
-        end
+        hydra.run if batch_id % 200 == 0
       end
 
       hydra.run
