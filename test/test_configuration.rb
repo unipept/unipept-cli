@@ -31,5 +31,13 @@ module Unipept
       assert_equal('value', config.config['key'])
       assert_equal('value', config['key'])
     end
+
+    def test_delete
+      config = Configuration.new('no_file')
+      config['key'] = 'value'
+      assert_equal('value', config['key'])
+      config.delete('key')
+      assert_equal(nil, config['key'])
+    end
   end
 end

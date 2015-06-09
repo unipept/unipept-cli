@@ -27,6 +27,11 @@ module Unipept
       File.open(file_name, 'w') { |f| f.write config.to_yaml }
     end
 
+    # Deletes a key
+    def delete(key)
+      config.delete(key)
+    end
+
     # forwards [] to the internal config hash
     def [](*args)
       config.[](*args)
