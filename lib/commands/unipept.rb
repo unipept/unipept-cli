@@ -58,7 +58,7 @@ module Unipept
           if opts[:version]
             puts File.read(File.join(File.dirname(__FILE__), '..', 'VERSION'))
           else
-            root_cmd.run(['help'])
+            Commands::Unipept.run(['help'])
           end
         end
       end
@@ -88,7 +88,7 @@ module Unipept
           elsif args.size == 1
             puts config[args.first]
           elsif args.size == 0
-            root_cmd.run(['config', '-h'])
+            Commands::Unipept.run(['config', '-h'])
           end
         end
       end
