@@ -45,7 +45,7 @@ module Unipept
     def get_input_iterator
       return arguments.each unless arguments.empty?
       return IO.foreach(options[:input]) if options[:input]
-      STDIN.each_line
+      $stdin.each_line
     end
 
     # Returns the default batch_size of a command.
@@ -69,7 +69,7 @@ module Unipept
     # option is set or if we output to a file.
     def print_server_message
       return if options[:quiet]
-      return unless STDOUT.tty?
+      return unless $stdout.tty?
       return if recently_fetched?
       @configuration['last_fetch_date'] = Time.now
       @configuration.save
@@ -84,6 +84,7 @@ module Unipept
       !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
     end
 
+    # Runs the command
     def run
       print_server_message
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
@@ -118,17 +119,14 @@ module Unipept
 
           elsif resp.timed_out?
             batch_order.wait(batch_id) do
-              $stderr.puts 'request timed out, continuing anyway, but results might be incomplete'
               save_error('request timed out, continuing anyway, but results might be incomplete')
             end
           elsif resp.code == 0
             batch_order.wait(batch_id) do
-              $stderr.puts 'could not get an http response, continuing anyway, but results might be incomplete'
-              save_error(resp.return_message)
+              save_error('could not get an http response, continuing anyway, but results might be incomplete' + resp.return_message)
             end
           else
             batch_order.wait(batch_id) do
-              $stderr.puts "received a non-successful http response #{resp.code}, continuing anyway, but results might be incomplete"
               save_error("Got #{resp.code}: #{resp.response_body}\nRequest headers: #{resp.request.options}\nRequest body:\n#{resp.request.encoded_body}\n\n")
             end
           end
@@ -144,53 +142,70 @@ module Unipept
       hydra.run
     end
 
+    # Saves an error to a new file in the .unipept directory in the users home
+    # directory.
     def save_error(message)
       path = File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, 'w') do |f|
-        f.write message
-      end
+      File.open(path, 'w') { |f| f.write message }
       $stderr.puts "API request failed! log can be found in #{path}"
     end
 
+    # Write a string to the output defined by the command. If a file is given,
+    # write it to the file. If not, write to stdout
     def write_to_output(string)
       if options[:output]
-        File.open(options[:output], 'a') do |f|
-          f.write string
-        end
+        File.open(options[:output], 'a') { |f| f.write string }
       else
         puts string
       end
     end
 
+    # Splits the input lines into slices, based on the batch_size of the current
+    # command. Executes the given block for each of the batches.
+    #
+    # Supports both normal input and input in the fasta format.
     def line_iterator(lines, &block)
       first_line = lines.next rescue return
       if first_line.start_with? '>'
-        current_fasta_header = first_line.chomp
-        lines.each_slice(batch_size).with_index do |slice, i|
-          fasta_mapper = []
-          input_set = Set.new
-
-          slice.each do |line|
-            line.chomp!
-            if line.start_with? '>'
-              current_fasta_header = line
-            else
-              fasta_mapper << [current_fasta_header, line]
-              input_set << line
-            end
-          end
-
-          block.call(input_set.to_a, i, fasta_mapper)
-        end
+        fasta_iterator(first_line, lines, &block)
       else
-        Enumerator.new do |y|
-          y << first
-          loop do
-            y << lines.next
-          end
-        end.each_slice(batch_size).with_index(&block)
+        normal_iterator(first_line, lines, &block)
       end
+    end
+
+    # Splits the input lines in fasta format into slices, based on the
+    # batch_size of the current command. Executes the given block for each of
+    # the batches.
+    def fasta_iterator(first_line, next_lines, &block)
+      current_fasta_header = first_line.chomp
+      next_lines.each_slice(batch_size).with_index do |slice, i|
+        fasta_mapper = []
+        input_set = Set.new
+
+        slice.each do |line|
+          line.chomp!
+          if line.start_with? '>'
+            current_fasta_header = line
+          else
+            fasta_mapper << [current_fasta_header, line]
+            input_set << line
+          end
+        end
+
+        block.call(input_set.to_a, i, fasta_mapper)
+      end
+    end
+
+    # Splits the input lines into slices, based on the batch_size of the current
+    # command. Executes the given block for each of the batches.
+    def normal_iterator(first_line, next_lines, &block)
+      Enumerator.new do |y|
+        y << first_line
+        loop do
+          y << next_lines.next
+        end
+      end.each_slice(batch_size).with_index(&block)
     end
 
     private
