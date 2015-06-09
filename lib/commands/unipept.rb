@@ -97,7 +97,6 @@ module Unipept
     def add_pept2taxa_command
       @root_command.define_command('pept2taxa') do
         usage 'pept2taxa [options]'
-        aliases :pt
         summary 'Fetch taxa of Uniprot records that match tryptic peptides.'
         description <<-EOS
         For each tryptic peptide the unipept pept2taxa command retrieves from Unipept the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
@@ -125,7 +124,6 @@ module Unipept
     def add_pept2lca_command
       @root_command.define_command('pept2lca') do
         usage 'pept2lca [options]'
-        aliases :pl
         summary 'Fetch taxonomic lowest common ancestor of Uniprot records that match tryptic peptides.'
         description <<-EOS
         For each tryptic peptide the unipept pept2lca command retrieves from Unipept the lowest common ancestor of the set of taxa from all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of tryptic peptides that are passed
@@ -152,7 +150,6 @@ module Unipept
     def add_taxa2lca_command
       @root_command.define_command('taxa2lca') do
         usage 'taxa2lca [options]'
-        aliases :tl
         summary 'Compute taxonomic lowest common ancestor for given list of taxa.'
         description <<-EOS
         The unipept taxa2lca command computes the lowest common ancestor of a given list of NCBI Taxonomy Identifiers. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
@@ -178,7 +175,6 @@ module Unipept
     def add_pept2prot_command
       @root_command.define_command('pept2prot') do
         usage 'pept2prot [options]'
-        aliases :pp
         summary 'Fetch Uniprot records that match tryptic peptides.'
         description <<-EOS
         For each tryptic peptide the unipept pept2prot command retrieves from Unipept all Uniprot records whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
@@ -206,7 +202,6 @@ module Unipept
     def add_taxonomy_command
       @root_command.define_command('taxonomy') do
         usage 'taxonomy [options]'
-        aliases :tax
         summary 'Fetch taxonomic information from Unipept Taxonomy.'
         description <<-EOS
         The unipept taxonomy command yields information from the Unipept Taxonomy records for a given list of NCBI Taxonomy Identifiers. The Unipept Taxonomy is a cleaned up version of the NCBI Taxonomy, and its records are also records of the NCBI Taxonomy. The command expects a list of NCBI Taxonomy Identifiers that are passed
