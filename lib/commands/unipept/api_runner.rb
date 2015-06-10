@@ -91,7 +91,7 @@ module Unipept
     def run
       print_server_message
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
-      formatter = Unipept::Formatter.new_for_format(options[:format])
+      @formatter = Unipept::Formatter.new_for_format(options[:format])
       batch_order = Unipept::BatchOrder.new
       batch_iterator = Unipept::BatchIterator.new(batch_size)
 
@@ -103,33 +103,10 @@ module Unipept
           accept_encoding: 'gzip',
           headers: { 'User-Agent' => @user_agent }
         )
+
         request.on_complete do |resp|
-          if resp.success?
-            result = JSON[resp.response_body] rescue []
-            result = [result] unless result.is_a? Array
-            result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
-
-            # wait till it's our turn to write
-            batch_order.wait(batch_id) do
-              unless result.empty?
-                write_to_output formatter.header(result, fasta_mapper) if batch_id == 0
-                write_to_output formatter.format(result, fasta_mapper)
-              end
-            end
-
-          elsif resp.timed_out?
-            batch_order.wait(batch_id) do
-              save_error('request timed out, continuing anyway, but results might be incomplete')
-            end
-          elsif resp.code == 0
-            batch_order.wait(batch_id) do
-              save_error('could not get an http response, continuing anyway, but results might be incomplete' + resp.return_message)
-            end
-          else
-            batch_order.wait(batch_id) do
-              save_error("Got #{resp.code}: #{resp.response_body}\nRequest headers: #{resp.request.options}\nRequest body:\n#{resp.request.encoded_body}\n\n")
-            end
-          end
+          block = handle_response(resp, batch_id, fasta_mapper)
+          batch_order.wait(batch_id, &block)
         end
 
         hydra.queue request
@@ -159,6 +136,29 @@ module Unipept
     end
 
     private
+
+    # Handles the response of an API request.
+    # Returns a block to execute.
+    def handle_response(response, batch_id, fasta_mapper)
+      if response.success?
+        result = JSON[response.response_body] rescue []
+        result = [result] unless result.is_a? Array
+        result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
+
+        lambda do
+          unless result.empty?
+            write_to_output @formatter.header(result, fasta_mapper) if batch_id == 0
+            write_to_output @formatter.format(result, fasta_mapper)
+          end
+        end
+      elsif response.timed_out?
+        -> { save_error('request timed out, continuing anyway, but results might be incomplete') }
+      elsif response.code == 0
+        -> { save_error('could not get an http response, continuing anyway, but results might be incomplete' + response.return_message) }
+      else
+        -> { save_error("Got #{response.code}: #{response.response_body}\nRequest headers: #{response.request.options}\nRequest body:\n#{response.request.encoded_body}\n\n") }
+      end
+    end
 
     def glob_to_regex(string)
       /^#{string.gsub('*', '.*')}$/
