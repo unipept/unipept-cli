@@ -53,7 +53,7 @@ module Unipept
 
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
-    def get_request_body(input, selected_fields)
+    def construct_request_body(input, selected_fields)
       names = selected_fields.empty? || selected_fields.any? { |f| /name/.match f.to_s }
       { input: input,
         equate_il: options[:equate],
@@ -65,6 +65,11 @@ module Unipept
     # Returns an array of regular expressions containing all the selected fields
     def selected_fields
       @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
+    end
+
+    # Returns a formatter, based on the format specified in the options
+    def formatter
+      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
     end
 
     # Checks if the server has a message and prints it if not empty.
@@ -91,7 +96,6 @@ module Unipept
     def run
       print_server_message
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
-      @formatter = Unipept::Formatter.new_for_format(options[:format])
       batch_order = Unipept::BatchOrder.new
       batch_iterator = Unipept::BatchIterator.new(batch_size)
 
@@ -99,7 +103,7 @@ module Unipept
         request = Typhoeus::Request.new(
           @url,
           method: :post,
-          body: get_request_body(input_slice, selected_fields),
+          body: construct_request_body(input_slice, selected_fields),
           accept_encoding: 'gzip',
           headers: { 'User-Agent' => @user_agent }
         )
@@ -147,8 +151,8 @@ module Unipept
 
         lambda do
           unless result.empty?
-            write_to_output @formatter.header(result, fasta_mapper) if batch_id == 0
-            write_to_output @formatter.format(result, fasta_mapper)
+            write_to_output formatter.header(result, fasta_mapper) if batch_id == 0
+            write_to_output formatter.format(result, fasta_mapper)
           end
         end
       elsif response.timed_out?
