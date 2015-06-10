@@ -41,7 +41,7 @@ module Unipept
 
         - as separate command line arguments
 
-        - in one or more text files that are passed as an argument to the -i option
+        - in a text file that is passed as an argument to the -i option
 
         - to standard input
 
@@ -95,7 +95,7 @@ module Unipept
 
         - as separate command line arguments
 
-        - in one or more text files that are passed as an argument to the -i option
+        - in a text file that is passed as an argument to the -i option
 
         - to standard input
 
@@ -121,7 +121,7 @@ module Unipept
 
          - as separate command line arguments
 
-         - in one or more text files that are passed as an argument to the -i option
+         - in a text file that is passed as an argument to the -i option
 
          - to standard input
 
@@ -147,7 +147,7 @@ module Unipept
 
          - as separate command line arguments
 
-         - in one or more text files that are passed as an argument to the -i option
+         - in a text file that is passed as an argument to the -i option
 
          - to standard input
 
@@ -172,7 +172,7 @@ module Unipept
 
         - as separate command line arguments
 
-        - in one or more text files that are passed as an argument to the -i option
+        - in a text file that is passed as an argument to the -i option
 
         - to standard input
 
@@ -198,7 +198,7 @@ module Unipept
 
         - as separate command line arguments
 
-        - in one or more text files that are passed as an argument to the -i option
+        - in a text file that is passed as an argument to the -i option
 
         - to standard input
 

@@ -1,5 +1,13 @@
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
+    attr_reader :configuration
+
+    attr_reader :url
+
+    attr_reader :message_url
+
+    attr_reader :user_agent
+
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
@@ -20,12 +28,13 @@ module Unipept
     # Returns the host. If a value is defined by both an option and the config
     # file, the value of the option is used.
     def get_host
+      puts options
       # find host in opts first
       host = options[:host] ? options[:host] : @configuration['host']
 
       # No host has been set?
       if host.nil? || host.empty?
-        abort 'WARNING: no host has been set, you can set the host with `unipept config host http://api.unipept.ugent.be:3000/`'
+        abort 'WARNING: no host has been set, you can set the host with `unipept config host http://api.unipept.ugent.be/`'
       end
 
       # add http:// if needed
