@@ -28,7 +28,6 @@ module Unipept
     # Returns the host. If a value is defined by both an option and the config
     # file, the value of the option is used.
     def get_host
-      puts options
       # find host in opts first
       host = options[:host] ? options[:host] : @configuration['host']
 
