@@ -62,12 +62,12 @@ module Unipept
 
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
-    def construct_request_body(input, selected_fields)
+    def construct_request_body(input)
       names = selected_fields.empty? || selected_fields.any? { |f| /name/.match f.to_s }
       { input: input,
-        equate_il: options[:equate],
-        extra: options[:all],
-        names: options[:all] && names
+        equate_il: options[:equate] == true,
+        extra: options[:all] == true,
+        names: options[:all] == true && names
       }
     end
 
@@ -90,8 +90,13 @@ module Unipept
       return if recently_fetched?
       @configuration['last_fetch_date'] = Time.now
       @configuration.save
-      resp = Typhoeus.get(@message_url, params: { version: Unipept::VERSION }).body.chomp
+      resp = fetch_server_message
       puts resp unless resp.empty?
+    end
+
+    # Fetches a message from the server and returns it
+    def fetch_server_message
+      Typhoeus.get(@message_url, params: { version: Unipept::VERSION }).body.chomp
     end
 
     # Returns true if the last check for a server message was less than a day
@@ -112,7 +117,7 @@ module Unipept
         request = Typhoeus::Request.new(
           @url,
           method: :post,
-          body: construct_request_body(input_slice, selected_fields),
+          body: construct_request_body(input_slice),
           accept_encoding: 'gzip',
           headers: { 'User-Agent' => @user_agent }
         )
