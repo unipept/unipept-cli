@@ -10,19 +10,12 @@ module RetryableTyphoeus
   DEFAULT_RETRIES = 10
 
   class Request < Typhoeus::Request
+    attr_accessor :retries
+
     def initialize(base_url, options = {})
       @retries = (options.delete(:retries) || DEFAULT_RETRIES)
 
       super
     end
-
-    def retries=(retries)
-      @retries = retries
-    end
-
-    def retries
-      @retries ||= 0
-    end
   end
-
 end
