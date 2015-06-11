@@ -31,7 +31,7 @@ module Unipept
       lines = out.each_line
       assert_equal('', err)
       assert(lines.next.start_with? 'taxon_id,taxon_name,taxon_rank')
-      assert(lines.next.start_with? '1,root,no rank,')
+      assert(lines.next.start_with? '1,root,no rank')
     end
   end
 end
