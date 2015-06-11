@@ -1,6 +1,11 @@
 require_relative '../../../lib/commands/unipept/api_runner'
 
 module Unipept
+  # make methods public to test them
+  class Commands::ApiRunner
+    public :glob_to_regex, :handle_response, :error_file_path, :filter_result
+  end
+
   class UnipeptAPIRunnerTestCase < Unipept::TestCase
     def test_init
       runner = new_runner('test', { host: 'test_host' }, %w(a b c))
@@ -233,6 +238,7 @@ module Unipept
             def $stdout.tty?
               true
             end
+            $stdout.tty?
             runner.print_server_message
           end
           assert_equal('', out)
@@ -290,9 +296,168 @@ module Unipept
       assert(!runner.fetch_server_message.nil?)
     end
 
+    def test_stdout_write_to_output
+      runner = new_runner
+      out, _err = capture_io_while do
+        runner.write_to_output('hello world')
+      end
+      assert_equal('hello world', out.chomp)
+    end
+
+    def test_file_write_to_output
+      runner = new_runner('test', host: 'test', output: 'output_file')
+      out, _err = capture_io_while do
+        runner.write_to_output('hello world')
+      end
+      assert_equal('', out)
+      assert_equal('hello world', IO.foreach('output_file').next.chomp)
+    end
+
+    def test_glob_to_regex
+      runner = new_runner
+      assert(/^simple$/, runner.glob_to_regex('simple'))
+      assert(/^.*simple.*$/, runner.glob_to_regex('*simple*'))
+    end
+
+    def test_save_error
+      runner = new_runner
+      runner.stub(:error_file_path, 'errordir/error.log') do
+        _out, err = capture_io_while do
+          runner.save_error('error message')
+        end
+        assert(err.start_with? 'API request failed! log can be found in')
+        assert_equal('error message', IO.foreach('errordir/error.log').next.chomp)
+      end
+    end
+
+    def test_error_file_path
+      runner = new_runner
+      assert(runner.error_file_path.include? '/.unipept/')
+    end
+
+    def test_invalid_filter_result
+      runner = new_runner
+      assert_equal([], runner.filter_result('{"key":"value'))
+    end
+
+    def test_array_wrap_filter_result
+      runner = new_runner
+      assert_equal([{ 'key' => 'value' }], runner.filter_result('{"key":"value"}'))
+    end
+
+    def test_filter_filter_result
+      runner = new_runner('test', host: 'test', select: 'key1')
+      result = runner.filter_result('[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')
+      assert_equal([{ 'key1' => 'value1' }, { 'key1' => 'value2' }], result)
+    end
+
+    def test_success_header_handle_response
+      runner = new_runner
+      response = new_response(success: true, response_body: '[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')
+      lambda = runner.handle_response(response, 0, nil)
+      assert(lambda.lambda?)
+      out, err = capture_io_while(&lambda)
+      lines = out.each_line
+      assert_equal('', err)
+      assert_equal('key1,key2', lines.next.chomp)
+      assert_equal('value1,value1', lines.next.chomp)
+      assert_equal('value2,value2', lines.next.chomp)
+    end
+
+    def test_success_no_header_handle_response
+      runner = new_runner
+      response = new_response(success: true, response_body: '[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')
+      lambda = runner.handle_response(response, 1, nil)
+      assert(lambda.lambda?)
+      out, err = capture_io_while(&lambda)
+      lines = out.each_line
+      assert_equal('', err)
+      assert_equal('value1,value1', lines.next.chomp)
+      assert_equal('value2,value2', lines.next.chomp)
+    end
+
+    def test_time_out_handle_response
+      runner = new_runner
+      response = new_response(success: false, timed_out: true)
+      lambda = runner.handle_response(response, 0, nil)
+      assert(lambda.lambda?)
+      def runner.save_error(input)
+        $stderr.puts(input)
+      end
+      out, err = capture_io_while(&lambda)
+      assert_equal('', out)
+      assert(err.chomp.start_with? 'request timed out')
+    end
+
+    def test_code_0_handle_response
+      runner = new_runner
+      response = new_response(success: false, timed_out: false, code: 0)
+      lambda = runner.handle_response(response, 0, nil)
+      assert(lambda.lambda?)
+      def runner.save_error(input)
+        $stderr.puts(input)
+      end
+      out, err = capture_io_while(&lambda)
+      assert_equal('', out)
+      assert(err.chomp.start_with? 'could not get an http')
+    end
+
+    def test_failed_handle_response
+      runner = new_runner
+      response = new_response(success: false, timed_out: false, code: 10)
+      lambda = runner.handle_response(response, 0, nil)
+      assert(lambda.lambda?)
+      def runner.save_error(input)
+        $stderr.puts(input)
+      end
+      out, err = capture_io_while(&lambda)
+      assert_equal('', out)
+      assert(err.chomp.start_with? 'Got 10')
+    end
+
     def new_runner(command_name = 'test', options = { host: 'http://param_host' }, arguments = [])
       command = Cri::Command.define { name command_name }
       Commands::ApiRunner.new(options, arguments, command)
+    end
+
+    def new_response(values)
+      response = Class.new do
+        def initialize(values)
+          @values = values
+        end
+
+        def success?
+          @values[:success]
+        end
+
+        def timed_out?
+          @values[:timed_out]
+        end
+
+        def code
+          @values[:code]
+        end
+
+        def response_body
+          @values[:response_body]
+        end
+
+        def return_message
+          ''
+        end
+
+        def request
+          o = Object.new
+          def o.options
+            ''
+          end
+          def o.encoded_body
+            ''
+          end
+          o
+        end
+      end
+      response.new(values)
     end
   end
 end
