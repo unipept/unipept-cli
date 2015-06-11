@@ -30,7 +30,6 @@ module Unipept
     # Returns the host. If a value is defined by both an option and the config
     # file, the value of the option is used.
     def get_host
-      puts options
       # find host in opts first
       host = options[:host] ? options[:host] : @configuration['host']
 
@@ -65,7 +64,7 @@ module Unipept
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
     def construct_request_body(input)
-      names = selected_fields.empty? || selected_fields.any? { |f| /name/.match f.to_s }
+      names = selected_fields.empty? || selected_fields.any? { |f| f.to_s.include? 'name' }
       { input: input,
         equate_il: options[:equate] == true,
         extra: options[:all] == true,
@@ -108,12 +107,16 @@ module Unipept
       !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
     end
 
+    # Returns a new batch_iterator based on the batch_size
+    def batch_iterator
+      Unipept::BatchIterator.new(batch_size)
+    end
+
     # Runs the command
     def run
       print_server_message
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       batch_order = Unipept::BatchOrder.new
-      batch_iterator = Unipept::BatchIterator.new(batch_size)
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         request = ::RetryableTyphoeus::Request.new(
@@ -151,7 +154,7 @@ module Unipept
     # Saves an error to a new file in the .unipept directory in the users home
     # directory.
     def save_error(message)
-      path = File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))
+      path = error_file_path
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, 'w') { |f| f.write message }
       $stderr.puts "API request failed! log can be found in #{path}"
@@ -169,13 +172,15 @@ module Unipept
 
     private
 
+    def error_file_path
+      File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))
+    end
+
     # Handles the response of an API request.
     # Returns a block to execute.
     def handle_response(response, batch_id, fasta_mapper)
       if response.success?
-        result = JSON[response.response_body] rescue []
-        result = [result] unless result.is_a? Array
-        result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
+        result = filter_result(response.response_body)
 
         lambda do
           unless result.empty?
@@ -190,6 +195,15 @@ module Unipept
       else
         -> { save_error("Got #{response.code}: #{response.response_body}\nRequest headers: #{response.request.options}\nRequest body:\n#{response.request.encoded_body}\n\n") }
       end
+    end
+
+    # Parses the json_response, wraps it in an array if needed and filters the
+    # fields based on the selected_fields
+    def filter_result(json_response)
+      result = JSON[json_response] rescue []
+      result = [result] unless result.is_a? Array
+      result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
+      result
     end
 
     def glob_to_regex(string)
