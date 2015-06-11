@@ -415,6 +415,29 @@ module Unipept
       assert(err.chomp.start_with? 'Got 10')
     end
 
+    def test_run
+      runner = new_runner('taxonomy', host: 'http://api.unipept.ugent.be')
+      out, err = capture_io_while do
+        def runner.print_server_message
+          puts 'server message'
+        end
+        def runner.input_iterator
+          %w(0 1 2).each
+        end
+        def runner.batch_size
+          2
+        end
+        runner.run
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      assert_equal('server message', lines.next.chomp)
+      assert(lines.next.start_with? 'taxon_id')
+      assert(lines.next.start_with? '1,root')
+      assert(lines.next.start_with? '2,Bacteria')
+      assert_raises(StopIteration) { lines.next }
+    end
+
     def new_runner(command_name = 'test', options = { host: 'http://param_host' }, arguments = [])
       command = Cri::Command.define { name command_name }
       Commands::ApiRunner.new(options, arguments, command)
