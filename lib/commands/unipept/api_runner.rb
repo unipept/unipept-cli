@@ -105,12 +105,16 @@ module Unipept
       !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
     end
 
+    # Returns a new batch_iterator based on the batch_size
+    def batch_iterator
+      Unipept::BatchIterator.new(batch_size)
+    end
+
     # Runs the command
     def run
       print_server_message
       hydra = Typhoeus::Hydra.new(max_concurrency: 10)
       batch_order = Unipept::BatchOrder.new
-      batch_iterator = Unipept::BatchIterator.new(batch_size)
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         request = Typhoeus::Request.new(
