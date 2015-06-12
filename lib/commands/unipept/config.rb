@@ -1,9 +1,7 @@
 module Unipept
   class Commands::Config < Cri::CommandRunner
     def run
-      if arguments.size == 0 || arguments.size > 2
-        abort command.help
-      end
+      abort command.help if arguments.size == 0 || arguments.size > 2
 
       key, value = *arguments
 

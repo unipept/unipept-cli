@@ -22,14 +22,14 @@ module Unipept
       runner = new_runner('test', { host: 'http://param_host' }, %w(a b c))
       runner.options.delete(:host)
       runner.configuration['host'] = 'http://config_host'
-      host = runner.get_host
+      host = runner.host
       assert_equal('http://config_host', host)
     end
 
     def test_param_host
       runner = new_runner('test', { host: 'http://param_host' }, %w(a b c))
       runner.configuration.delete('host')
-      host = runner.get_host
+      host = runner.host
       assert_equal('http://param_host', host)
     end
 
@@ -39,7 +39,7 @@ module Unipept
       runner.options.delete(:host)
       _out, err = capture_io_while do
         assert_raises SystemExit do
-          runner.get_host
+          runner.host
         end
       end
       assert(err.start_with? 'WARNING: no host has been set')
@@ -48,19 +48,19 @@ module Unipept
     def test_host_priority
       runner = new_runner('test', { host: 'http://param_host' }, %w(a b c))
       runner.configuration['host'] = 'http://config_host'
-      host = runner.get_host
+      host = runner.host
       assert_equal('http://param_host', host)
     end
 
     def test_http_host
       runner = new_runner('test', { host: 'param_host' }, %w(a b c))
-      host = runner.get_host
+      host = runner.host
       assert_equal('http://param_host', host)
     end
 
     def test_https_host
       runner = new_runner('test', { host: 'https://param_host' }, %w(a b c))
-      host = runner.get_host
+      host = runner.host
       assert_equal('https://param_host', host)
     end
 
