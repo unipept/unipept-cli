@@ -10,8 +10,6 @@ Style/ClassAndModuleChildren:
   Enabled: false
 
 # disable for now
-Style/AccessorMethodName:
-  Enabled: false
 Style/ClassVars:
   Enabled: false
 Style/Documentation:

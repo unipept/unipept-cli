@@ -21,13 +21,13 @@ module Unipept
     # - the host
     # - the user agent
     def set_configuration
-      @host = get_host
+      @host = host
       @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
     end
 
     # Returns the host. If a value is defined by both an option and the config
     # file, the value of the option is used.
-    def get_host
+    def host
       # find host in opts first
       host = options[:host] ? options[:host] : @configuration['host']
 

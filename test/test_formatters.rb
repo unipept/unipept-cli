@@ -38,7 +38,7 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.get_object))
+      assert_equal('', formatter.header(TestObject.test_object))
     end
 
     def test_type
@@ -46,7 +46,7 @@ module Unipept
     end
 
     def test_format
-      assert_equal(TestObject.get_object, formatter.format(TestObject.get_object))
+      assert_equal(TestObject.test_object, formatter.format(TestObject.test_object))
     end
   end
 
@@ -56,7 +56,7 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.get_object))
+      assert_equal('', formatter.header(TestObject.test_object))
     end
 
     def test_type
@@ -64,7 +64,7 @@ module Unipept
     end
 
     def test_format
-      assert_equal(TestObject.as_json, formatter.format(TestObject.get_object))
+      assert_equal(TestObject.as_json, formatter.format(TestObject.test_object))
     end
   end
 
@@ -75,7 +75,7 @@ module Unipept
 
     def test_header
       fasta = [['peptide', '>test']]
-      object = [TestObject.get_object, TestObject.get_object]
+      object = [TestObject.test_object, TestObject.test_object]
       assert_equal(TestObject.as_csv_header, formatter.header(object))
       assert_equal('fasta_header,' + TestObject.as_csv_header, formatter.header(object, fasta))
     end
@@ -85,14 +85,14 @@ module Unipept
     end
 
     def test_format
-      object = [TestObject.get_object, TestObject.get_object]
+      object = [TestObject.test_object, TestObject.test_object]
       csv = [TestObject.as_csv, TestObject.as_csv, ''].join("\n")
       assert_equal(csv, formatter.format(object))
     end
 
     def test_format_with_fasta
       fasta = [['>test', '5']]
-      object = [TestObject.get_object, TestObject.get_object]
+      object = [TestObject.test_object, TestObject.test_object]
       csv = ['>test,' + TestObject.as_csv, '>test,' + TestObject.as_csv, ''].join("\n")
       assert_equal(csv, formatter.format(object, fasta))
     end
@@ -104,7 +104,7 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.get_object))
+      assert_equal('', formatter.header(TestObject.test_object))
     end
 
     def test_type
@@ -112,12 +112,12 @@ module Unipept
     end
 
     def test_format
-      assert_equal(TestObject.as_xml, formatter.format(TestObject.get_object))
+      assert_equal(TestObject.as_xml, formatter.format(TestObject.test_object))
     end
   end
 
   class TestObject
-    def self.get_object
+    def self.test_object
       JSON.parse('{"integer": 5, "string": "string", "list": ["a", 2, false]}')
     end
 
