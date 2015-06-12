@@ -1,3 +1,5 @@
+require_relative '../../retryable_typhoeus'
+
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
     attr_reader :configuration
@@ -117,7 +119,7 @@ module Unipept
       batch_order = Unipept::BatchOrder.new
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
-        request = Typhoeus::Request.new(
+        request = ::RetryableTyphoeus::Request.new(
           @url,
           method: :post,
           body: construct_request_body(input_slice),
@@ -125,7 +127,19 @@ module Unipept
           headers: { 'User-Agent' => @user_agent }
         )
 
-        request.on_complete do |resp|
+        # Failure callback: retry if retries not exceeded
+        request.on_failure do |resp|
+          if resp.request.retries <= 0
+            block = handle_response(resp, batch_id, fasta_mapper)
+            batch_order.wait(batch_id, &block)
+          else
+            resp.request.retries -= 1
+            hydra.queue_front resp.request
+          end
+        end
+
+        # Success callback
+        request.on_success do |resp|
           block = handle_response(resp, batch_id, fasta_mapper)
           batch_order.wait(batch_id, &block)
         end
