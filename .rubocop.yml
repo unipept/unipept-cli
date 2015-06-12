@@ -14,8 +14,6 @@ Style/ClassVars:
   Enabled: false
 Style/Documentation:
   Enabled: false
-Style/IfUnlessModifier:
-  Enabled: false
 Style/RescueModifier:
   Enabled: false
 Metrics/AbcSize:

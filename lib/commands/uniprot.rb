@@ -62,9 +62,7 @@ module Unipept::Commands
       else
         # other format has been specified, just download and output
         resp = Typhoeus.get("http://www.uniprot.org/uniprot/#{accession}.#{format}")
-        if resp.success?
-          resp.response_body
-        end
+        resp.response_body if resp.success?
       end
     end
   end

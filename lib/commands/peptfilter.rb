@@ -33,9 +33,7 @@ module Unipept::Commands
           end
 
           pept = pept.chomp
-          if Peptfilter.filter(pept, minlen, maxlen, lacks, contains)
-            puts pept
-          end
+          puts pept if Peptfilter.filter(pept, minlen, maxlen, lacks, contains)
         end
       end
     end
