@@ -127,19 +127,7 @@ module Unipept
           headers: { 'User-Agent' => @user_agent }
         )
 
-        # Failure callback: retry if retries not exceeded
-        request.on_failure do |resp|
-          if resp.request.retries <= 0
-            block = handle_response(resp, batch_id, fasta_mapper)
-            batch_order.wait(batch_id, &block)
-          else
-            resp.request.retries -= 1
-            hydra.queue_front resp.request
-          end
-        end
-
-        # Success callback
-        request.on_success do |resp|
+        request.on_complete do |resp|
           block = handle_response(resp, batch_id, fasta_mapper)
           batch_order.wait(batch_id, &block)
         end
