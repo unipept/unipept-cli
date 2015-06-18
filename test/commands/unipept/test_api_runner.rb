@@ -121,6 +121,18 @@ module Unipept
       assert_equal(123, runner.batch_size)
     end
 
+    def test_number_of_parallel_requests
+      assert_equal(10, new_runner.concurrent_requests)
+      runner = new_runner('test',  host: 'http://param_host', parallel: '123')
+      assert_equal(123, runner.concurrent_requests)
+    end
+
+    def test_queue_size
+      assert_equal(200, new_runner.queue_size)
+      runner = new_runner('test',  host: 'http://param_host', parallel: '100')
+      assert_equal(2000, runner.queue_size)
+    end
+
     def test_default_formatter
       runner = new_runner
       assert_equal('csv', runner.formatter.type)
