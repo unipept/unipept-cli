@@ -34,6 +34,7 @@ module Unipept
 
       response_fail = new_response(400)
       response_success = new_response(200)
+      Typhoeus::Expectation.clear
       Typhoeus.stub('stubbed.com').and_return([response_fail, response_success])
 
       request = new_request
