@@ -5,7 +5,7 @@ module Unipept::Commands
       SimpleBatchIterator.new
     end
 
-    def batch_size
+    def default_batch_size
       fail 'NOT NEEDED FOR TAXA2LCA'
     end
   end

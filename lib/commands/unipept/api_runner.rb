@@ -54,9 +54,14 @@ module Unipept
       $stdin.each_line
     end
 
-    # Returns the default batch_size of a command.
-    def batch_size
+    # Returns the default default_batch_size of a command.
+    def default_batch_size
       100
+    end
+
+    # returns the effective batch_size of a command
+    def batch_size
+      default_batch_size
     end
 
     # Constructs a request body (a Hash) for set of input strings, using the

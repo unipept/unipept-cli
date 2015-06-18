@@ -2,11 +2,11 @@ require_relative '../../../lib/commands'
 
 module Unipept
   class UnipeptTaxa2lcaTestCase < Unipept::TestCase
-    def test_batch_size
+    def test_default_batch_size
       command = Cri::Command.define { name 'taxa2lca' }
       taxa2lca = Commands::Taxa2lca.new({ host: 'http://api.unipept.ugent.be' }, [], command)
       assert_raises RuntimeError do
-        taxa2lca.batch_size
+        taxa2lca.default_batch_size
       end
     end
 
