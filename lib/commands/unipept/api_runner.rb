@@ -68,6 +68,33 @@ module Unipept
       end
     end
 
+    # Returns an array of regular expressions containing all the selected fields
+    def selected_fields
+      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
+    end
+
+    # Returns a formatter, based on the format specified in the options
+    def formatter
+      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
+    end
+
+    # Returns a new batch_iterator based on the batch_size
+    def batch_iterator
+      Unipept::BatchIterator.new(batch_size)
+    end
+
+    def concurrent_requests
+      if options[:parallel]
+        options[:parallel].to_i
+      else
+        10
+      end
+    end
+
+    def queue_size
+      concurrent_requests * 20
+    end
+
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
     def construct_request_body(input)
@@ -77,16 +104,6 @@ module Unipept
         extra: options[:all] == true,
         names: options[:all] == true && names
       }
-    end
-
-    # Returns an array of regular expressions containing all the selected fields
-    def selected_fields
-      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
-    end
-
-    # Returns a formatter, based on the format specified in the options
-    def formatter
-      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
     end
 
     # Checks if the server has a message and prints it if not empty.
@@ -112,23 +129,6 @@ module Unipept
     def recently_fetched?
       last_fetched = @configuration['last_fetch_date']
       !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
-    end
-
-    # Returns a new batch_iterator based on the batch_size
-    def batch_iterator
-      Unipept::BatchIterator.new(batch_size)
-    end
-
-    def concurrent_requests
-      if options[:parallel]
-        options[:parallel].to_i
-      else
-        10
-      end
-    end
-
-    def queue_size
-      concurrent_requests * 20
     end
 
     # Runs the command
