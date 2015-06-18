@@ -4,8 +4,6 @@ module Unipept
 
     attr_reader :url
 
-    attr_reader :message_url
-
     attr_reader :user_agent
 
     def initialize(args, opts, cmd)
@@ -14,7 +12,6 @@ module Unipept
       set_configuration
 
       @url = "#{@host}/api/v1/#{cmd.name}.json"
-      @message_url = "#{@host}/api/v1/messages.json"
     end
 
     # Sets the configurable options of the command line app:
@@ -68,16 +65,6 @@ module Unipept
       end
     end
 
-    # Returns an array of regular expressions containing all the selected fields
-    def selected_fields
-      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
-    end
-
-    # Returns a formatter, based on the format specified in the options
-    def formatter
-      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
-    end
-
     # Returns a new batch_iterator based on the batch_size
     def batch_iterator
       Unipept::BatchIterator.new(batch_size)
@@ -95,6 +82,16 @@ module Unipept
       concurrent_requests * 20
     end
 
+    # Returns an array of regular expressions containing all the selected fields
+    def selected_fields
+      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
+    end
+
+    # Returns a formatter, based on the format specified in the options
+    def formatter
+      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
+    end
+
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
     def construct_request_body(input)
@@ -106,34 +103,9 @@ module Unipept
       }
     end
 
-    # Checks if the server has a message and prints it if not empty.
-    # We will only check this once a day and won't print anything if the quiet
-    # option is set or if we output to a file.
-    def print_server_message
-      return if options[:quiet]
-      return unless $stdout.tty?
-      return if recently_fetched?
-      @configuration['last_fetch_date'] = Time.now
-      @configuration.save
-      resp = fetch_server_message
-      puts resp unless resp.empty?
-    end
-
-    # Fetches a message from the server and returns it
-    def fetch_server_message
-      Typhoeus.get(@message_url, params: { version: Unipept::VERSION }).body.chomp
-    end
-
-    # Returns true if the last check for a server message was less than a day
-    # ago.
-    def recently_fetched?
-      last_fetched = @configuration['last_fetch_date']
-      !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
-    end
-
     # Runs the command
     def run
-      print_server_message
+      ServerMessage.new(@host).print unless options[:quiet]
       hydra = Typhoeus::Hydra.new(max_concurrency: concurrent_requests)
       batch_order = Unipept::BatchOrder.new
 

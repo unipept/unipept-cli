@@ -1,9 +1,10 @@
 require 'typhoeus'
 
-require_relative '../formatters'
-require_relative '../configuration'
 require_relative '../batch_order'
 require_relative '../batch_iterator'
+require_relative '../configuration'
+require_relative '../formatters'
+require_relative '../server_message'
 require_relative '../version'
 
 require_relative 'unipept/config'
