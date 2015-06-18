@@ -61,7 +61,7 @@ module Unipept
 
     # returns the effective batch_size of a command
     def batch_size
-      default_batch_size
+      options[:batch] || default_batch_size
     end
 
     # Constructs a request body (a Hash) for set of input strings, using the
