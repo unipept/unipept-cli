@@ -23,7 +23,11 @@ module RetryableTyphoeus
         super
       else
         @retries -= 1
-        @hydra.queue_front self
+        if @hydra
+          @hydra.queue_front self
+        else
+          run
+        end
       end
     end
   end
