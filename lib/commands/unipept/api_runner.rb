@@ -51,6 +51,10 @@ module Unipept
       $stdin.each_line
     end
 
+    def output_writer
+      @output_writer ||= OutputWriter.new(options[:output])
+    end
+
     # Returns the default default_batch_size of a command.
     def default_batch_size
       100
@@ -139,16 +143,6 @@ module Unipept
       $stderr.puts "API request failed! log can be found in #{path}"
     end
 
-    # Write a string to the output defined by the command. If a file is given,
-    # write it to the file. If not, write to stdout
-    def write_to_output(string)
-      if options[:output]
-        File.open(options[:output], 'a') { |f| f.write string }
-      else
-        puts string
-      end
-    end
-
     private
 
     def error_file_path
@@ -163,8 +157,8 @@ module Unipept
 
         lambda do
           unless result.empty?
-            write_to_output formatter.header(result, fasta_mapper) if batch_id == 0
-            write_to_output formatter.format(result, fasta_mapper)
+            output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
+            output_writer.write_line formatter.format(result, fasta_mapper)
           end
         end
       elsif response.timed_out?
