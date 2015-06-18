@@ -22,7 +22,6 @@ module RetryableTyphoeus
       if response.success? || @retries <= 0
         super
       else
-        p "FAILING #{@retries}"
         @retries -= 1
         @hydra.queue_front self
       end
