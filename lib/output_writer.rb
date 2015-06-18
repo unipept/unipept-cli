@@ -1,16 +1,11 @@
 module Unipept
   class OutputWriter
     def initialize(file)
-      @file  = File.open(file, 'a') if file
-      @stdout = file.nil?
+      @output = file ? File.open(file, 'a') : $stdout
     end
 
     def write_line(string)
-      if @stdout
-        puts string
-      else
-        @file.write string
-      end
+      @output.write string
     end
   end
 end
