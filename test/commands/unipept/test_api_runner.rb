@@ -108,8 +108,17 @@ module Unipept
       assert_equal(%w(a b c), output)
     end
 
+    def test_default_batch_size
+      assert_equal(100, new_runner.default_batch_size)
+    end
+
     def test_batch_size
       assert_equal(100, new_runner.batch_size)
+    end
+
+    def test_argument_batch_size
+      runner = new_runner('test',  host: 'http://param_host', batch: '123')
+      assert_equal(123, runner.batch_size)
     end
 
     def test_default_formatter

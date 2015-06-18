@@ -10,6 +10,12 @@ module Unipept
       assert_equal(100, pept2lca.default_batch_size)
     end
 
+    def test_batch_size
+      command = Cri::Command.define { name 'pept2lca' }
+      pept2lca = Commands::Pept2lca.new({ host: 'http://api.unipept.ugent.be', batch: '123' }, [], command)
+      assert_equal(123, pept2lca.batch_size)
+    end
+
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
