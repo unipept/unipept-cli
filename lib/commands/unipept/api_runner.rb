@@ -119,10 +119,22 @@ module Unipept
       Unipept::BatchIterator.new(batch_size)
     end
 
+    def concurrent_requests
+      if options[:parallel]
+        options[:parallel].to_i
+      else
+        10
+      end
+    end
+
+    def queue_size
+      concurrent_requests * 20
+    end
+
     # Runs the command
     def run
       print_server_message
-      hydra = Typhoeus::Hydra.new(max_concurrency: 10)
+      hydra = Typhoeus::Hydra.new(max_concurrency: concurrent_requests)
       batch_order = Unipept::BatchOrder.new
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
@@ -140,7 +152,7 @@ module Unipept
         end
 
         hydra.queue request
-        hydra.run if batch_id % 200 == 0
+        hydra.run if batch_id % queue_size == 0
       end
 
       hydra.run

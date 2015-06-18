@@ -51,6 +51,7 @@ module Unipept
         flag :q, :quiet, 'disable service messages'
         option :i, :input, 'read input from file', argument: :required
         option nil, :batch, 'specify the batch size', argument: :required, hidden: true
+        option nil, :parallel, 'specify the number of parallel requests', argument: :required, hidden: true
         option :o, :output, 'write output to file', argument: :required
         option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join ', ' }) (default: #{Unipept::Formatter.default})", argument: :required
 
