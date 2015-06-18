@@ -217,23 +217,6 @@ module Unipept
       assert_equal(false, body[:names])
     end
 
-    def test_stdout_write_to_output
-      runner = new_runner
-      out, _err = capture_io_while do
-        runner.write_to_output('hello world')
-      end
-      assert_equal('hello world', out.chomp)
-    end
-
-    def test_file_write_to_output
-      runner = new_runner('test', host: 'test', output: 'output_file')
-      out, _err = capture_io_while do
-        runner.write_to_output('hello world')
-      end
-      assert_equal('', out)
-      assert_equal('hello world', IO.foreach('output_file').next.chomp)
-    end
-
     def test_glob_to_regex
       runner = new_runner
       assert(/^simple$/, runner.glob_to_regex('simple'))
