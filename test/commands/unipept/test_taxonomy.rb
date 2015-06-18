@@ -2,10 +2,10 @@ require_relative '../../../lib/commands'
 
 module Unipept
   class UnipeptTaxonomyTestCase < Unipept::TestCase
-    def test_batch_size
+    def test_default_batch_size
       command = Cri::Command.define { name 'taxonomy' }
       taxonomy = Commands::Taxonomy.new({ host: 'http://api.unipept.ugent.be' }, [], command)
-      assert_equal(100, taxonomy.batch_size)
+      assert_equal(100, taxonomy.default_batch_size)
     end
 
     def test_help

@@ -1,9 +1,11 @@
 require 'typhoeus'
 
-require_relative '../formatters'
-require_relative '../configuration'
 require_relative '../batch_order'
 require_relative '../batch_iterator'
+require_relative '../configuration'
+require_relative '../formatters'
+require_relative '../output_writer'
+require_relative '../server_message'
 require_relative '../version'
 
 require_relative 'unipept/config'
@@ -50,6 +52,8 @@ module Unipept
         flag :v, :version, 'displays the version'
         flag :q, :quiet, 'disable service messages'
         option :i, :input, 'read input from file', argument: :required
+        option nil, :batch, 'specify the batch size', argument: :required, hidden: true
+        option nil, :parallel, 'specify the number of parallel requests', argument: :required, hidden: true
         option :o, :output, 'write output to file', argument: :required
         option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join ', ' }) (default: #{Unipept::Formatter.default})", argument: :required
 

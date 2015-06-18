@@ -14,7 +14,6 @@ module Unipept
       assert_equal(%w(a b c), runner.arguments)
       assert(!runner.configuration.nil?)
       assert_equal('http://test_host/api/v1/test.json', runner.url)
-      assert_equal('http://test_host/api/v1/messages.json', runner.message_url)
       assert(/Unipept CLI - unipept [0-9]\.[0-9]\.[0-9]/.match runner.user_agent)
     end
 
@@ -108,8 +107,29 @@ module Unipept
       assert_equal(%w(a b c), output)
     end
 
+    def test_default_batch_size
+      assert_equal(100, new_runner.default_batch_size)
+    end
+
     def test_batch_size
       assert_equal(100, new_runner.batch_size)
+    end
+
+    def test_argument_batch_size
+      runner = new_runner('test',  host: 'http://param_host', batch: '123')
+      assert_equal(123, runner.batch_size)
+    end
+
+    def test_number_of_parallel_requests
+      assert_equal(10, new_runner.concurrent_requests)
+      runner = new_runner('test',  host: 'http://param_host', parallel: '123')
+      assert_equal(123, runner.concurrent_requests)
+    end
+
+    def test_queue_size
+      assert_equal(200, new_runner.queue_size)
+      runner = new_runner('test',  host: 'http://param_host', parallel: '100')
+      assert_equal(2000, runner.queue_size)
     end
 
     def test_default_formatter
@@ -150,24 +170,6 @@ module Unipept
     def test_wildcard_selected_fields
       runner = new_runner('test',  host: 'http://param_host', select: 'field*')
       assert_equal([/^field.*$/], runner.selected_fields)
-    end
-
-    def test_never_recently_fetched
-      runner = new_runner
-      runner.configuration.delete('last_fetch_date')
-      assert(!runner.recently_fetched?)
-    end
-
-    def test_old_recently_fetched
-      runner = new_runner
-      runner.configuration['last_fetch_date'] = Time.now - 60 * 60 * 25
-      assert(!runner.recently_fetched?)
-    end
-
-    def test_recently_recently_fetched
-      runner = new_runner
-      runner.configuration['last_fetch_date'] = Time.now - 60 * 60 * 1
-      assert(runner.recently_fetched?)
     end
 
     def test_basic_construct_request_body
@@ -213,104 +215,6 @@ module Unipept
       assert_equal(false, body[:equate_il])
       assert_equal(true, body[:extra])
       assert_equal(false, body[:names])
-    end
-
-    def test_print_server_message
-      runner = new_runner
-      runner.stub(:recently_fetched?, false) do
-        runner.stub(:fetch_server_message, 'message') do
-          out, _err = capture_io_while do
-            def $stdout.tty?
-              true
-            end
-            runner.print_server_message
-          end
-          assert_equal('message', out.chomp)
-        end
-      end
-    end
-
-    def test_quiet_print_server_message
-      runner = new_runner('test', host: 'bla', quiet: true)
-      runner.stub(:recently_fetched?, false) do
-        runner.stub(:fetch_server_message, 'message') do
-          out, _err = capture_io_while do
-            def $stdout.tty?
-              true
-            end
-            $stdout.tty?
-            runner.print_server_message
-          end
-          assert_equal('', out)
-        end
-      end
-    end
-
-    def test_no_tty_print_server_message
-      runner = new_runner
-      runner.stub(:recently_fetched?, false) do
-        runner.stub(:fetch_server_message, 'message') do
-          out, _err = capture_io_while do
-            def $stdout.tty?
-              false
-            end
-            runner.print_server_message
-          end
-          assert_equal('', out)
-        end
-      end
-    end
-
-    def test_recent_print_server_message
-      runner = new_runner
-      runner.stub(:recently_fetched?, true) do
-        runner.stub(:fetch_server_message, 'message') do
-          out, _err = capture_io_while do
-            def $stdout.tty?
-              true
-            end
-            runner.print_server_message
-          end
-          assert_equal('', out)
-        end
-      end
-    end
-
-    def test_empty_print_server_message
-      runner = new_runner
-      runner.stub(:recently_fetched?, false) do
-        runner.stub(:fetch_server_message, '') do
-          out, _err = capture_io_while do
-            def $stdout.tty?
-              true
-            end
-            runner.print_server_message
-          end
-          assert_equal('', out)
-        end
-      end
-    end
-
-    def test_fetch_server_message
-      runner = new_runner('test', host: 'http://api.unipept.ugent.be')
-      assert(!runner.fetch_server_message.nil?)
-    end
-
-    def test_stdout_write_to_output
-      runner = new_runner
-      out, _err = capture_io_while do
-        runner.write_to_output('hello world')
-      end
-      assert_equal('hello world', out.chomp)
-    end
-
-    def test_file_write_to_output
-      runner = new_runner('test', host: 'test', output: 'output_file')
-      out, _err = capture_io_while do
-        runner.write_to_output('hello world')
-      end
-      assert_equal('', out)
-      assert_equal('hello world', IO.foreach('output_file').next.chomp)
     end
 
     def test_glob_to_regex
@@ -418,9 +322,6 @@ module Unipept
     def test_run
       runner = new_runner('taxonomy', host: 'http://api.unipept.ugent.be')
       out, err = capture_io_while do
-        def runner.print_server_message
-          puts 'server message'
-        end
         def runner.input_iterator
           %w(0 1 2).each
         end
@@ -431,7 +332,6 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert_equal('server message', lines.next.chomp)
       assert(lines.next.start_with? 'taxon_id')
       assert(lines.next.start_with? '1,root')
       assert(lines.next.start_with? '2,Bacteria')

@@ -2,12 +2,24 @@ require_relative '../../../lib/commands'
 
 module Unipept
   class UnipeptPept2lcaTestCase < Unipept::TestCase
+    def test_default_batch_size
+      command = Cri::Command.define { name 'pept2lca' }
+      pept2lca = Commands::Pept2lca.new({ host: 'http://api.unipept.ugent.be' }, [], command)
+      assert_equal(1000, pept2lca.default_batch_size)
+      pept2lca.options[:all] = true
+      assert_equal(100, pept2lca.default_batch_size)
+    end
+
+    def test_argument_batch_size
+      command = Cri::Command.define { name 'pept2lca' }
+      pept2lca = Commands::Pept2lca.new({ host: 'http://api.unipept.ugent.be', batch: '123' }, [], command)
+      assert_equal(123, pept2lca.batch_size)
+    end
+
     def test_batch_size
       command = Cri::Command.define { name 'pept2lca' }
       pept2lca = Commands::Pept2lca.new({ host: 'http://api.unipept.ugent.be' }, [], command)
       assert_equal(1000, pept2lca.batch_size)
-      pept2lca.options[:all] = true
-      assert_equal(100, pept2lca.batch_size)
     end
 
     def test_help

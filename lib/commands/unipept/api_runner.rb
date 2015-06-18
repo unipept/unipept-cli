@@ -6,8 +6,6 @@ module Unipept
 
     attr_reader :url
 
-    attr_reader :message_url
-
     attr_reader :user_agent
 
     def initialize(args, opts, cmd)
@@ -16,7 +14,6 @@ module Unipept
       set_configuration
 
       @url = "#{@host}/api/v1/#{cmd.name}.json"
-      @message_url = "#{@host}/api/v1/messages.json"
     end
 
     # Sets the configurable options of the command line app:
@@ -56,9 +53,49 @@ module Unipept
       $stdin.each_line
     end
 
-    # Returns the default batch_size of a command.
-    def batch_size
+    def output_writer
+      @output_writer ||= OutputWriter.new(options[:output])
+    end
+
+    # Returns the default default_batch_size of a command.
+    def default_batch_size
       100
+    end
+
+    # returns the effective batch_size of a command
+    def batch_size
+      if options[:batch]
+        options[:batch].to_i
+      else
+        default_batch_size
+      end
+    end
+
+    # Returns a new batch_iterator based on the batch_size
+    def batch_iterator
+      Unipept::BatchIterator.new(batch_size)
+    end
+
+    def concurrent_requests
+      if options[:parallel]
+        options[:parallel].to_i
+      else
+        10
+      end
+    end
+
+    def queue_size
+      concurrent_requests * 20
+    end
+
+    # Returns an array of regular expressions containing all the selected fields
+    def selected_fields
+      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
+    end
+
+    # Returns a formatter, based on the format specified in the options
+    def formatter
+      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
     end
 
     # Constructs a request body (a Hash) for set of input strings, using the
@@ -72,50 +109,10 @@ module Unipept
       }
     end
 
-    # Returns an array of regular expressions containing all the selected fields
-    def selected_fields
-      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
-    end
-
-    # Returns a formatter, based on the format specified in the options
-    def formatter
-      @formatter ||= Unipept::Formatter.new_for_format(options[:format])
-    end
-
-    # Checks if the server has a message and prints it if not empty.
-    # We will only check this once a day and won't print anything if the quiet
-    # option is set or if we output to a file.
-    def print_server_message
-      return if options[:quiet]
-      return unless $stdout.tty?
-      return if recently_fetched?
-      @configuration['last_fetch_date'] = Time.now
-      @configuration.save
-      resp = fetch_server_message
-      puts resp unless resp.empty?
-    end
-
-    # Fetches a message from the server and returns it
-    def fetch_server_message
-      Typhoeus.get(@message_url, params: { version: Unipept::VERSION }).body.chomp
-    end
-
-    # Returns true if the last check for a server message was less than a day
-    # ago.
-    def recently_fetched?
-      last_fetched = @configuration['last_fetch_date']
-      !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
-    end
-
-    # Returns a new batch_iterator based on the batch_size
-    def batch_iterator
-      Unipept::BatchIterator.new(batch_size)
-    end
-
     # Runs the command
     def run
-      print_server_message
-      hydra = Typhoeus::Hydra.new(max_concurrency: 10)
+      ServerMessage.new(@host).print unless options[:quiet]
+      hydra = Typhoeus::Hydra.new(max_concurrency: concurrent_requests)
       batch_order = Unipept::BatchOrder.new
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
@@ -133,7 +130,7 @@ module Unipept
         end
 
         hydra.queue request
-        hydra.run if batch_id % 200 == 0
+        hydra.run if batch_id % queue_size == 0
       end
 
       hydra.run
@@ -146,16 +143,6 @@ module Unipept
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, 'w') { |f| f.write message }
       $stderr.puts "API request failed! log can be found in #{path}"
-    end
-
-    # Write a string to the output defined by the command. If a file is given,
-    # write it to the file. If not, write to stdout
-    def write_to_output(string)
-      if options[:output]
-        File.open(options[:output], 'a') { |f| f.write string }
-      else
-        puts string
-      end
     end
 
     private
@@ -172,8 +159,8 @@ module Unipept
 
         lambda do
           unless result.empty?
-            write_to_output formatter.header(result, fasta_mapper) if batch_id == 0
-            write_to_output formatter.format(result, fasta_mapper)
+            output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
+            output_writer.write_line formatter.format(result, fasta_mapper)
           end
         end
       elsif response.timed_out?

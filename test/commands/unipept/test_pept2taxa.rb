@@ -2,12 +2,12 @@ require_relative '../../../lib/commands'
 
 module Unipept
   class UnipeptPept2taxaTestCase < Unipept::TestCase
-    def test_batch_size
+    def test_default_batch_size
       command = Cri::Command.define { name 'pept2taxa' }
       pept2taxa = Commands::Pept2taxa.new({ host: 'http://api.unipept.ugent.be' }, [], command)
-      assert_equal(10, pept2taxa.batch_size)
+      assert_equal(10, pept2taxa.default_batch_size)
       pept2taxa.options[:all] = true
-      assert_equal(5, pept2taxa.batch_size)
+      assert_equal(5, pept2taxa.default_batch_size)
     end
 
     def test_help
