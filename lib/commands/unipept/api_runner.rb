@@ -9,17 +9,10 @@ module Unipept
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
-      set_configuration
 
-      @url = "#{@host}/api/v1/#{cmd.name}.json"
-    end
-
-    # Sets the configurable options of the command line app:
-    # - the host
-    # - the user agent
-    def set_configuration
       @host = host
       @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
+      @url = "#{@host}/api/v1/#{cmd.name}.json"
     end
 
     # Returns the host. If a value is defined by both an option and the config
