@@ -57,7 +57,17 @@ module Unipept
     #   assert_equal(9, request.retries)
     # end
 
-    def test_failing_requests_finally_completes_with_error
+    def test_failing_requests_finally_complete_wo_hydra
+      response = new_response(400)
+      Typhoeus.stub('stubbed.com').and_return(response)
+
+      request = new_request
+      request.run
+
+      assert_equal(0, request.retries)
+    end
+
+    def test_failing_requests_finally_complete_with_error
       hydra = new_hydra
       response = new_response(400)
       Typhoeus.stub('stubbed.com').and_return(response)
