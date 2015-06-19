@@ -11,17 +11,10 @@ module Unipept
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
-      set_configuration
 
-      @url = "#{@host}/api/v1/#{cmd.name}.json"
-    end
-
-    # Sets the configurable options of the command line app:
-    # - the host
-    # - the user agent
-    def set_configuration
       @host = host
       @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
+      @url = "#{@host}/api/v1/#{cmd.name}.json"
     end
 
     # Returns the host. If a value is defined by both an option and the config
@@ -155,15 +148,25 @@ module Unipept
     # Returns a block to execute.
     def handle_response(response, batch_id, fasta_mapper)
       if response.success?
-        result = filter_result(response.response_body)
+        handle_success_response(response, batch_id, fasta_mapper)
+      else
+        handle_failed_response(response)
+      end
+    end
 
-        lambda do
-          unless result.empty?
-            output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
-            output_writer.write_line formatter.format(result, fasta_mapper)
-          end
+    def handle_success_response(response, batch_id, fasta_mapper)
+      result = filter_result(response.response_body)
+
+      lambda do
+        unless result.empty?
+          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
+          output_writer.write_line formatter.format(result, fasta_mapper)
         end
-      elsif response.timed_out?
+      end
+    end
+
+    def handle_failed_response(response)
+      if response.timed_out?
         -> { save_error('request timed out, continuing anyway, but results might be incomplete') }
       elsif response.code == 0
         -> { save_error('could not get an http response, continuing anyway, but results might be incomplete' + response.return_message) }
