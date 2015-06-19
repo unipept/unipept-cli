@@ -107,5 +107,5 @@ DEPENDENCIES
   jeweler
   minitest
   rake
-  rubocop (= 0.28)
+  rubocop
   typhoeus (= 0.7.2)
