@@ -104,7 +104,7 @@ module Unipept
 
     # Groups the data by the first key of each element, for example
     # [{key1: v1, key2: v2},{key1: v1, key2: v3},{key1: v4, key2: v2}]
-    # to {v1 => [{key1: v1, key2: v2},{key1: v1, key2: v3}], v4 => [{key1: v4, key2: v2}]]
+    # to {v1 => [{key1: v1, key2: v2},{key1: v1, key2: v3}], v4 => [{key1: v4, key2: v2}]}
     #
     # @param [Array<Hash>] data The data we wish to group
     #
@@ -188,7 +188,7 @@ module Unipept
 
     class ::Array
       def to_xml(array_name = :array, _item_name = :item)
-        %(<#{array_name} size="#{size}">) + map { |n|n.to_xml(:item) }.join + "</#{array_name}>"
+        %(<#{array_name}>) + map { |n|n.to_xml(:item) }.join + "</#{array_name}>"
       end
     end
 
