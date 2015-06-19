@@ -105,8 +105,11 @@ module Unipept
       ServerMessage.new(@host).print unless options[:quiet]
       hydra = Typhoeus::Hydra.new(max_concurrency: concurrent_requests)
       batch_order = Unipept::BatchOrder.new
+      last_id = 0
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
+        last_id =  batch_id
+
         request = Typhoeus::Request.new(
           @url,
           method: :post,
@@ -125,6 +128,7 @@ module Unipept
       end
 
       hydra.run
+      batch_order.wait(last_id + 1) { output_writer.write_line formatter.footer }
     end
 
     # Saves an error to a new file in the .unipept directory in the users home
@@ -158,7 +162,7 @@ module Unipept
       lambda do
         unless result.empty?
           output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
-          output_writer.write_line formatter.format(result, fasta_mapper)
+          output_writer.write_line formatter.format(result, fasta_mapper, batch_id == 0)
         end
       end
     end

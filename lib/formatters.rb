@@ -61,6 +61,10 @@ module Unipept
       ''
     end
 
+    def footer
+      ''
+    end
+
     # Converts the given input data and corresponding fasta headers to another
     # format.
     #
@@ -72,9 +76,9 @@ module Unipept
     # element is the input data
     #
     # @return [String] The converted input data
-    def format(data, fasta_mapper = nil)
+    def format(data, fasta_mapper = nil, first)
       data = integrate_fasta_headers(data, fasta_mapper) if fasta_mapper
-      convert(data)
+      convert(data, first)
     end
 
     # Converts the given input data to another format.
@@ -82,7 +86,7 @@ module Unipept
     # @param [Array] data The data we wish to convert
     #
     # @return [String] The converted input data
-    def convert(data)
+    def convert(data, _first)
       data
     end
 
@@ -123,13 +127,22 @@ module Unipept
       'json'
     end
 
+    def header(_data, _fasta_mapper = nil)
+      '['
+    end
+
+    def footer
+      "]\n"
+    end
+
     # Converts the given input data to the JSON format.
     #
     # @param [Array] data The data we wish to convert
     #
     # @return [String] The converted input data in the JSON format
-    def convert(data)
-      data.to_json
+    def convert(data, first)
+      output = data.map(&:to_json).join(',')
+      first ? output : ',' + output
     end
   end
 
@@ -168,7 +181,7 @@ module Unipept
     # @param [Array] data The data we wish to convert
     #
     # @return [String] The converted input data in the CSV format
-    def convert(data)
+    def convert(data, _first)
       CSV.generate do |csv|
         data.each do |o|
           csv << o.values.map { |v| v == ''  ? nil : v }
@@ -206,13 +219,21 @@ module Unipept
       'xml'
     end
 
+    def header(_data, _fasta_mapper = nil)
+      '<results>'
+    end
+
+    def footer
+      "</results>\n"
+    end
+
     # Converts the given input data to the XML format.
     #
     # @param [Array] data The data we wish to convert
     #
     # @return [String] The converted input data in the XML format
-    def convert(data)
-      data.to_xml
+    def convert(data, _first)
+      data.map { |row| '<result>' + row.to_xml + '</result>' }.join('')
     end
   end
 end
