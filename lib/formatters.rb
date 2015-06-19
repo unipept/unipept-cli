@@ -66,14 +66,51 @@ module Unipept
     #
     # @param [Array] data The data we wish to convert
     #
-    # @param [Array<Array<String>>] _fasta_mapper Optional mapping between input
+    # @param [Array<Array<String>>] fasta_mapper Optional mapping between input
     # data and corresponding fasta header. The data is represented as a list
     # containing tuples where the first element is the fasta header and second
     # element is the input data
     #
     # @return [String] The converted input data
-    def format(data, _fasta_mapper = nil)
+    def format(data, fasta_mapper = nil)
+      data = integrate_fasta_headers(data, fasta_mapper) if fasta_mapper
+      convert(data)
+    end
+
+    # Converts the given input data to another format.
+    #
+    # @param [Array] data The data we wish to convert
+    #
+    # @return [String] The converted input data
+    def convert(data)
       data
+    end
+
+    # Integrates the fasta headers into the data object
+    def integrate_fasta_headers(data, fasta_mapper)
+      data_dict = group_by_first_key(data)
+      data = fasta_mapper.map do |header, key|
+        result = data_dict[key]
+        unless result.nil?
+          result = result.map do |row|
+            copy = { fasta_header: header }
+            copy.merge(row)
+          end
+        end
+        result
+      end
+      data.compact.flatten(1)
+    end
+
+    # Groups the data by the first key of each element, for example
+    # [{key1: v1, key2: v2},{key1: v1, key2: v3},{key1: v4, key2: v2}]
+    # to {v1 => [{key1: v1, key2: v2},{key1: v1, key2: v3}], v4 => [{key1: v4, key2: v2}]]
+    #
+    # @param [Array<Hash>] data The data we wish to group
+    #
+    # @return [Hash] The input data grouped by the first key
+    def group_by_first_key(data)
+      data.group_by { |el| el.values.first.to_s }
     end
   end
 
@@ -86,19 +123,12 @@ module Unipept
       'json'
     end
 
-    # Converts the given input data and corresponding fasta headers to JSON.
-    # Currently ignores the fasta_mapper.
+    # Converts the given input data to the JSON format.
     #
     # @param [Array] data The data we wish to convert
     #
-    # @param [Array<Array<String>>] _fasta_mapper Optional mapping between input
-    # data and corresponding fasta header. The data is represented as a list
-    # containing tuples where the first element is the fasta header and second
-    # element is the input data
-    #
-    # @return [String] The input data converted to the JSON format.
-    def format(data, _fasta_mapper = nil)
-      # TODO: add fasta header based on fasta_mapper information
+    # @return [String] The converted input data in the JSON format
+    def convert(data)
       data.to_json
     end
   end
@@ -133,74 +163,17 @@ module Unipept
       end
     end
 
-    # Converts the given input data and corresponding fasta headers to the csv
-    # format
+    # Converts the given input data to the CSV format.
     #
     # @param [Array] data The data we wish to convert
     #
-    # @param [Array<Array<String>>] fasta_mapper Optional mapping between input
-    # data and corresponding fasta header. The data is represented as a list
-    # containing tuples where the first element is the fasta header and second
-    # element is the input data
-    #
-    # @return [String] The converted input data into the csv format
-    def format(data, fasta_mapper = nil)
+    # @return [String] The converted input data in the CSV format
+    def convert(data)
       CSV.generate do |csv|
-        if fasta_mapper
-          format_fasta(csv, data, fasta_mapper)
-        else
-          format_normal(csv, data)
+        data.each do |o|
+          csv << o.values.map { |v| v == ''  ? nil : v }
         end
       end
-    end
-
-    # Converts the given input data and corresponding fasta headers to the csv
-    # format
-    #
-    # @param [CSV] csv object we write the csv output to
-    #
-    # @param [Array] data The data we wish to convert
-    #
-    # @return [String] The converted input data into the csv format
-    def format_normal(csv, data)
-      data.each do |o|
-        csv << o.values.map { |v| v == ''  ? nil : v }
-      end
-    end
-
-    # Converts the given input data and corresponding fasta headers to the csv
-    # format
-    #
-    # @param [CSV] csv object we write the csv output to
-    #
-    # @param [Array] data The data we wish to convert
-    #
-    # @param [Array<Array<String>>] fasta_mapper Optional mapping between input
-    # data and corresponding fasta header. The data is represented as a list
-    # containing tuples where the first element is the fasta header and second
-    # element is the input data
-    #
-    # @return [String] The converted input data into the csv format
-    def format_fasta(csv, data, fasta_mapper)
-      data_dict = group_by_first_key(data)
-      fasta_mapper.each do |fasta_header, key|
-        next if data_dict[key].nil?
-
-        data_dict[key].each do |r|
-          csv << ([fasta_header] + r.values).map { |v| v == '' ? nil : v }
-        end
-      end
-    end
-
-    # Groups the data by the first key of each element, for example
-    # [{key1: v1, key2: v2},{key1: v1, key2: v3},{key1: v4, key2: v2}]
-    # to {v1 => [{key1: v1, key2: v2},{key1: v1, key2: v3}], v4 => [{key1: v4, key2: v2}]]
-    #
-    # @param [Array<Hash>] data The data we wish to Groups
-    #
-    # @return [Hash] The input data grouped by the first key
-    def group_by_first_key(data)
-      data.group_by { |el| el.values.first.to_s }
     end
   end
 
@@ -233,19 +206,12 @@ module Unipept
       'xml'
     end
 
-    # Converts the given input data and corresponding fasta headers to XML.
-    # Currently ignores the fasta_mapper.
+    # Converts the given input data to the XML format.
     #
     # @param [Array] data The data we wish to convert
     #
-    # @param [Array<Array<String>>] _fasta_mapper Optional mapping between input
-    # data and corresponding fasta header. The data is represented as a list
-    # containing tuples where the first element is the fasta header and second
-    # element is the input data
-    #
-    # @return [String] The input data converted to the XML format.
-    def format(data, _fasta_mapper = nil)
-      # TODO: add fasta header based on fasta_mapper information
+    # @return [String] The converted input data in the XML format
+    def convert(data)
       data.to_xml
     end
   end
