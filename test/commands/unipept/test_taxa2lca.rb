@@ -35,5 +35,29 @@ module Unipept
       assert(lines.next.start_with? 'taxon_id,taxon_name,taxon_rank')
       assert(lines.next.start_with? '1678,Bifidobacterium,genus')
     end
+
+    def test_run_xml
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(taxa2lca --host http://api.unipept.ugent.be --format xml 216816 1680))
+      end
+      lines = out.each_line
+      output = lines.to_a.join('').chomp
+      assert_equal('', err)
+      assert(output.start_with? '<results>')
+      assert(output.end_with? '</results>')
+    end
+
+    def test_run_json
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(taxa2lca --host http://api.unipept.ugent.be --format json 216816 1680))
+      end
+      lines = out.each_line
+      output = lines.to_a.join('').chomp
+      assert_equal('', err)
+      assert(output.start_with? '[')
+      assert(output.end_with? ']')
+      assert(!output.include?('}{'))
+      assert(!output.include?(']['))
+    end
   end
 end

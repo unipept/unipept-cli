@@ -47,5 +47,30 @@ module Unipept
       assert(lines.select { |line| line.start_with? '>test,ENFVYIAK,' }.size >= 1)
       assert(lines.select { |line| line.start_with? '>tost,EGGAGSSTGQR,' }.size >= 1)
     end
+
+    def test_run_with_fasta_multiple_batches_json
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 --format json >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      output = lines.to_a.join('').chomp
+      assert(output.start_with? '[')
+      assert(output.end_with? ']')
+      assert(!output.include?('}{'))
+      assert(output.include? 'fasta_header')
+    end
+
+    def test_run_with_fasta_multiple_batches_xml
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 --format xml >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      output = lines.to_a.join('').chomp
+      assert(output.start_with? '<results>')
+      assert(output.end_with? '</results>')
+      assert(output.include? '<fasta_header>')
+    end
   end
 end
