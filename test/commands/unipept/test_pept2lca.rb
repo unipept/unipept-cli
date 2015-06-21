@@ -48,5 +48,18 @@ module Unipept
       assert(lines.next.start_with? 'AALTER,1,root,no rank')
       assert_raises(StopIteration) { lines.next }
     end
+
+    def test_run_with_fasta_multiple_batches
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be --batch 2 >test AALTER AALER >tost AALTER))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      assert(lines.next.start_with? 'fasta_header,peptide,taxon_id')
+      assert(lines.next.start_with? '>test,AALTER,1,root,no rank')
+      assert(lines.next.start_with? '>test,AALER,1,root,no rank')
+      assert(lines.next.start_with? '>tost,AALTER,1,root,no rank')
+      assert_raises(StopIteration) { lines.next }
+    end
   end
 end

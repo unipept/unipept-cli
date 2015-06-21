@@ -35,5 +35,17 @@ module Unipept
       assert(lines.next.start_with? 'peptide,taxon_id,taxon_name,taxon_rank')
       assert(lines.next.start_with? 'ENFVYIAK,')
     end
+
+    def test_run_with_fasta_multiple_batches
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      assert(lines.next.start_with? 'fasta_header,peptide,taxon_id,taxon_name,taxon_rank')
+      assert(lines.select { |line| line.start_with? '>test,EGGAGSSTGQR,' }.size >= 1)
+      assert(lines.select { |line| line.start_with? '>test,ENFVYIAK,' }.size >= 1)
+      assert(lines.select { |line| line.start_with? '>tost,EGGAGSSTGQR,' }.size >= 1)
+    end
   end
 end

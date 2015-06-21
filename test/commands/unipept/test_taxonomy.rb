@@ -33,5 +33,17 @@ module Unipept
       assert(lines.next.start_with? 'taxon_id,taxon_name,taxon_rank')
       assert(lines.next.start_with? '1,root,no rank')
     end
+
+    def test_run_with_fasta_multiple_batches
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(taxonomy --host http://api.unipept.ugent.be --batch 2 >test 1 216816 >tost 1))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      assert(lines.next.start_with? 'fasta_header,taxon_id,taxon_name,taxon_rank')
+      assert(lines.select { |line| line.start_with? '>test,1,' }.size >= 1)
+      assert(lines.select { |line| line.start_with? '>test,216816,' }.size >= 1)
+      assert(lines.select { |line| line.start_with? '>tost,1,' }.size >= 1)
+    end
   end
 end
