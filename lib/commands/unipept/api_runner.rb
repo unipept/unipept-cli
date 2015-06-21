@@ -50,7 +50,7 @@ module Unipept
 
     # Returns the default default_batch_size of a command.
     def default_batch_size
-      100
+      fail NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # returns the effective batch_size of a command

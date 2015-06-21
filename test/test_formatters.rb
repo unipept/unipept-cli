@@ -51,15 +51,42 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.test_object))
+      assert_raises NotImplementedError do
+        formatter.header(TestObject.test_object, nil)
+      end
+    end
+
+    def test_footer
+      assert_raises NotImplementedError do
+        formatter.footer
+      end
     end
 
     def test_type
-      assert_equal('', formatter.type)
+      assert_raises NotImplementedError do
+        formatter.type
+      end
     end
 
     def test_format
-      assert_equal(TestObject.test_object, formatter.format(TestObject.test_object))
+      f = formatter
+      def f.integrate_fasta_headers(_a, _b)
+        puts 'header'
+      end
+      def f.convert(_a, _b)
+        'body'
+      end
+      assert_equal('body', f.format(TestObject.test_object, nil, false))
+      out, _err = capture_io_while do
+        assert_equal('body', f.format(TestObject.test_object, [], false))
+      end
+      assert_equal('header', out.chomp)
+    end
+
+    def test_convert
+      assert_raises NotImplementedError do
+        formatter.convert(TestObject.test_object, false)
+      end
     end
   end
 
@@ -69,21 +96,26 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.test_object))
+      assert_equal('[', formatter.header(TestObject.test_object, nil))
+    end
+
+    def test_footer
+      assert_equal("]\n", formatter.footer)
     end
 
     def test_type
       assert_equal('json', formatter.type)
     end
 
-    def test_format
-      assert_equal(TestObject.as_json, formatter.format(TestObject.test_object))
+    def test_convert
+      assert_equal(TestObject.as_json, formatter.convert([TestObject.test_object], true))
+      assert_equal(',' + TestObject.as_json, formatter.convert([TestObject.test_object], false))
     end
 
     def test_format_with_fasta
       fasta = [['>test', '5']]
-      output = formatter.format([TestObject.test_object], fasta)
-      json = '[{"fasta_header":">test","integer":5,"string":"string","list":["a",2,false]}]'
+      output = formatter.format([TestObject.test_object], fasta, true)
+      json = '{"fasta_header":">test","integer":5,"string":"string","list":["a",2,false]}'
       assert_equal(json, output)
     end
   end
@@ -100,21 +132,26 @@ module Unipept
       assert_equal('fasta_header,' + TestObject.as_csv_header, formatter.header(object, fasta))
     end
 
+    def test_footer
+      assert_equal('', formatter.footer)
+    end
+
     def test_type
       assert_equal('csv', formatter.type)
     end
 
-    def test_format
+    def test_convert
       object = [TestObject.test_object, TestObject.test_object]
       csv = [TestObject.as_csv, TestObject.as_csv, ''].join("\n")
-      assert_equal(csv, formatter.format(object))
+      assert_equal(csv, formatter.convert(object, true))
+      assert_equal(csv, formatter.convert(object, false))
     end
 
     def test_format_with_fasta
       fasta = [['>test', '5']]
       object = [TestObject.test_object, TestObject.test_object]
       csv = ['>test,' + TestObject.as_csv, '>test,' + TestObject.as_csv, ''].join("\n")
-      assert_equal(csv, formatter.format(object, fasta))
+      assert_equal(csv, formatter.format(object, fasta, false))
     end
   end
 
@@ -124,21 +161,27 @@ module Unipept
     end
 
     def test_header
-      assert_equal('', formatter.header(TestObject.test_object))
+      assert_equal('<results>', formatter.header(TestObject.test_object))
+    end
+
+    def test_footer
+      assert_equal("</results>\n", formatter.footer)
     end
 
     def test_type
       assert_equal('xml', formatter.type)
     end
 
-    def test_format
-      assert_equal(TestObject.as_xml, formatter.format(TestObject.test_object))
+    def test_convert
+      xml = '<result>' + TestObject.as_xml + '</result>'
+      assert_equal(xml, formatter.convert([TestObject.test_object], true))
+      assert_equal(xml, formatter.convert([TestObject.test_object], false))
     end
 
     def test_format_with_fasta
       fasta = [['>test', '5']]
-      output = formatter.format([TestObject.test_object], fasta)
-      xml = '<array><item><fasta_header>>test</fasta_header>' + TestObject.as_xml + '</item></array>'
+      output = formatter.format([TestObject.test_object], fasta, false)
+      xml = '<result><fasta_header>>test</fasta_header>' + TestObject.as_xml + '</result>'
       assert_equal(xml, output)
     end
   end

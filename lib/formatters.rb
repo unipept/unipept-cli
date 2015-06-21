@@ -42,7 +42,7 @@ module Unipept
 
     # @return [String] The type of the current formatter
     def type
-      ''
+      fail NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Returns the header row for the given sample_data and fasta_mapper. This
@@ -58,11 +58,15 @@ module Unipept
     #
     # @return [String] The header row
     def header(_sample_data, _fasta_mapper = nil)
-      ''
+      fail NotImplementedError, 'This must be implemented in a subclass.'
     end
 
+    # Returns the footer row. This row is output only once at the end of the
+    # output
+    #
+    # @return [String] The footer row
     def footer
-      ''
+      fail NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Converts the given input data and corresponding fasta headers to another
@@ -75,6 +79,8 @@ module Unipept
     # containing tuples where the first element is the fasta header and second
     # element is the input data
     #
+    # @param [Boolean] Is this the first output batch?
+    #
     # @return [String] The converted input data
     def format(data, fasta_mapper = nil, first)
       data = integrate_fasta_headers(data, fasta_mapper) if fasta_mapper
@@ -85,9 +91,11 @@ module Unipept
     #
     # @param [Array] data The data we wish to convert
     #
+    # @param [Boolean] Is this the first output batch?
+    #
     # @return [String] The converted input data
-    def convert(data, _first)
-      data
+    def convert(_data, _first)
+      fail NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Integrates the fasta headers into the data object
@@ -139,6 +147,8 @@ module Unipept
     #
     # @param [Array] data The data we wish to convert
     #
+    # @param [Boolean] Is this the first output batch?
+    #
     # @return [String] The converted input data in the JSON format
     def convert(data, first)
       output = data.map(&:to_json).join(',')
@@ -176,9 +186,15 @@ module Unipept
       end
     end
 
+    def footer
+      ''
+    end
+
     # Converts the given input data to the CSV format.
     #
     # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
     #
     # @return [String] The converted input data in the CSV format
     def convert(data, _first)
@@ -230,6 +246,8 @@ module Unipept
     # Converts the given input data to the XML format.
     #
     # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
     #
     # @return [String] The converted input data in the XML format
     def convert(data, _first)

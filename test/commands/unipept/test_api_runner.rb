@@ -108,11 +108,17 @@ module Unipept
     end
 
     def test_default_batch_size
-      assert_equal(100, new_runner.default_batch_size)
+      assert_raises NotImplementedError do
+        new_runner.default_batch_size
+      end
     end
 
     def test_batch_size
-      assert_equal(100, new_runner.batch_size)
+      r = new_runner
+      def r.default_batch_size
+        100
+      end
+      assert_equal(100, r.batch_size)
     end
 
     def test_argument_batch_size
