@@ -14,7 +14,7 @@ To use the Unipept CLI, Ruby version 1.9.3 or higher needs to be installed. You 
 
 ```
 $ ruby -v
-ruby 2.1.1p76 (2014-02-24 revision 45161) [x86_64-darwin12.0]
+ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-darwin14.0]
 ```
 
 More information on installing Ruby can be found at https://www.ruby-lang.org/en/installation/
@@ -23,8 +23,8 @@ The Unipept CLI is available as a *gem*. This means it can easily be installed w
 
 ```bash
 $ gem install unipept
-Successfully installed unipept-0.8.0
-Parsing documentation for unipept-0.8.0
+Successfully installed unipept-0.9.0
+Parsing documentation for unipept-0.9.0
 Done installing documentation for unipept after 0 seconds
 1 gem installed
 ```
@@ -33,7 +33,7 @@ After successful installation, the unipept command should be available:
 
 ```bash
 $ unipept -v
-0.8.0
+0.9.0
 ```
 
 The help can be accessed by running `unipept -h`.
