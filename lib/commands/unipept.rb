@@ -104,8 +104,6 @@ module Unipept
         - to standard input
 
         The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
-
-        The unipept pept2taxa subcommand yields NCBI Taxonomy records as output.
         EOS
 
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
@@ -130,8 +128,6 @@ module Unipept
          - to standard input
 
         The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
-
-        The unipept pept2lca subcommand yields an NCBI Taxonomy record as output.
         EOS
 
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
@@ -156,8 +152,6 @@ module Unipept
          - to standard input
 
         The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
-
-        The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
         EOS
 
         flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
@@ -181,8 +175,6 @@ module Unipept
         - to standard input
 
         The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
-
-        The unipept pept2prot subcommand yields Uniprot records as output.
         EOS
 
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
@@ -207,8 +199,6 @@ module Unipept
         - to standard input
 
         The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
-
-        The unipept taxonomy subcommand yields NCBI Taxonomy records as output.
         EOS
 
         flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
