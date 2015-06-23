@@ -36,12 +36,8 @@ module Unipept
       runner = new_runner('test', { host: 'param_host' }, %w(a b c))
       runner.configuration.delete('host')
       runner.options.delete(:host)
-      _out, err = capture_io_while do
-        assert_raises SystemExit do
-          runner.host
-        end
-      end
-      assert(err.start_with? 'WARNING: no host has been set')
+      host = runner.host
+      assert_equal('http://api.unipept.ugent.be', host)
     end
 
     def test_host_priority

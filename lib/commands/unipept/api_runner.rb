@@ -20,11 +20,7 @@ module Unipept
     def host
       # find host in opts first
       host = options[:host] ? options[:host] : @configuration['host']
-
-      # No host has been set?
-      if host.nil? || host.empty?
-        abort 'WARNING: no host has been set, you can set the host with `unipept config host http://api.unipept.ugent.be/`'
-      end
+      host = 'http://api.unipept.ugent.be' if host.nil? || host.empty?
 
       # add http:// if needed
       if host.start_with?('http://') || host.start_with?('https://')
