@@ -88,7 +88,7 @@ module Unipept
     # Constructs a request body (a Hash) for set of input strings, using the
     # options supplied by the user.
     def construct_request_body(input)
-      names = selected_fields.empty? || selected_fields.any? { |f| f.to_s.include? 'name' }
+      names = selected_fields.empty? || selected_fields.any? { |f| f.to_s.include?('name') || f.to_s.include?('.*$') }
       { input: input,
         equate_il: options[:equate] == true,
         extra: options[:all] == true,

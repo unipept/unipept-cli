@@ -210,6 +210,15 @@ module Unipept
       assert_equal(true, body[:names])
     end
 
+    def test_all_names_wildcard_select_construct_request_body
+      runner = new_runner('test',  host: 'http://param_host', all: true, select: 'test,order*')
+      body = runner.construct_request_body('test')
+      assert_equal('test', body[:input])
+      assert_equal(false, body[:equate_il])
+      assert_equal(true, body[:extra])
+      assert_equal(true, body[:names])
+    end
+
     def test_all_no_names_select_construct_request_body
       runner = new_runner('test',  host: 'http://param_host', all: true, select: 'test')
       body = runner.construct_request_body('test')
