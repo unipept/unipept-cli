@@ -23,7 +23,7 @@ Jeweler::Tasks.new do |gem|
   gem.summary = 'Command line interface to Unipept web services.'
   gem.description = <<-EOS
   Command line interface to the Unipept (http://unipept.ugent.be) web services
-  (pept2lca, taxa2lca, pept2taxa and taxonomy) and some utility commands for
+  (pept2lca, taxa2lca, pept2taxa, pept2prot and taxonomy) and some utility commands for
   handling proteins using the command line.
   EOS
   gem.email = 'unipept@ugent.be'
