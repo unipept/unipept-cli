@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
   s.date = "2015-06-21"
-  s.description = "  Command line interface to the Unipept (http://unipept.ugent.be) web services\n  (pept2lca, taxa2lca, pept2taxa and taxonomy) and some utility commands for\n  handling proteins using the command line.\n"
+  s.description = "Command line interface to the Unipept (http://unipept.ugent.be) web services (pept2lca, taxa2lca, pept2taxa and taxonomy) and some utility commands for handling proteins using the command line."
   s.email = "unipept@ugent.be"
   s.executables = ["unipept", "prot2pept", "peptfilter", "uniprot"]
   s.extra_rdoc_files = [
@@ -108,4 +108,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<coveralls>, [">= 0"])
   end
 end
-
