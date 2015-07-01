@@ -7,9 +7,9 @@ gem 'cri', '~> 2.7'
 gem 'typhoeus', '0.7.2'
 
 group :development do
-  gem 'rake'
-  gem 'minitest'
-  gem 'rubocop'
-  gem 'jeweler'
+  gem 'rake', '~> 10.4'
+  gem 'minitest', '~> 5.7'
+  gem 'rubocop', '~>0.32'
+  gem 'jeweler', '~> 2.0'
   gem 'coveralls', require: false
 end
