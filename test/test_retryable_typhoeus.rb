@@ -83,8 +83,8 @@ module Unipept
 
     def new_request(extra_opts = {})
       ::RetryableTyphoeus::Request.new(
-          'stubbed.com',
-          request_options.merge(extra_opts)
+        'stubbed.com',
+        request_options.merge(extra_opts)
       )
     end
 

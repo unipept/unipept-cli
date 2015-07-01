@@ -10,6 +10,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 
 # disable for now
+Lint/NestedMethodDefinition:
+  Enabled: false
 Style/ClassVars:
   Enabled: false
 Style/Documentation:

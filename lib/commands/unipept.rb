@@ -55,7 +55,7 @@ module Unipept
         option nil, :batch, 'specify the batch size', argument: :required, hidden: true
         option nil, :parallel, 'specify the number of parallel requests', argument: :required, hidden: true
         option :o, :output, 'write output to file', argument: :required
-        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join ', ' }) (default: #{Unipept::Formatter.default})", argument: :required
+        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.join ', '}) (default: #{Unipept::Formatter.default})", argument: :required
 
         # Configuration options
         option nil, 'host', 'specify the server running the Unipept web service', argument: :required

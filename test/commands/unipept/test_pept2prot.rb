@@ -43,9 +43,9 @@ module Unipept
       lines = out.each_line
       assert_equal('', err)
       assert(lines.next.start_with? 'fasta_header,peptide,uniprot_id,taxon_id')
-      assert(lines.select { |line| line.start_with? '>test,EGGAGSSTGQR,' }.size >= 1)
-      assert(lines.select { |line| line.start_with? '>test,ENFVYIAK,' }.size >= 1)
-      assert(lines.select { |line| line.start_with? '>tost,EGGAGSSTGQR,' }.size >= 1)
+      assert(lines.count { |line| line.start_with? '>test,EGGAGSSTGQR,' } >= 1)
+      assert(lines.count { |line| line.start_with? '>test,ENFVYIAK,' } >= 1)
+      assert(lines.count { |line| line.start_with? '>tost,EGGAGSSTGQR,' } >= 1)
     end
 
     def test_run_with_fasta_multiple_batches_json

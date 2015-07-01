@@ -200,7 +200,7 @@ module Unipept
     def convert(data, _first)
       CSV.generate do |csv|
         data.each do |o|
-          csv << o.values.map { |v| v == ''  ? nil : v }
+          csv << o.values.map { |v| v == '' ? nil : v }
         end
       end
     end
@@ -217,13 +217,13 @@ module Unipept
 
     class ::Array
       def to_xml(array_name = :array, _item_name = :item)
-        %(<#{array_name}>) + map { |n|n.to_xml(:item) }.join + "</#{array_name}>"
+        %(<#{array_name}>) + map { |n| n.to_xml(:item) }.join + "</#{array_name}>"
       end
     end
 
     class ::Hash
       def to_xml(name = nil)
-        data = to_a.map { |k, v|v.to_xml(k) }.join
+        data = to_a.map { |k, v| v.to_xml(k) }.join
         name ? "<#{name}>#{data}</#{name}>" : data
       end
     end
