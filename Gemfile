@@ -4,7 +4,7 @@ source 'http://rubygems.org'
 #   gem "activesupport", ">= 2.3.5"
 
 gem 'cri', '~> 2.7'
-gem 'typhoeus', '~> 0.6'
+gem 'typhoeus', '0.7.2'
 
 group :development do
   gem 'rake'

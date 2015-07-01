@@ -1,3 +1,5 @@
+require_relative '../../retryable_typhoeus'
+
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
     attr_reader :configuration
@@ -105,8 +107,7 @@ module Unipept
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         last_id =  batch_id
-
-        request = Typhoeus::Request.new(
+        request = ::RetryableTyphoeus::Request.new(
           @url,
           method: :post,
           body: construct_request_body(input_slice),
