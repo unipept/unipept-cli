@@ -8,16 +8,16 @@ module Unipept::Commands
     valid_formats = Set.new %w(fasta txt xml rdf gff sequence)
     @root_command = Cri::Command.define do
       name 'uniprot'
-      summary 'Command line interface to Uniprot web services.'
+      summary 'Command line interface to UniProt web services.'
       usage 'uniprot [options]'
       description <<-EOS
-      The uniprot command is a command line wrapper around the Uniprot web services. The command expects a list of Uniprot Accession Numbers that are passed
+      The uniprot command is a command line wrapper around the UniProt web services. The command expects a list of UniProt Accession Numbers that are passed
 
       - as separate command line arguments
 
       - to standard input
 
-      The command will give priority to the first way Uniprot Accession Numbers are passed, in the order as listed above. The standard input should have one Uniprot Accession Number per line.
+      The command will give priority to the first way UniProt Accession Numbers are passed, in the order as listed above. The standard input should have one UniProt Accession Number per line.
 
       The uniprot command yields just the protein sequences as a default, but can return several formats.
       EOS
@@ -48,14 +48,14 @@ module Unipept::Commands
       @root_command.run(args)
     end
 
-    # Fetches a Uniprot record from the uniprot website with the given accession
+    # Fetches a UniProt entry from the UniProt website with the given accession
     # number in the requested format.
     #
     # @param [String] accession The accession number of the record to fetch
     #
     # @param [String] format The format of of the record. If the format is 'sequence', the sequence will be returned in as a single line
     #
-    # @return [String] The requested Uniprot record in the requested format
+    # @return [String] The requested UniProt entry in the requested format
     def self.get_uniprot_entry(accession, format)
       if format == 'sequence'
         get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..-1].join('')
