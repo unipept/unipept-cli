@@ -11,5 +11,5 @@ group :development do
   gem 'minitest', '~> 5.7'
   gem 'rubocop', '~>0.32'
   gem 'jeweler', '~> 2.0'
-  gem 'coveralls', require: false
+  gem 'coveralls', '~> 0', require: false
 end

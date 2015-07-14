@@ -103,7 +103,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  coveralls
+  coveralls (~> 0)
   cri (~> 2.7)
   jeweler (~> 2.0)
   minitest (~> 5.7)
