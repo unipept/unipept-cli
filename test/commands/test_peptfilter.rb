@@ -151,6 +151,16 @@ module Unipept
       assert_equal(">\nAALTER\n>", out.chomp)
     end
 
+    def test_no_input
+      out, err = capture_io_while do
+        assert_raises SystemExit do
+          Commands::Peptfilter.run(%w(some argument))
+        end
+      end
+      assert_equal('', out.chomp)
+      assert_equal("error: peptfilter doesn't support input as arguments. Use standard input instead.", err.chomp)
+    end
+
     def test_normal_input
       out, _err = capture_io_with_input(['A', 'A' * 11, 'AAAAB', 'BBBBB', 'CCCCC', 'CCCCCA']) do
         Commands::Peptfilter.run(%w(--minlen 4 --maxlen 10 --lacks B --contains A))

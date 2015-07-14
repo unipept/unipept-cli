@@ -20,7 +20,8 @@ module Unipept::Commands
         puts cmd.help
         exit 0
       end
-      run do |opts, _args, _cmd|
+      run do |opts, args, _cmd|
+        abort "error: peptfilter doesn't support input as arguments. Use standard input instead." unless args.empty?
         minlen = opts.fetch(:minlen, '5').to_i
         maxlen = opts.fetch(:maxlen, '50').to_i
         lacks = opts.fetch(:lacks, '').chars.to_a
