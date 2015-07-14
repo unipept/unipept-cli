@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.require_paths = ["lib"]
   s.authors = ["Toon Willems", "Bart Mesuere", "Tom Naessens"]
   s.date = "2015-07-14"
   s.description = "  Command line interface to the Unipept (http://unipept.ugent.be) web services\n  (pept2lca, taxa2lca, pept2taxa, pept2prot and taxonomy) and some utility commands for\n  handling proteins using the command line.\n"
@@ -75,9 +76,8 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "https://github.com/unipept/unipept-cli/"
   s.licenses = ["MIT"]
-  s.require_paths = ["lib"]
   s.required_ruby_version = Gem::Requirement.new(">= 1.9.3")
-  s.rubygems_version = "2.1.11"
+  s.rubygems_version = "2.4.8"
   s.summary = "Command line interface to Unipept web services."
 
   if s.respond_to? :specification_version then
