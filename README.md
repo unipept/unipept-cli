@@ -6,7 +6,7 @@
 [![Code Climate](https://codeclimate.com/github/unipept/unipept-cli/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept-cli)
 
 Unipept-cli offers a command line interface to the [Unipept](http://unipept.ugent.be) web service.
-Documentation about the web service can be found at [http://unipept.ugent.be/apidocs](http://unipept.ugent.be/apidocs).
+Documentation about the web service can be found at [http://unipept.ugent.be/apidocs](http://unipept.ugent.be/apidocs), documentation about the command line tools at [http://unipept.ugent.be/clidocs](http://unipept.ugent.be/clidocs).
 
 ## Installation
 
@@ -14,7 +14,7 @@ To use the Unipept CLI, Ruby version 1.9.3 or higher needs to be installed. You 
 
 ```
 $ ruby -v
-ruby 2.1.6p336 (2015-04-13 revision 50298) [x86_64-darwin14.0]
+ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]
 ```
 
 More information on installing Ruby can be found at https://www.ruby-lang.org/en/installation/
@@ -23,8 +23,8 @@ The Unipept CLI is available as a *gem*. This means it can easily be installed w
 
 ```bash
 $ gem install unipept
-Successfully installed unipept-0.10.0
-Parsing documentation for unipept-0.10.0
+Successfully installed unipept-1.0.0
+Parsing documentation for unipept-1.0.0
 Done installing documentation for unipept after 0 seconds
 1 gem installed
 ```
@@ -33,7 +33,7 @@ After successful installation, the unipept command should be available:
 
 ```bash
 $ unipept -v
-0.10.0
+1.0.0
 ```
 
 The help can be accessed by running `unipept -h`.

@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = 'unipept'
   gem.executables = %w(unipept prot2pept peptfilter uniprot)
-  gem.homepage = 'https://github.com/unipept/unipept-cli/'
+  gem.homepage = 'http://unipept.ugent.be'
   gem.license = 'MIT'
   gem.summary = 'Command line interface to Unipept web services.'
   gem.description = <<-EOS
