@@ -110,3 +110,6 @@ DEPENDENCIES
   rake (~> 10.4)
   rubocop (~> 0.32)
   typhoeus (= 0.7.2)
+
+BUNDLED WITH
+   1.10.3
