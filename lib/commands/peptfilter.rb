@@ -38,8 +38,6 @@ module Unipept::Commands
       end
     end
 
-    @root_command.add_command(Cri::Command.new_basic_help)
-
     # Invokes the peptfilter command-line tool with the given arguments.
     #
     # @param [Array<String>] args An array of command-line arguments
