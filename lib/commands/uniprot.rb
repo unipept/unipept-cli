@@ -11,7 +11,7 @@ module Unipept::Commands
       summary 'Command line interface to UniProt web services.'
       usage 'uniprot [options]'
       description <<-EOS
-      The uniprot command is a command line wrapper around the UniProt web services. The command expects a list of UniProt Accession Numbers that are passed
+      The uniprot command fetches UniProt entries from the UniProt web services. The command expects a list of UniProt Accession Numbers that are passed
 
       - as separate command line arguments
 
