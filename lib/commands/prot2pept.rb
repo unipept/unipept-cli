@@ -20,6 +20,7 @@ module Unipept::Commands
       end
       run do |opts, _args, _cmd|
         pattern = opts.fetch(:pattern, '([KR])([^P])')
+        pattern = Regexp.compile(pattern)
 
         # decide if we have FASTA input
         first_char = $stdin.getc
@@ -33,7 +34,7 @@ module Unipept::Commands
               protein = ''
               puts line
             else
-              protein += line.chomp
+              protein << line.chomp
             end
           end
           puts Prot2pept.split(protein, pattern)
@@ -46,7 +47,7 @@ module Unipept::Commands
     end
 
     def self.split(protein, pattern)
-      protein.tr('*', "\n").gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+      protein.tr('*', "\n").gsub(pattern, "\\1\n\\2").gsub(pattern, "\\1\n\\2").split("\n").reject(&:empty?)
     end
 
     # Invokes the uniprot command-line tool with the given arguments.
