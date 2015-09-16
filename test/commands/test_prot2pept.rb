@@ -8,6 +8,11 @@ module Unipept
       end
       assert_equal("AALTER\nAALTERPAALTER", out.chomp)
 
+      out, _err = capture_io_with_input('AALTERAAL*TERPAALTER') do
+        Commands::Prot2pept.run(%w())
+      end
+      assert_equal("AALTER\nAAL\nTERPAALTER", out.chomp)
+
       out, _err = capture_io_with_input('KRKPR') do
         Commands::Prot2pept.run(%w())
       end

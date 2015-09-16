@@ -46,7 +46,7 @@ module Unipept::Commands
     end
 
     def self.split(protein, pattern)
-      protein.gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
+      protein.gsub(/\*/, "\n").gsub(/#{pattern}/, "\\1\n\\2").gsub(/#{pattern}/, "\\1\n\\2").split("\n").reject(&:empty?)
     end
 
     # Invokes the uniprot command-line tool with the given arguments.
