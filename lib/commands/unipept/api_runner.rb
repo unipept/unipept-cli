@@ -60,6 +60,11 @@ module Unipept
       end
     end
 
+    # returns the required fields to do any mapping
+    def required_fields
+      []
+    end
+
     # Returns a new batch_iterator based on the batch_size
     def batch_iterator
       Unipept::BatchIterator.new(batch_size)
@@ -79,7 +84,10 @@ module Unipept
 
     # Returns an array of regular expressions containing all the selected fields
     def selected_fields
-      @selected_fields ||= [*options[:select]].map { |f| f.split(',') }.flatten.map { |f| glob_to_regex(f) }
+      return @selected_fields unless @selected_fields.nil?
+      fields = [*options[:select]].map { |f| f.split(',') }.flatten
+      fields.concat(required_fields) unless fields.empty?
+      @selected_fields = fields.map { |f| glob_to_regex(f) }
     end
 
     # Returns a formatter, based on the format specified in the options
