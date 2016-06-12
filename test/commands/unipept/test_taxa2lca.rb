@@ -10,6 +10,12 @@ module Unipept
       end
     end
 
+    def test_required_fields
+      command = Cri::Command.define { name 'taxa2lca' }
+      taxa2lca = Commands::Taxa2lca.new({ host: 'http://api.unipept.ugent.be' }, [], command)
+      assert_equal([], taxa2lca.required_fields)
+    end
+
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do

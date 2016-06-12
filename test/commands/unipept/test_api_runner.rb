@@ -103,6 +103,18 @@ module Unipept
       assert_equal(%w(a b c), output)
     end
 
+    def test_required_fields
+      assert_equal([], new_runner.required_fields)
+    end
+
+    def test_required_fields_configurable
+      r = new_runner
+      def r.required_fields
+        ['test']
+      end
+      assert_equal(['test'], r.required_fields)
+    end
+
     def test_default_batch_size
       assert_raises NotImplementedError do
         new_runner.default_batch_size
@@ -147,6 +159,22 @@ module Unipept
     def test_no_selected_fields
       runner = new_runner
       assert_equal([], runner.selected_fields)
+    end
+
+    def test_required_fields_are_not_selected_with_empty_selection
+      runner = new_runner
+      def runner.required_fields
+        ['test']
+      end
+      assert_equal([], runner.selected_fields)
+    end
+
+    def test_required_fields_are_selected
+      runner = new_runner('test',  host: 'http://param_host', select: 'field')
+      def runner.required_fields
+        ['test']
+      end
+      assert_equal([/^field$/, /^test$/], runner.selected_fields)
     end
 
     def test_single_selected_fields

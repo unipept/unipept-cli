@@ -10,6 +10,12 @@ module Unipept
       assert_equal(5, pept2prot.default_batch_size)
     end
 
+    def test_required_fields
+      command = Cri::Command.define { name 'pept2prot' }
+      pept2prot = Commands::Pept2prot.new({ host: 'http://api.unipept.ugent.be' }, [], command)
+      assert_equal(['peptide'], pept2prot.required_fields)
+    end
+
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
@@ -43,6 +49,18 @@ module Unipept
       lines = out.each_line
       assert_equal('', err)
       assert(lines.next.start_with? 'fasta_header,peptide,uniprot_id,protein_name,taxon_id')
+      assert(lines.count { |line| line.start_with? '>test,EGGAGSSTGQR,' } >= 1)
+      assert(lines.count { |line| line.start_with? '>test,ENFVYIAK,' } >= 1)
+      assert(lines.count { |line| line.start_with? '>tost,EGGAGSSTGQR,' } >= 1)
+    end
+
+    def test_run_with_fasta_multiple_batches_and_select
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w(pept2prot --host http://api.unipept.ugent.be --batch 2 --select uniprot_id >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+      end
+      lines = out.each_line
+      assert_equal('', err)
+      assert(lines.next.start_with? 'fasta_header,peptide,uniprot_id')
       assert(lines.count { |line| line.start_with? '>test,EGGAGSSTGQR,' } >= 1)
       assert(lines.count { |line| line.start_with? '>test,ENFVYIAK,' } >= 1)
       assert(lines.count { |line| line.start_with? '>tost,EGGAGSSTGQR,' } >= 1)
