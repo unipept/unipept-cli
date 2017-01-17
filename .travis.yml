@@ -6,5 +6,8 @@ rvm:
   - 2.1.9
   - 2.0.0
 
+install:
+  - bundle install --without release
+
 notifications:
   slack: zeuswpi:yBidVPnaP2JuP2zfa36Ew0E1
