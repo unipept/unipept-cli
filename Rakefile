@@ -28,7 +28,7 @@ Jeweler::Tasks.new do |gem|
   EOS
   gem.email = 'unipept@ugent.be'
   gem.authors = ['Toon Willems', 'Bart Mesuere', 'Tom Naessens']
-  gem.required_ruby_version = '>= 2.1.9'
+  gem.required_ruby_version = '>= 2.2.6'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
