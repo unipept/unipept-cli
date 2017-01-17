@@ -13,24 +13,28 @@ require 'rake'
 require 'rake/testtask'
 require 'rubocop/rake_task'
 
-require 'jeweler'
-Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = 'unipept'
-  gem.executables = %w(unipept prot2pept peptfilter uniprot)
-  gem.homepage = 'http://unipept.ugent.be'
-  gem.license = 'MIT'
-  gem.summary = 'Command line interface to Unipept web services.'
-  gem.description = <<-EOS
-  Command line interface to the Unipept (http://unipept.ugent.be) web services
-  (pept2lca, taxa2lca, pept2taxa, pept2prot and taxonomy) and some utility
-  commands for handling proteins using the command line.
-  EOS
-  gem.email = 'unipept@ugent.be'
-  gem.authors = ['Toon Willems', 'Bart Mesuere', 'Tom Naessens']
-  gem.required_ruby_version = '>= 2.0.0'
+begin
+  require 'jeweler'
+  Jeweler::Tasks.new do |gem|
+    # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
+    gem.name = 'unipept'
+    gem.executables = %w(unipept prot2pept peptfilter uniprot)
+    gem.homepage = 'http://unipept.ugent.be'
+    gem.license = 'MIT'
+    gem.summary = 'Command line interface to Unipept web services.'
+    gem.description = <<-EOS
+    Command line interface to the Unipept (http://unipept.ugent.be) web services
+    (pept2lca, taxa2lca, pept2taxa, pept2prot and taxonomy) and some utility
+    commands for handling proteins using the command line.
+    EOS
+    gem.email = 'unipept@ugent.be'
+    gem.authors = ['Toon Willems', 'Bart Mesuere', 'Tom Naessens']
+    gem.required_ruby_version = '>= 2.0.0'
+  end
+  Jeweler::RubygemsDotOrgTasks.new
+rescue LoadError
+# do nothing
 end
-Jeweler::RubygemsDotOrgTasks.new
 
 task :test_unit do
   require './test/helper.rb'
