@@ -12,7 +12,6 @@ end
 require 'rake'
 require 'rake/testtask'
 require 'rubocop/rake_task'
-
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|

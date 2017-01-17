@@ -11,3 +11,7 @@ group :development do
   gem 'rubocop', '~>0.32'
   gem 'coveralls', '~> 0', require: false
 end
+
+group :release do
+  gem 'jeweler'
+end
