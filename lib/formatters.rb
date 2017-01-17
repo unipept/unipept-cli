@@ -82,7 +82,7 @@ module Unipept
     # @param [Boolean] Is this the first output batch?
     #
     # @return [String] The converted input data
-    def format(data, fasta_mapper = nil, first)
+    def format(data, fasta_mapper, first)
       data = integrate_fasta_headers(data, fasta_mapper) if fasta_mapper
       convert(data, first)
     end

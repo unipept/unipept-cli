@@ -25,7 +25,7 @@ module Unipept
       host = 'http://api.unipept.ugent.be' if host.nil? || host.empty?
 
       # add http:// if needed
-      if host.start_with?('http://') || host.start_with?('https://')
+      if host.start_with?('http://', 'https://')
         host
       else
         "http://#{host}"
@@ -128,7 +128,7 @@ module Unipept
         end
 
         hydra.queue request
-        hydra.run if batch_id % queue_size == 0
+        hydra.run if (batch_id % queue_size).zero?
       end
 
       hydra.run
@@ -165,8 +165,8 @@ module Unipept
 
       lambda do
         unless result.empty?
-          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id == 0
-          output_writer.write_line formatter.format(result, fasta_mapper, batch_id == 0)
+          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id.zero?
+          output_writer.write_line formatter.format(result, fasta_mapper, batch_id.zero?)
         end
       end
     end
@@ -174,7 +174,7 @@ module Unipept
     def handle_failed_response(response)
       if response.timed_out?
         -> { save_error('request timed out, continuing anyway, but results might be incomplete') }
-      elsif response.code == 0
+      elsif response.code.zero?
         -> { save_error('could not get an http response, continuing anyway, but results might be incomplete' + response.return_message) }
       else
         -> { save_error("Got #{response.code}: #{response.response_body}\nRequest headers: #{response.request.options}\nRequest body:\n#{response.request.encoded_body}\n\n") }
