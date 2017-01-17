@@ -8,14 +8,14 @@ module Unipept
           Commands::Unipept.run(%w(config -h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
           Commands::Unipept.run(%w(config --help))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
 
     def test_no_args
@@ -24,7 +24,7 @@ module Unipept
           Commands::Unipept.run(%w(config))
         end
       end
-      assert(err.include? 'show help for this command')
+      assert(err.include?('show help for this command'))
     end
 
     def test_too_many_args
@@ -33,7 +33,7 @@ module Unipept
           Commands::Unipept.run(%w(config a b c))
         end
       end
-      assert(err.include? 'show help for this command')
+      assert(err.include?('show help for this command'))
     end
 
     def test_setting_config

@@ -14,11 +14,11 @@ module Unipept
     # config from
     def initialize(file = nil)
       @file_name = file ? file : File.join(Dir.home, '.unipeptrc')
-      if !File.exist? file_name
-        @config = {}
-      else
-        @config = YAML.load_file file_name
-      end
+      @config = if !File.exist? file_name
+                  {}
+                else
+                  YAML.load_file file_name
+                end
     end
 
     # Saves the config to disk. If the file doesn't exist yet, a new one will be

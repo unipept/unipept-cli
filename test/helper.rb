@@ -33,18 +33,18 @@ module Unipept
       FileUtils.rm_rf(@tmp_dir)
     end
 
-    def capture_io_with_input(input, &block)
+    def capture_io_with_input(input)
       capture_io_while do
         input = input.join("\n") if input.is_a? Array
         $stdin.write(input)
         $stdin.rewind
-        block.call
+        yield
       end
     end
 
-    def capture_io_while(&block)
+    def capture_io_while
       orig_io = capture_io
-      block.call
+      yield
       [$stdout.string, $stderr.string]
     ensure
       uncapture_io(*orig_io)

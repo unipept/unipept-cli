@@ -75,7 +75,7 @@ module Unipept
     end
 
     def test_input_iterator_stdin
-      runner = new_runner('test',  host: 'https://param_host')
+      runner = new_runner('test', host: 'https://param_host')
       output = []
       _out, _err = capture_io_with_input(%w(a b c)) do
         runner.input_iterator.each { |el| output << el.chomp }
@@ -136,13 +136,13 @@ module Unipept
 
     def test_number_of_parallel_requests
       assert_equal(10, new_runner.concurrent_requests)
-      runner = new_runner('test',  host: 'http://param_host', parallel: '123')
+      runner = new_runner('test', host: 'http://param_host', parallel: '123')
       assert_equal(123, runner.concurrent_requests)
     end
 
     def test_queue_size
       assert_equal(200, new_runner.queue_size)
-      runner = new_runner('test',  host: 'http://param_host', parallel: '100')
+      runner = new_runner('test', host: 'http://param_host', parallel: '100')
       assert_equal(2000, runner.queue_size)
     end
 
@@ -152,7 +152,7 @@ module Unipept
     end
 
     def test_param_formatter
-      runner = new_runner('test',  host: 'http://param_host', format: 'json')
+      runner = new_runner('test', host: 'http://param_host', format: 'json')
       assert_equal('json', runner.formatter.type)
     end
 
@@ -170,7 +170,7 @@ module Unipept
     end
 
     def test_required_fields_are_selected
-      runner = new_runner('test',  host: 'http://param_host', select: 'field')
+      runner = new_runner('test', host: 'http://param_host', select: 'field')
       def runner.required_fields
         ['test']
       end
@@ -178,32 +178,32 @@ module Unipept
     end
 
     def test_single_selected_fields
-      runner = new_runner('test',  host: 'http://param_host', select: 'field')
+      runner = new_runner('test', host: 'http://param_host', select: 'field')
       assert_equal([/^field$/], runner.selected_fields)
     end
 
     def test_comma_selected_fields
-      runner = new_runner('test',  host: 'http://param_host', select: 'field1,field2')
+      runner = new_runner('test', host: 'http://param_host', select: 'field1,field2')
       assert_equal([/^field1$/, /^field2$/], runner.selected_fields)
     end
 
     def test_multiple_selected_fields
-      runner = new_runner('test',  host: 'http://param_host', select: %w(field1 field2))
+      runner = new_runner('test', host: 'http://param_host', select: %w(field1 field2))
       assert_equal([/^field1$/, /^field2$/], runner.selected_fields)
     end
 
     def test_combined_selected_fields
-      runner = new_runner('test',  host: 'http://param_host', select: ['field1', 'field2,field3'])
+      runner = new_runner('test', host: 'http://param_host', select: ['field1', 'field2,field3'])
       assert_equal([/^field1$/, /^field2$/, /^field3$/], runner.selected_fields)
     end
 
     def test_wildcard_selected_fields
-      runner = new_runner('test',  host: 'http://param_host', select: 'field*')
+      runner = new_runner('test', host: 'http://param_host', select: 'field*')
       assert_equal([/^field.*$/], runner.selected_fields)
     end
 
     def test_basic_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host')
+      runner = new_runner('test', host: 'http://param_host')
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(false, body[:equate_il])
@@ -212,7 +212,7 @@ module Unipept
     end
 
     def test_equate_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host', equate: true)
+      runner = new_runner('test', host: 'http://param_host', equate: true)
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(true, body[:equate_il])
@@ -221,7 +221,7 @@ module Unipept
     end
 
     def test_all_no_select_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host', all: true)
+      runner = new_runner('test', host: 'http://param_host', all: true)
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(false, body[:equate_il])
@@ -230,7 +230,7 @@ module Unipept
     end
 
     def test_all_names_select_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host', all: true, select: 'test,names')
+      runner = new_runner('test', host: 'http://param_host', all: true, select: 'test,names')
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(false, body[:equate_il])
@@ -239,7 +239,7 @@ module Unipept
     end
 
     def test_all_names_wildcard_select_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host', all: true, select: 'test,order*')
+      runner = new_runner('test', host: 'http://param_host', all: true, select: 'test,order*')
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(false, body[:equate_il])
@@ -248,7 +248,7 @@ module Unipept
     end
 
     def test_all_no_names_select_construct_request_body
-      runner = new_runner('test',  host: 'http://param_host', all: true, select: 'test')
+      runner = new_runner('test', host: 'http://param_host', all: true, select: 'test')
       body = runner.construct_request_body('test')
       assert_equal('test', body[:input])
       assert_equal(false, body[:equate_il])
@@ -268,14 +268,14 @@ module Unipept
         _out, err = capture_io_while do
           runner.save_error('error message')
         end
-        assert(err.start_with? 'API request failed! log can be found in')
+        assert(err.start_with?('API request failed! log can be found in'))
         assert_equal('error message', IO.foreach('errordir/error.log').next.chomp)
       end
     end
 
     def test_error_file_path
       runner = new_runner
-      assert(runner.error_file_path.include? '/.unipept/')
+      assert(runner.error_file_path.include?('/.unipept/'))
     end
 
     def test_invalid_filter_result
@@ -329,7 +329,7 @@ module Unipept
       end
       out, err = capture_io_while(&lambda)
       assert_equal('', out)
-      assert(err.chomp.start_with? 'request timed out')
+      assert(err.chomp.start_with?('request timed out'))
     end
 
     def test_code_0_handle_response
@@ -342,7 +342,7 @@ module Unipept
       end
       out, err = capture_io_while(&lambda)
       assert_equal('', out)
-      assert(err.chomp.start_with? 'could not get an http')
+      assert(err.chomp.start_with?('could not get an http'))
     end
 
     def test_failed_handle_response
@@ -355,7 +355,7 @@ module Unipept
       end
       out, err = capture_io_while(&lambda)
       assert_equal('', out)
-      assert(err.chomp.start_with? 'Got 10')
+      assert(err.chomp.start_with?('Got 10'))
     end
 
     def test_run
@@ -364,6 +364,7 @@ module Unipept
         def runner.input_iterator
           %w(0 1 2).each
         end
+
         def runner.batch_size
           2
         end
@@ -371,9 +372,9 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert(lines.next.start_with? 'taxon_id')
-      assert(lines.next.start_with? '1,root')
-      assert(lines.next.start_with? '2,Bacteria')
+      assert(lines.next.start_with?('taxon_id'))
+      assert(lines.next.start_with?('1,root'))
+      assert(lines.next.start_with?('2,Bacteria'))
       assert_raises(StopIteration) { lines.next }
     end
 
@@ -413,6 +414,7 @@ module Unipept
           def o.options
             ''
           end
+
           def o.encoded_body
             ''
           end

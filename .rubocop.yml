@@ -8,6 +8,8 @@ AllCops:
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
   Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
 
 # disable for now
 Lint/NestedMethodDefinition:

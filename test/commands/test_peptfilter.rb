@@ -174,7 +174,7 @@ module Unipept
           Commands::Peptfilter.run(%w(-h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
   end
 end

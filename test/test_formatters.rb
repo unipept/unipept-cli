@@ -4,9 +4,9 @@ module Unipept
   class FormattersTestCase < Unipept::TestCase
     def test_available_formatters
       formatters = Formatter.available
-      assert(formatters.include? 'json')
-      assert(formatters.include? 'csv')
-      assert(formatters.include? 'xml')
+      assert(formatters.include?('json'))
+      assert(formatters.include?('csv'))
+      assert(formatters.include?('xml'))
     end
 
     def test_default_formatter
@@ -16,7 +16,7 @@ module Unipept
     def test_formatter_registration
       assert(!(Formatter.available.include? 'test'))
       Formatter.register(:test)
-      assert(Formatter.available.include? 'test')
+      assert(Formatter.available.include?('test'))
     end
 
     def test_new_for_format
@@ -73,6 +73,7 @@ module Unipept
       def f.integrate_fasta_headers(_a, _b)
         puts 'header'
       end
+
       def f.convert(_a, _b)
         'body'
       end

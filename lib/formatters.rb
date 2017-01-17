@@ -42,7 +42,7 @@ module Unipept
 
     # @return [String] The type of the current formatter
     def type
-      fail NotImplementedError, 'This must be implemented in a subclass.'
+      raise NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Returns the header row for the given sample_data and fasta_mapper. This
@@ -58,7 +58,7 @@ module Unipept
     #
     # @return [String] The header row
     def header(_sample_data, _fasta_mapper = nil)
-      fail NotImplementedError, 'This must be implemented in a subclass.'
+      raise NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Returns the footer row. This row is output only once at the end of the
@@ -66,7 +66,7 @@ module Unipept
     #
     # @return [String] The footer row
     def footer
-      fail NotImplementedError, 'This must be implemented in a subclass.'
+      raise NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Converts the given input data and corresponding fasta headers to another
@@ -95,7 +95,7 @@ module Unipept
     #
     # @return [String] The converted input data
     def convert(_data, _first)
-      fail NotImplementedError, 'This must be implemented in a subclass.'
+      raise NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # Integrates the fasta headers into the data object

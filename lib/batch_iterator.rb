@@ -39,7 +39,7 @@ module Unipept
     # Splits the input lines in fasta format into slices, based on the
     # batch_size of the current command. Executes the given block for each of
     # the batches.
-    def fasta_iterator(first_line, next_lines, &block)
+    def fasta_iterator(first_line, next_lines)
       current_fasta_header = first_line.chomp
       next_lines.each_slice(batch_size).with_index do |slice, i|
         fasta_mapper = []
@@ -55,7 +55,7 @@ module Unipept
           end
         end
 
-        block.call(input_set.to_a, i, fasta_mapper)
+        yield(input_set.to_a, i, fasta_mapper)
       end
     end
 

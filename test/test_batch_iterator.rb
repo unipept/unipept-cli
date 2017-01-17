@@ -9,7 +9,7 @@ module Unipept
 
     def test_fasta
       iterator = BatchIterator.new(50)
-      assert(iterator.fasta? '> test')
+      assert(iterator.fasta?('> test'))
       assert(!(iterator.fasta? '< test'))
       assert(!(iterator.fasta? 'test'))
     end

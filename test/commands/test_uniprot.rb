@@ -65,7 +65,7 @@ module Unipept
         end
       end
       assert_equal('', out)
-      assert(err.include? 'xxx is not a valid output format')
+      assert(err.include?('xxx is not a valid output format'))
     end
 
     def test_default_format
@@ -130,7 +130,7 @@ module Unipept
           Commands::Uniprot.run(%w(-h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
   end
 end

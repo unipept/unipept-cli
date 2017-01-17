@@ -34,14 +34,14 @@ module Unipept
           Commands::Unipept.run(%w(pept2lca -h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
           Commands::Unipept.run(%w(pept2lca --help))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
 
     def test_run
@@ -50,8 +50,8 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert(lines.next.start_with? 'peptide,taxon_id')
-      assert(lines.next.start_with? 'AALTER,1,root,no rank')
+      assert(lines.next.start_with?('peptide,taxon_id'))
+      assert(lines.next.start_with?('AALTER,1,root,no rank'))
       assert_raises(StopIteration) { lines.next }
     end
 
@@ -61,10 +61,10 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert(lines.next.start_with? 'fasta_header,peptide,taxon_id')
-      assert(lines.next.start_with? '>test,AALTER,1,root,no rank')
-      assert(lines.next.start_with? '>test,AALER,1,root,no rank')
-      assert(lines.next.start_with? '>tost,AALTER,1,root,no rank')
+      assert(lines.next.start_with?('fasta_header,peptide,taxon_id'))
+      assert(lines.next.start_with?('>test,AALTER,1,root,no rank'))
+      assert(lines.next.start_with?('>test,AALER,1,root,no rank'))
+      assert(lines.next.start_with?('>tost,AALTER,1,root,no rank'))
       assert_raises(StopIteration) { lines.next }
     end
 
@@ -74,10 +74,10 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert(lines.next.start_with? 'fasta_header,peptide,taxon_id')
-      assert(lines.next.start_with? '>test,AALTER,1')
-      assert(lines.next.start_with? '>test,AALER,1')
-      assert(lines.next.start_with? '>tost,AALTER,1')
+      assert(lines.next.start_with?('fasta_header,peptide,taxon_id'))
+      assert(lines.next.start_with?('>test,AALTER,1'))
+      assert(lines.next.start_with?('>test,AALER,1'))
+      assert(lines.next.start_with?('>tost,AALTER,1'))
       assert_raises(StopIteration) { lines.next }
     end
 
@@ -88,10 +88,10 @@ module Unipept
       lines = out.each_line
       assert_equal('', err)
       output = lines.to_a.join('').chomp
-      assert(output.start_with? '[')
-      assert(output.end_with? ']')
+      assert(output.start_with?('['))
+      assert(output.end_with?(']'))
       assert(!output.include?('}{'))
-      assert(output.include? 'fasta_header')
+      assert(output.include?('fasta_header'))
     end
 
     def test_run_with_fasta_multiple_batches_xml
@@ -101,9 +101,9 @@ module Unipept
       lines = out.each_line
       assert_equal('', err)
       output = lines.to_a.join('').chomp
-      assert(output.start_with? '<results>')
-      assert(output.end_with? '</results>')
-      assert(output.include? '<fasta_header>')
+      assert(output.start_with?('<results>'))
+      assert(output.end_with?('</results>'))
+      assert(output.include?('<fasta_header>'))
     end
   end
 end

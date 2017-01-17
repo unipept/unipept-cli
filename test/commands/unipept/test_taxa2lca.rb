@@ -22,14 +22,14 @@ module Unipept
           Commands::Unipept.run(%w(taxa2lca -h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
           Commands::Unipept.run(%w(taxa2lca --help))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
 
     def test_run
@@ -38,8 +38,8 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      assert(lines.next.start_with? 'taxon_id,taxon_name,taxon_rank')
-      assert(lines.next.start_with? '1678,Bifidobacterium,genus')
+      assert(lines.next.start_with?('taxon_id,taxon_name,taxon_rank'))
+      assert(lines.next.start_with?('1678,Bifidobacterium,genus'))
     end
 
     def test_run_xml
@@ -49,8 +49,8 @@ module Unipept
       lines = out.each_line
       output = lines.to_a.join('').chomp
       assert_equal('', err)
-      assert(output.start_with? '<results>')
-      assert(output.end_with? '</results>')
+      assert(output.start_with?('<results>'))
+      assert(output.end_with?('</results>'))
     end
 
     def test_run_json
@@ -60,8 +60,8 @@ module Unipept
       lines = out.each_line
       output = lines.to_a.join('').chomp
       assert_equal('', err)
-      assert(output.start_with? '[')
-      assert(output.end_with? ']')
+      assert(output.start_with?('['))
+      assert(output.end_with?(']'))
       assert(!output.include?('}{'))
       assert(!output.include?(']['))
     end

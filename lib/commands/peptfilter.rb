@@ -98,7 +98,7 @@ module Unipept::Commands
     #
     # @return [Boolean] true if the peptide satisfies all requirements
     def self.filter_lacks(peptide, lacks)
-      (peptide.chars.to_a & lacks).size == 0
+      (peptide.chars.to_a & lacks).empty?
     end
 
     # Checks if a peptide satisfies the contains requirement.

@@ -48,7 +48,7 @@ module Unipept
 
     # Returns the default default_batch_size of a command.
     def default_batch_size
-      fail NotImplementedError, 'This must be implemented in a subclass.'
+      raise NotImplementedError, 'This must be implemented in a subclass.'
     end
 
     # returns the effective batch_size of a command
@@ -102,8 +102,7 @@ module Unipept
       { input: input,
         equate_il: options[:equate] == true,
         extra: options[:all] == true,
-        names: options[:all] == true && names
-      }
+        names: options[:all] == true && names }
     end
 
     # Runs the command
@@ -114,7 +113,7 @@ module Unipept
       last_id = 0
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
-        last_id =  batch_id
+        last_id = batch_id
         request = ::RetryableTyphoeus::Request.new(
           @url,
           method: :post,

@@ -8,14 +8,14 @@ module Unipept
           Commands::Unipept.run(%w(-h))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
           Commands::Unipept.run(%w(--help))
         end
       end
-      assert(out.include? 'show help for this command')
+      assert(out.include?('show help for this command'))
     end
 
     def test_no_valid_subcommand
@@ -24,7 +24,7 @@ module Unipept
           Commands::Unipept.run(%w())
         end
       end
-      assert(err.include? 'show help for this command')
+      assert(err.include?('show help for this command'))
     end
 
     def test_version
