@@ -9,6 +9,5 @@ group :development do
   gem 'rake', '~> 10.4'
   gem 'minitest', '~> 5.7'
   gem 'rubocop', '~>0.32'
-  gem 'jeweler', '~> 2.0'
   gem 'coveralls', '~> 0', require: false
 end
