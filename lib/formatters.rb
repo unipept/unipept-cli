@@ -254,4 +254,37 @@ module Unipept
       data.map { |row| '<result>' + row.to_xml + '</result>' }.join('')
     end
   end
+
+  class BlastFormatter < Formatter
+    register :blast
+
+    # @return [String] The type of the current formatter: blast
+    def type
+      'blast'
+    end
+
+    def header(_data, _fasta_mapper = nil)
+      ''
+    end
+
+    def footer
+      ''
+    end
+
+    # Converts the given input data to the Blast format.
+    #
+    # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
+    #
+    # @return [String] The converted input data in the Blast format
+    def convert(data, _first)
+      data
+        .reject { |o| o['refseq_protein_ids'].empty? }
+        .map do |o|
+          "#{o['peptide']}\tref|#{o['refseq_protein_ids']}|\t100\t10\t0\t0\t0\t10\t0\t10\t1e-100\t100\n"
+        end
+        .join
+    end
+  end
 end

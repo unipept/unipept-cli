@@ -180,6 +180,7 @@ module Unipept
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
         flag :a, :all, 'report all information fields of UniProt entries available in Unipept. Note that this may have a performance penalty.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+        option nil, :meganize, 'output the results in a BlastTab-like format that MEGAN can understand'
 
         runner Commands::Pept2prot
       end
