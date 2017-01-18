@@ -166,6 +166,7 @@ module Unipept
       def runner.required_fields
         ['test']
       end
+      runner.required_fields
       assert_equal([], runner.selected_fields)
     end
 
