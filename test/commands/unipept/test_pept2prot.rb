@@ -16,6 +16,22 @@ module Unipept
       assert_equal(['peptide'], pept2prot.required_fields)
     end
 
+    def test_meganize_options
+      command = Cri::Command.define { name 'pept2prot' }
+      pept2prot = Commands::Pept2prot.new({ meganize: true, host: 'http://api.unipept.ugent.be' }, [], command)
+      assert(pept2prot.options[:all])
+      assert_equal(['peptide,refseq_protein_ids'], pept2prot.options[:select])
+      assert_equal('blast', pept2prot.options[:format])
+    end
+
+    def test_meganize_options_overridecommand
+      command = Cri::Command.define { name 'pept2prot' }
+      pept2prot = Commands::Pept2prot.new({ meganize: true, format: 'xml', all: false, select: ['something'], host: 'http://api.unipept.ugent.be' }, [], command)
+      assert(pept2prot.options[:all])
+      assert_equal(['peptide,refseq_protein_ids'], pept2prot.options[:select])
+      assert_equal('blast', pept2prot.options[:format])
+    end
+
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do

@@ -7,6 +7,7 @@ module Unipept
       assert(formatters.include?('json'))
       assert(formatters.include?('csv'))
       assert(formatters.include?('xml'))
+      assert(formatters.include?('blast'))
     end
 
     def test_default_formatter
@@ -28,6 +29,9 @@ module Unipept
 
       formatter = Formatter.new_for_format('csv')
       assert_equal('csv', formatter.type)
+
+      formatter = Formatter.new_for_format('blast')
+      assert_equal('blast', formatter.type)
 
       formatter = Formatter.new_for_format('blah')
       assert_equal('csv', formatter.type)
@@ -118,6 +122,31 @@ module Unipept
       output = formatter.format([TestObject.test_object], fasta, true)
       json = '{"fasta_header":">test","integer":5,"string":"string","list":["a",2,false]}'
       assert_equal(json, output)
+    end
+  end
+
+  class BlastFormatterTestCase < Unipept::TestCase
+    def formatter
+      Formatter.new_for_format('blast')
+    end
+
+    def test_header
+      assert_equal('', formatter.header(nil, nil))
+    end
+
+    def test_footer
+      assert_equal('', formatter.footer)
+    end
+
+    def test_type
+      assert_equal('blast', formatter.type)
+    end
+
+    def test_convert
+      object = [{ 'peptide' => 'MDGTEYIIVK', 'refseq_protein_ids' => 'WP_008705701.1' }, { 'peptide' => 'ISVAQGASK', 'refseq_protein_ids' => 'NP_003881.2 XP_011547112.1 XP_011547113.1' }, { 'peptide' => 'ISVAQGASK', 'refseq_protein_ids' => '' }]
+      output = "MDGTEYIIVK\tref|WP_008705701.1|\t100\t10\t0\t0\t0\t10\t0\t10\t1e-100\t100\nISVAQGASK\tref|NP_003881.2 XP_011547112.1 XP_011547113.1|\t100\t10\t0\t0\t0\t10\t0\t10\t1e-100\t100\n"
+      assert_equal(output, formatter.convert(object, true))
+      assert_equal(output, formatter.convert(object, false))
     end
   end
 
