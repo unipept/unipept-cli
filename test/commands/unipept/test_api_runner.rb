@@ -309,7 +309,7 @@ module Unipept
     end
 
     def test_success_no_header_option_handle_response
-      runner = new_runner('test', host: 'test', 'no-header': true)
+      runner = new_runner('test', Hash[:host, 'test', :'no-header', true])
       response = new_response(success: true, response_body: '[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')
       lambda = runner.handle_response(response, 0, nil)
       assert(lambda.lambda?)
