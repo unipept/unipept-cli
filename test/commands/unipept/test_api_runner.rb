@@ -308,6 +308,18 @@ module Unipept
       assert_equal('value2,value2', lines.next.chomp)
     end
 
+    def test_success_no_header_option_handle_response
+      runner = new_runner('test', host: 'test', 'no-header': true)
+      response = new_response(success: true, response_body: '[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')
+      lambda = runner.handle_response(response, 0, nil)
+      assert(lambda.lambda?)
+      out, err = capture_io_while(&lambda)
+      lines = out.each_line
+      assert_equal('', err)
+      assert_equal('value1,value1', lines.next.chomp)
+      assert_equal('value2,value2', lines.next.chomp)
+    end
+
     def test_success_no_header_handle_response
       runner = new_runner
       response = new_response(success: true, response_body: '[{"key1":"value1","key2":"value1"},{"key1":"value2","key2":"value2"}]')

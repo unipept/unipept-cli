@@ -165,7 +165,7 @@ module Unipept
 
       lambda do
         unless result.empty?
-          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id.zero?
+          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id.zero? && !options[:"no-header"]
           output_writer.write_line formatter.format(result, fasta_mapper, batch_id.zero?)
         end
       end
