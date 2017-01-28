@@ -15,6 +15,7 @@ module Unipept
       @host = host
       @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
       @url = "#{@host}/api/v1/#{cmd.name}.json"
+      @fasta = false
     end
 
     # Returns the host. If a value is defined by both an option and the config
@@ -86,7 +87,7 @@ module Unipept
     def selected_fields
       return @selected_fields unless @selected_fields.nil?
       fields = [*options[:select]].map { |f| f.split(',') }.flatten
-      fields.concat(required_fields) unless fields.empty?
+      fields.concat(required_fields) if @fasta && !fields.empty?
       @selected_fields = fields.map { |f| glob_to_regex(f) }
     end
 
@@ -114,6 +115,7 @@ module Unipept
 
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         last_id = batch_id
+        @fasta = !fasta_mapper.nil?
         request = ::RetryableTyphoeus::Request.new(
           @url,
           method: :post,

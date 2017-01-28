@@ -170,12 +170,22 @@ module Unipept
       assert_equal([], runner.selected_fields)
     end
 
-    def test_required_fields_are_selected
+    def test_required_fields_are_selected_for_fasta
       runner = new_runner('test', host: 'http://param_host', select: 'field')
       def runner.required_fields
         ['test']
       end
+      runner.instance_variable_set(:@fasta, true)
       assert_equal([/^field$/, /^test$/], runner.selected_fields)
+    end
+
+    def test_required_fields_are_not_selected_if_not_fasta
+      runner = new_runner('test', host: 'http://param_host', select: 'field')
+      def runner.required_fields
+        ['test']
+      end
+      runner.instance_variable_set(:@fasta, false)
+      assert_equal([/^field$/], runner.selected_fields)
     end
 
     def test_single_selected_fields
