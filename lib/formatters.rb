@@ -32,7 +32,7 @@ module Unipept
     #
     # @return [Array<String>] The list of available formatters
     def self.available
-      formatters.keys
+      formatters.select { |_key, value| !value.hidden? }.keys
     end
 
     # @return [String] The type of the default formatter: csv
@@ -43,6 +43,10 @@ module Unipept
     # @return [String] The type of the current formatter
     def type
       raise NotImplementedError, 'This must be implemented in a subclass.'
+    end
+
+    def self.hidden?
+      false
     end
 
     # Returns the header row for the given sample_data and fasta_mapper. This
@@ -261,6 +265,10 @@ module Unipept
     # @return [String] The type of the current formatter: blast
     def type
       'blast'
+    end
+
+    def self.hidden?
+      true
     end
 
     def header(_data, _fasta_mapper = nil)

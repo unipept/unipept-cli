@@ -7,7 +7,7 @@ module Unipept
       assert(formatters.include?('json'))
       assert(formatters.include?('csv'))
       assert(formatters.include?('xml'))
-      assert(formatters.include?('blast'))
+      assert(!formatters.include?('blast'))
     end
 
     def test_default_formatter
