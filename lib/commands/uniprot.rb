@@ -5,7 +5,7 @@ module Unipept::Commands
     attr_reader :root_command
     attr_reader :valid_formats
 
-    valid_formats = Set.new %w(fasta txt xml rdf gff sequence)
+    valid_formats = Set.new %w[fasta txt xml rdf gff sequence]
     @root_command = Cri::Command.define do
       name 'uniprot'
       summary 'Command line interface to UniProt web services.'
@@ -29,7 +29,7 @@ module Unipept::Commands
       run do |opts, args, _cmd|
         format = opts.fetch(:format, 'sequence')
         unless valid_formats.include? format
-          $stderr.puts format + ' is not a valid output format. Available formats are: ' + valid_formats.to_a.join(', ')
+          warn format + ' is not a valid output format. Available formats are: ' + valid_formats.to_a.join(', ')
           exit 1
         end
         iterator = args.empty? ? $stdin.each_line : args

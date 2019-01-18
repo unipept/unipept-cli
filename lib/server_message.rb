@@ -19,6 +19,7 @@ module Unipept
     def print
       return unless $stdout.tty?
       return if recently_fetched?
+
       resp = fetch_server_message
       update_fetched
       puts resp unless resp.empty?

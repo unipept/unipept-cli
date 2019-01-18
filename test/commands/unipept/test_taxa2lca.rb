@@ -19,14 +19,14 @@ module Unipept
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(taxa2lca -h))
+          Commands::Unipept.run(%w[taxa2lca -h])
         end
       end
       assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(taxa2lca --help))
+          Commands::Unipept.run(%w[taxa2lca --help])
         end
       end
       assert(out.include?('show help for this command'))
@@ -34,7 +34,7 @@ module Unipept
 
     def test_run
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(taxa2lca --host http://api.unipept.ugent.be 216816 1680))
+        Commands::Unipept.run(%w[taxa2lca --host http://api.unipept.ugent.be 216816 1680])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -44,7 +44,7 @@ module Unipept
 
     def test_run_xml
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(taxa2lca --host http://api.unipept.ugent.be --format xml 216816 1680))
+        Commands::Unipept.run(%w[taxa2lca --host http://api.unipept.ugent.be --format xml 216816 1680])
       end
       lines = out.each_line
       output = lines.to_a.join('').chomp
@@ -55,7 +55,7 @@ module Unipept
 
     def test_run_json
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(taxa2lca --host http://api.unipept.ugent.be --format json 216816 1680))
+        Commands::Unipept.run(%w[taxa2lca --host http://api.unipept.ugent.be --format json 216816 1680])
       end
       lines = out.each_line
       output = lines.to_a.join('').chomp

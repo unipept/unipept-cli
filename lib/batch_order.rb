@@ -11,6 +11,7 @@ module Unipept
     def wait(i, &block)
       @order[i] = block
       return unless i == @current
+
       while order[@current]
         order.delete(@current).call
         @current += 1

@@ -22,7 +22,7 @@ module Unipept
     # file, the value of the option is used.
     def host
       # find host in opts first
-      host = options[:host] ? options[:host] : @configuration['host']
+      host = options[:host] || @configuration['host']
       host = 'http://api.unipept.ugent.be' if host.nil? || host.empty?
 
       # add http:// if needed
@@ -40,6 +40,7 @@ module Unipept
     def input_iterator
       return arguments.each unless arguments.empty?
       return IO.foreach(options[:input]) if options[:input]
+
       $stdin.each_line
     end
 
@@ -86,6 +87,7 @@ module Unipept
     # Returns an array of regular expressions containing all the selected fields
     def selected_fields
       return @selected_fields unless @selected_fields.nil?
+
       fields = [*options[:select]].map { |f| f.split(',') }.flatten
       fields.concat(required_fields) if @fasta && !fields.empty?
       @selected_fields = fields.map { |f| glob_to_regex(f) }
@@ -143,7 +145,7 @@ module Unipept
       path = error_file_path
       FileUtils.mkdir_p File.dirname(path)
       File.open(path, 'w') { |f| f.write message }
-      $stderr.puts "API request failed! log can be found in #{path}"
+      warn "API request failed! log can be found in #{path}"
     end
 
     private

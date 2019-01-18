@@ -17,7 +17,7 @@ module Unipept
     # @return [Formatter] The requested formatter
     def self.new_for_format(format)
       formatters[format].new
-    rescue
+    rescue StandardError
       formatters[default].new
     end
 
@@ -32,7 +32,7 @@ module Unipept
     #
     # @return [Array<String>] The list of available formatters
     def self.available
-      formatters.select { |_key, value| !value.hidden? }.keys
+      formatters.reject { |_key, value| value.hidden? }.keys
     end
 
     # @return [String] The type of the default formatter: csv

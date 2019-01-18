@@ -16,7 +16,7 @@ module Unipept
 
     def test_normal_iterator
       iterator = BatchIterator.new(2)
-      data = %w(a b c d e)
+      data = %w[a b c d e]
       out, _err = capture_io_while do
         iterator.iterate(data.each) do |batch, batch_id, fasta_mapper|
           assert_nil(fasta_mapper)
@@ -29,7 +29,7 @@ module Unipept
 
     def test_fasta_iterator_single_header
       iterator = BatchIterator.new(2)
-      data = %w(>h1 a b c d e)
+      data = %w[>h1 a b c d e]
       mappings = []
       out, _err = capture_io_while do
         iterator.iterate(data.each) do |batch, batch_id, fasta_mapper|
@@ -47,7 +47,7 @@ module Unipept
 
     def test_fasta_iterator_double_header_single_batch
       iterator = BatchIterator.new(3)
-      data = %w(>h1 a >h2 b c d e)
+      data = %w[>h1 a >h2 b c d e]
       mappings = []
       out, _err = capture_io_while do
         iterator.iterate(data.each) do |batch, batch_id, fasta_mapper|
@@ -68,7 +68,7 @@ module Unipept
 
     def test_fasta_iterator_multiple_values
       iterator = BatchIterator.new(4)
-      data = %w(>h1 a >h2 a a)
+      data = %w[>h1 a >h2 a a]
       mappings = []
       out, _err = capture_io_while do
         iterator.iterate(data.each) do |batch, batch_id, fasta_mapper|

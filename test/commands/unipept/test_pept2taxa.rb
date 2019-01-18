@@ -19,14 +19,14 @@ module Unipept
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(pept2taxa -h))
+          Commands::Unipept.run(%w[pept2taxa -h])
         end
       end
       assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(pept2taxa --help))
+          Commands::Unipept.run(%w[pept2taxa --help])
         end
       end
       assert(out.include?('show help for this command'))
@@ -34,7 +34,7 @@ module Unipept
 
     def test_run
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be ENFVYIAK))
+        Commands::Unipept.run(%w[pept2taxa --host http://api.unipept.ugent.be ENFVYIAK])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -44,7 +44,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+        Commands::Unipept.run(%w[pept2taxa --host http://api.unipept.ugent.be --batch 2 >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -56,7 +56,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_and_select
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 --select taxon_id >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+        Commands::Unipept.run(%w[pept2taxa --host http://api.unipept.ugent.be --batch 2 --select taxon_id >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -68,7 +68,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_json
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 --format json >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+        Commands::Unipept.run(%w[pept2taxa --host http://api.unipept.ugent.be --batch 2 --format json >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -81,7 +81,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_xml
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2taxa --host http://api.unipept.ugent.be --batch 2 --format xml >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR))
+        Commands::Unipept.run(%w[pept2taxa --host http://api.unipept.ugent.be --batch 2 --format xml >test EGGAGSSTGQR ENFVYIAK >tost EGGAGSSTGQR])
       end
       lines = out.each_line
       assert_equal('', err)

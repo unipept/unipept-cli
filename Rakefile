@@ -1,12 +1,10 @@
-# encoding: utf-8
-
 require 'rubygems'
 require 'bundler'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts 'Run `bundle install` to install missing gems'
+  warn e.message
+  warn 'Run `bundle install` to install missing gems'
   exit e.status_code
 end
 require 'rake'
@@ -17,7 +15,7 @@ begin
   Jeweler::Tasks.new do |gem|
     # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
     gem.name = 'unipept'
-    gem.executables = %w(unipept prot2pept peptfilter uniprot)
+    gem.executables = %w[unipept prot2pept peptfilter uniprot]
     gem.homepage = 'http://unipept.ugent.be'
     gem.license = 'MIT'
     gem.summary = 'Command line interface to Unipept web services.'
@@ -32,7 +30,7 @@ begin
   end
   Jeweler::RubygemsDotOrgTasks.new
 rescue LoadError
-# do nothing
+  # do nothing
 end
 
 task :test_unit do
@@ -45,7 +43,7 @@ end
 
 RuboCop::RakeTask.new(:test_style)
 
-task test: [:test_unit, :test_style]
+task test: %i[test_unit test_style]
 
 task default: :test
 

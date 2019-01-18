@@ -13,7 +13,7 @@ module Unipept
     # @param [String] file An optional file name of the YAML file to create the
     # config from
     def initialize(file = nil)
-      @file_name = file ? file : File.join(Dir.home, '.unipeptrc')
+      @file_name = file || File.join(Dir.home, '.unipeptrc')
       @config = if !File.exist? file_name
                   {}
                 else

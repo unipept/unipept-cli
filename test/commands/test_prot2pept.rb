@@ -4,46 +4,46 @@ module Unipept
   class Prot2peptTestCase < Unipept::TestCase
     def test_normal_input
       out, _err = capture_io_with_input('AALTERAALTERPAALTER') do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("AALTER\nAALTERPAALTER", out.chomp)
 
       out, _err = capture_io_with_input('AALTERAAL*TERPAALTER') do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("AALTER\nAAL\nTERPAALTER", out.chomp)
 
       out, _err = capture_io_with_input('KRKPR') do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("K\nR\nKPR", out.chomp)
 
-      out, _err = capture_io_with_input(%w(AALTERAALTERPAALTER AALTERAA)) do
-        Commands::Prot2pept.run(%w())
+      out, _err = capture_io_with_input(%w[AALTERAALTERPAALTER AALTERAA]) do
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("AALTER\nAALTERPAALTER\nAALTER\nAA", out.chomp)
     end
 
     def test_fasta_input
       out, _err = capture_io_with_input(">AKA\nAALTERAALTERPAALTER") do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal(">AKA\nAALTER\nAALTERPAALTER", out.chomp)
 
       out, _err = capture_io_with_input(">AKA\nAAL\nT\nERAALTER\nP\nAALTER") do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal(">AKA\nAALTER\nAALTERPAALTER", out.chomp)
 
       out, _err = capture_io_with_input(">AKA\nAAL\nT\n>\nERAALTER\nP\nAALTER") do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal(">AKA\nAALT\n>\nER\nAALTERPAALTER", out.chomp)
     end
 
     def test_default_pattern
       default_out, _err = capture_io_with_input('AALTERAALTERPAALTER') do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("AALTER\nAALTERPAALTER", default_out.chomp)
 
@@ -60,7 +60,7 @@ module Unipept
 
     def test_pattern
       out, _err = capture_io_with_input('AALTERAALTERPAALTER') do
-        Commands::Prot2pept.run(%w())
+        Commands::Prot2pept.run(%w[])
       end
       assert_equal("AALTER\nAALTERPAALTER", out.chomp)
 
@@ -78,7 +78,7 @@ module Unipept
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Prot2pept.run(%w(-h))
+          Commands::Prot2pept.run(%w[-h])
         end
       end
       assert(out.include?('show help for this command'))

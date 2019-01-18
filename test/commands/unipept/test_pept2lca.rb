@@ -31,14 +31,14 @@ module Unipept
     def test_help
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(pept2lca -h))
+          Commands::Unipept.run(%w[pept2lca -h])
         end
       end
       assert(out.include?('show help for this command'))
 
       out, _err = capture_io_while do
         assert_raises SystemExit do
-          Commands::Unipept.run(%w(pept2lca --help))
+          Commands::Unipept.run(%w[pept2lca --help])
         end
       end
       assert(out.include?('show help for this command'))
@@ -46,7 +46,7 @@ module Unipept
 
     def test_run
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be AALTER))
+        Commands::Unipept.run(%w[pept2lca --host http://api.unipept.ugent.be AALTER])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -57,7 +57,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be --batch 2 >test AALTER AALER >tost AALTER))
+        Commands::Unipept.run(%w[pept2lca --host http://api.unipept.ugent.be --batch 2 >test AALTER AALER >tost AALTER])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -70,7 +70,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_and_select
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be --batch 2 --select taxon_id >test AALTER AALER >tost AALTER))
+        Commands::Unipept.run(%w[pept2lca --host http://api.unipept.ugent.be --batch 2 --select taxon_id >test AALTER AALER >tost AALTER])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -83,7 +83,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_json
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be --batch 2 --format json >test AALTER AALER >tost AALTER))
+        Commands::Unipept.run(%w[pept2lca --host http://api.unipept.ugent.be --batch 2 --format json >test AALTER AALER >tost AALTER])
       end
       lines = out.each_line
       assert_equal('', err)
@@ -96,7 +96,7 @@ module Unipept
 
     def test_run_with_fasta_multiple_batches_xml
       out, err = capture_io_while do
-        Commands::Unipept.run(%w(pept2lca --host http://api.unipept.ugent.be --batch 2 --format xml >test AALTER AALER >tost AALTER))
+        Commands::Unipept.run(%w[pept2lca --host http://api.unipept.ugent.be --batch 2 --format xml >test AALTER AALER >tost AALTER])
       end
       lines = out.each_line
       assert_equal('', err)

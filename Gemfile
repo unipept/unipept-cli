@@ -8,10 +8,10 @@ gem 'cri', '2.11'
 gem 'typhoeus', '~> 1.1'
 
 group :development do
-  gem 'rake', '~> 10.4'
-  gem 'minitest', '~> 5.7'
-  gem 'rubocop', '~>0.32'
   gem 'coveralls', '~> 0', require: false
+  gem 'minitest', '~> 5.7'
+  gem 'rake', '~> 10.4'
+  gem 'rubocop', '~>0.32'
 end
 
 group :release do
