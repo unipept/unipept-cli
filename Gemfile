@@ -2,7 +2,9 @@ source 'http://rubygems.org'
 # Add dependencies required to use your gem here.
 # Example:
 #   gem "activesupport", ">= 2.3.5"
-gem 'cri', '2.7'
+
+# for now, stay on version 2.11 because of a bug
+gem 'cri', '2.11'
 gem 'typhoeus', '~> 1.1'
 
 group :development do
