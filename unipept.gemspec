@@ -17,8 +17,7 @@ Gem::Specification.new do |s|
   s.executables = ["unipept".freeze, "prot2pept".freeze, "peptfilter".freeze, "uniprot".freeze]
   s.extra_rdoc_files = [
     "LICENSE.txt",
-    "README.md",
-    "TODO"
+    "README.md"
   ]
   s.files = [
     ".document",
