@@ -3,8 +3,7 @@ source 'http://rubygems.org'
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 
-# for now, stay on version 2.11 because of a bug
-gem 'cri', '2.11'
+gem 'cri', '~>2.15.3'
 gem 'typhoeus', '~> 1.1'
 
 group :development do
