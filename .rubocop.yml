@@ -2,6 +2,7 @@ AllCops:
   Exclude:
     - 'unipept.gemspec'
     - 'vendor/**/*'
+    - 'Rakefile'
 
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
@@ -27,4 +28,8 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: false
 Metrics/BlockLength:
+  Enabled: false
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+Naming/UncommunicativeMethodParamName:
   Enabled: false
