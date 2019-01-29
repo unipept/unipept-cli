@@ -9,9 +9,13 @@ require_relative '../server_message'
 require_relative '../version'
 
 require_relative 'unipept/config'
+require_relative 'unipept/pept2ec'
+require_relative 'unipept/pept2funct'
+require_relative 'unipept/pept2go'
 require_relative 'unipept/pept2lca'
 require_relative 'unipept/pept2prot'
 require_relative 'unipept/pept2taxa'
+require_relative 'unipept/peptinfo'
 require_relative 'unipept/taxa2lca'
 require_relative 'unipept/taxonomy'
 
@@ -21,7 +25,11 @@ module Unipept
       @root_command = create_root_command
       add_config_command
       add_pept2taxa_command
+      add_pept2ec_command
+      add_pept2funct_command
+      add_pept2go_command
       add_pept2lca_command
+      add_peptinfo_command
       add_taxa2lca_command
       add_pept2prot_command
       add_taxonomy_command
@@ -115,6 +123,78 @@ module Unipept
       end
     end
 
+    def add_pept2ec_command
+      @root_command.define_command('pept2ec') do
+        usage 'pept2ec[options]'
+        summary 'Fetch EC numbers of UniProt entries that match tryptic peptides.'
+        description <<-EOS
+        For each tryptic peptide the unipept pept2ec command retrieves from Unipept the set of EC numbers from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
+
+        - as separate command line arguments
+
+        - in a text file that is passed as an argument to the -i option
+
+        - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+        flag :a, :all, 'Also return the names of the EC numbers. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Pept2ec
+      end
+    end
+
+    def add_pept2funct_command
+      @root_command.define_command('pept2funct') do
+        usage 'pept2ec[options]'
+        summary 'Fetch EC numbers and GO terms of UniProt entries that match tryptic peptides.'
+        description <<-EOS
+        For each tryptic peptide the unipept pept2funct command retrieves from Unipept the set of EC numbers and GO terms from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
+
+        - as separate command line arguments
+
+        - in a text file that is passed as an argument to the -i option
+
+        - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+        flag :a, :all, 'Also return the names of the EC numbers and GO terms. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Pept2funct
+      end
+    end
+
+        def add_pept2go_command
+      @root_command.define_command('pept2go') do
+        usage 'pept2go [options]'
+        summary 'Fetch GO terms of UniProt entries that match tryptic peptides.'
+        description <<-EOS
+        For each tryptic peptide the unipept pept2go command retrieves from Unipept the set of GO terms from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
+
+        - as separate command line arguments
+
+        - in a text file that is passed as an argument to the -i option
+
+        - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+        flag :a, :all, 'Also return the names of the GO terms. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Pept2go
+      end
+    end
+
     def add_pept2lca_command
       @root_command.define_command('pept2lca') do
         usage 'pept2lca [options]'
@@ -136,6 +216,30 @@ module Unipept
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Pept2lca
+      end
+    end
+
+    def add_peptinfo_command
+      @root_command.define_command('peptinfo') do
+        usage 'peptinfo [options]'
+        summary 'Fetch functional information and the taxonomic lowest common ancestor of UniProt entries that match tryptic peptides.'
+        description <<-EOS
+        For each tryptic peptide the unipept peptinfo command retrieves from Unipept the functional information and the lowest common ancestor of the set of taxa from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The lowest common ancestor is based on the topology of the Unipept Taxonomy -- a cleaned up version of the NCBI Taxonomy -- and is itself a record from the NCBI Taxonomy. The command expects a list of tryptic peptides that are passed
+
+         - as separate command line arguments
+
+         - in a text file that is passed as an argument to the -i option
+
+         - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+        flag :a, :all, 'report the names of the functional annotations and all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Peptinfo
       end
     end
 
