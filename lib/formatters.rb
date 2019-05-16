@@ -186,7 +186,20 @@ module Unipept
       CSV.generate do |csv|
         first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
-        csv << (keys + first.keys).map(&:to_s) if first
+        firstKeys = first.keys
+        if firstKeys.include?("ec")
+          idx = firstKeys.index("ec")
+          firstKeys[idx] = "ec_numbers"
+          firstKeys.insert(idx + 1, "ec_protein_count")
+        end
+
+        if firstKeys.include?("go")
+          idx = firstKeys.index("go")
+          firstKeys[idx] = "go_terms"
+          firstKeys.insert(idx + 1, "go_protein_count")
+        end
+
+        csv << (keys + firstKeys).map(&:to_s) if first
       end
     end
 
@@ -204,7 +217,19 @@ module Unipept
     def convert(data, _first)
       CSV.generate do |csv|
         data.each do |o|
-          csv << o.values.map { |v| v == '' ? nil : v }
+          row = []
+          o.each do |k, v|
+            if k == "ec"
+              row << (v.map { |el| el["ec_number"] }).join(" ")
+              row << (v.map { |el| el["protein_count"] }).join(" ")
+            elsif k == "go"
+              row << (v.map { |el| el["go_term"] }).join(" ")
+              row << (v.map { |el| el["protein_count"] }).join(" ")
+            else
+              row << (v == '' || k == "ec" || k == "go" ? nil : v)
+            end
+          end
+          csv << row
         end
       end
     end
