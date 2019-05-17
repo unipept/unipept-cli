@@ -221,13 +221,10 @@ module Unipept
         data.each do |o|
           row = []
           o.each do |k, v|
-            puts v
-            if k == "ec"
-              row << (v.map { |el| el["ec_number"] }).join(" ")
-              row << (v.map { |el| el["protein_count"] }).join(" ")
-            elsif k == "go"
-              row << (v.map { |el| el["go_term"] }).join(" ")
-              row << (v.map { |el| el["protein_count"] }).join(" ")
+            if k == "ec" || k == "go"
+              v.first.keys.each do |key|
+                row << (v.map { |el| el[key] }).join(" ")
+              end
             else
               row << (v == '' || k == "ec" || k == "go" ? nil : v)
             end
