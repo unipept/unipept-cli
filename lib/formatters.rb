@@ -187,21 +187,17 @@ module Unipept
         first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
 
-        firstKeys = first.keys
+        keys += first.keys
 
-        if firstKeys.include?("ec")
-          idx = firstKeys.index("ec")
-          firstKeys.delete_at(idx)
-          firstKeys.insert(idx, *first["ec"].first.keys)
+        ['ec', 'go'].each do |annotation|
+          if keys.include?(annotation)
+            idx = keys.index(annotation)
+            keys.delete_at(idx)
+            keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
+          end
         end
 
-        if firstKeys.include?("go")
-          idx = firstKeys.index("go")
-          firstKeys.delete_at(idx)
-          firstKeys.insert(idx, *first["go"].first.keys)
-        end
-
-        csv << (keys + firstKeys).map(&:to_s) if first
+        csv << (keys).map(&:to_s) if first
       end
     end
 
@@ -226,7 +222,7 @@ module Unipept
                 row << (v.map { |el| el[key] }).join(" ")
               end
             else
-              row << (v == '' || k == "ec" || k == "go" ? nil : v)
+              row << (v == '' ? nil : v)
             end
           end
           csv << row
