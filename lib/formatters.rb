@@ -189,15 +189,15 @@ module Unipept
 
         keys += first.keys
 
-        ['ec', 'go'].each do |annotation|
-          if keys.include?(annotation)
-            idx = keys.index(annotation)
-            keys.delete_at(idx)
-            keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
-          end
+        %w[ec go].each do |annotation|
+          next unless keys.include?(annotation)
+
+          idx = keys.index(annotation)
+          keys.delete_at(idx)
+          keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
         end
 
-        csv << (keys).map(&:to_s) if first
+        csv << keys.map(&:to_s) if first
       end
     end
 
@@ -217,9 +217,9 @@ module Unipept
         data.each do |o|
           row = []
           o.each do |k, v|
-            if k == "ec" || k == "go"
+            if %w[ec go].include? k
               v.first.keys.each do |key|
-                row << (v.map { |el| el[key] }).join(" ")
+                row << (v.map { |el| el[key] }).join(' ')
               end
             else
               row << (v == '' ? nil : v)

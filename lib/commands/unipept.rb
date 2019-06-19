@@ -171,7 +171,7 @@ module Unipept
       end
     end
 
-        def add_pept2go_command
+    def add_pept2go_command
       @root_command.define_command('pept2go') do
         usage 'pept2go [options]'
         summary 'Fetch GO terms of UniProt entries that match tryptic peptides.'
