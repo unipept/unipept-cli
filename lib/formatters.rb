@@ -186,7 +186,18 @@ module Unipept
       CSV.generate do |csv|
         first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
-        csv << (keys + first.keys).map(&:to_s) if first
+
+        keys += first.keys
+
+        ['ec', 'go'].each do |annotation|
+          if keys.include?(annotation)
+            idx = keys.index(annotation)
+            keys.delete_at(idx)
+            keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
+          end
+        end
+
+        csv << (keys).map(&:to_s) if first
       end
     end
 
@@ -204,7 +215,17 @@ module Unipept
     def convert(data, _first)
       CSV.generate do |csv|
         data.each do |o|
-          csv << o.values.map { |v| v == '' ? nil : v }
+          row = []
+          o.each do |k, v|
+            if k == "ec" || k == "go"
+              v.first.keys.each do |key|
+                row << (v.map { |el| el[key] }).join(" ")
+              end
+            else
+              row << (v == '' ? nil : v)
+            end
+          end
+          csv << row
         end
       end
     end
