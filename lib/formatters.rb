@@ -218,8 +218,13 @@ module Unipept
           row = []
           o.each do |k, v|
             if %w[ec go].include? k
-              v.first.keys.each do |key|
-                row << (v.map { |el| el[key] }).join(' ')
+              if v.length > 0
+                v.first.keys.each do |key|
+                  row << (v.map { |el| el[key] }).join(' ')
+                end
+              else
+                row << nil
+                row << nil
               end
             else
               row << (v == '' ? nil : v)
