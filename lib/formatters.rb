@@ -183,6 +183,11 @@ module Unipept
     #
     # @return [String] The header row
     def header(data, fasta_mapper = nil)
+      # First we need to check whether some input is non-empty (and keep track of which input this is)
+      data.each do |row|
+        puts row
+      end
+
       CSV.generate do |csv|
         first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
