@@ -190,10 +190,10 @@ module Unipept
     def filter_result(json_response)
       result = JSON[json_response] rescue []
       result = [result] unless result.is_a? Array
-      key_order = result.first.keys
-      result = flatten_functional_fields(result) if formatter.instance_of? CSVFormatter
+      key_order = result.first.keys if result.first
+      result = flatten_functional_fields(result) if formatter.instance_of?(Unipept::CSVFormatter)
       result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
-      result = inflate_functional_fields(result, key_order) if formatter.instance_of? CSVFormatter
+      result = inflate_functional_fields(result, key_order) if formatter.instance_of?(Unipept::CSVFormatter) && result.first
       result
     end
 
@@ -208,10 +208,8 @@ module Unipept
           if %w[ec go].include? k
             v.each do |item|
               item.each do |field_name, field_value|
-                new_field_name = (%w[ec_number go_term].include? field_name) ? field_name : k + '_' + field_name
-                if !(output_row.key? new_field_name)
-                  output_row[new_field_name] = []
-                end
+                new_field_name = %w[ec_number go_term].include?(field_name) ? field_name : k + '_' + field_name
+                output_row[new_field_name] = [] unless output_row.key? new_field_name
                 output_row[new_field_name] << field_value
               end
             end
@@ -221,7 +219,7 @@ module Unipept
         end
         output << output_row
       end
-      return output
+      output
     end
 
     # Transforms a flattened input created by flatten_functional_fields to the original
@@ -237,14 +235,14 @@ module Unipept
             # First, we take all distinct keys that start with "ec" or "go"
             annotation_keys = row.keys.select { |key| key.start_with? original_key }
             processed_keys += annotation_keys
-            if annotation_keys.length > 0
+            unless annotation_keys.empty?
               # Each of the values of the annotation_keys is an array. All respective values of each of
               # these arrays need to be put together into one hash. (E.g. {a => [1, 2], b=> [x, y]} --> [{a: 1, b: x}, {a: 2, b: y}])
               reconstructed_objects = []
-              for i in 0..annotation_keys[0].length
+              (0..annotation_keys[0].length).each do |i|
                 reconstructed_object = {}
                 annotation_keys.each do |annotation_key|
-                  reconstructed_object[(%w[ec_number go_term].include? annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
+                  reconstructed_object[%w[ec_number go_term].include?(annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
                 end
                 reconstructed_objects << reconstructed_object
               end
@@ -257,7 +255,7 @@ module Unipept
 
         output << output_row
       end
-      return output
+      output
     end
 
     def glob_to_regex(string)
