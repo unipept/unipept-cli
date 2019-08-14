@@ -188,6 +188,8 @@ module Unipept
       non_empty_ec = nil
       non_empty_go = nil
 
+      $keys_length = 0
+
       data.each do |row|
         if row["ec"] && row["ec"].length > 0
           non_empty_ec = row
@@ -209,6 +211,7 @@ module Unipept
           idx = keys.index("ec")
           keys.delete_at(idx)
           keys.insert(idx, *non_empty_ec["ec"].first.keys.map { |el| el == 'protein_count' ? "ec" + '_protein_count' : el })
+          $keys_length = *non_empty_ec["ec"].first.keys.length
         end
 
         if non_empty_go
@@ -217,9 +220,12 @@ module Unipept
           idx = keys.index("go")
           keys.delete_at(idx)
           keys.insert(idx, *non_empty_go["go"].first.keys.map { |el| el == 'protein_count' ? "go" + '_protein_count' : el })
+          $keys_length = *non_empty_go["go"].first.keys.length
         end
 
-        csv << keys.map(&:to_s) if first
+        # This global variable is necessary because we need to know how many items should be
+        # nil in the convert function.
+        csv << keys.map(&:to_s) if non_empty_ec || non_empty_go
       end
     end
 
@@ -240,13 +246,12 @@ module Unipept
           row = []
           o.each do |k, v|
             if %w[ec go].include? k
-              if v.length > 0
+              if v && v.length > 0
                 v.first.keys.each do |key|
                   row << (v.map { |el| el[key] }).join(' ')
                 end
               else
-                row << nil
-                row << nil
+                row = row.concat(Array.new($keys_length[0], nil))
               end
             else
               row << (v == '' ? nil : v)
