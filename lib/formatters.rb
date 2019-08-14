@@ -183,23 +183,40 @@ module Unipept
     #
     # @return [String] The header row
     def header(data, fasta_mapper = nil)
-      # First we need to check whether some input is non-empty (and keep track of which input this is)
+      # First we need to check whether some input is non-empty (and keep track
+      # of these inputs for EC and GO respectively).
+      non_empty_ec = nil
+      non_empty_go = nil
+
       data.each do |row|
-        puts row
+        if row["ec"] && row["ec"].length > 0
+          non_empty_ec = row
+        end
+
+        if row["go"] && row["go"].length > 0
+          non_empty_go = row
+        end
       end
 
       CSV.generate do |csv|
-        first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
+        processed_keys = []
+        
+        if non_empty_ec
+          processed_keys += non_empty_ec.keys
+          keys += non_empty_ec.keys
 
-        keys += first.keys
-
-        %w[ec go].each do |annotation|
-          next unless keys.include?(annotation)
-
-          idx = keys.index(annotation)
+          idx = keys.index("ec")
           keys.delete_at(idx)
-          keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
+          keys.insert(idx, *non_empty_ec["ec"].first.keys.map { |el| el == 'protein_count' ? "ec" + '_protein_count' : el })
+        end
+
+        if non_empty_go
+          keys += (non_empty_go.keys - processed_keys)
+
+          idx = keys.index("go")
+          keys.delete_at(idx)
+          keys.insert(idx, *non_empty_go["go"].first.keys.map { |el| el == 'protein_count' ? "go" + '_protein_count' : el })
         end
 
         csv << keys.map(&:to_s) if first
