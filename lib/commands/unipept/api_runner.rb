@@ -190,9 +190,10 @@ module Unipept
     def filter_result(json_response)
       result = JSON[json_response] rescue []
       result = [result] unless result.is_a? Array
-      result = flatten_functional_fields(result)
+      key_order = result.first.keys
+      result = flatten_functional_fields(result) if formatter.instance_of? CSVFormatter
       result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
-      result = inflate_functional_fields(result)
+      result = inflate_functional_fields(result, key_order) if formatter.instance_of? CSVFormatter
       result
     end
 
@@ -225,34 +226,33 @@ module Unipept
 
     # Transforms a flattened input created by flatten_functional_fields to the original
     # hierarchy.
-    def inflate_functional_fields(data)
+    def inflate_functional_fields(data, original_key_order)
       output = []
       data.each do |row|
         output_row = {}
 
         processed_keys = []
-        %w[ec go].each do |annotation_type|
-          # First, we take all distinct keys that start with "ec" or "go"
-          annotation_keys = row.keys.select { |key| key.start_with? annotation_type }
-          processed_keys += annotation_keys
-          if annotation_keys.length > 0
-            # Each of the values of the annotation_keys is an array. All respective values of each of
-            # these arrays need to be put together into one hash. (E.g. {a => [1, 2], b=> [x, y]} --> [{a: 1, b: x}, {a: 2, b: y}])
-            reconstructed_objects = []
-            for i in 0..annotation_keys[0].length
-              reconstructed_object = {}
-              annotation_keys.each do |annotation_key|
-                reconstructed_object[(%w[ec_number go_term].include? annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
+        original_key_order.each do |original_key|
+          if %w[ec go].include? original_key
+            # First, we take all distinct keys that start with "ec" or "go"
+            annotation_keys = row.keys.select { |key| key.start_with? original_key }
+            processed_keys += annotation_keys
+            if annotation_keys.length > 0
+              # Each of the values of the annotation_keys is an array. All respective values of each of
+              # these arrays need to be put together into one hash. (E.g. {a => [1, 2], b=> [x, y]} --> [{a: 1, b: x}, {a: 2, b: y}])
+              reconstructed_objects = []
+              for i in 0..annotation_keys[0].length
+                reconstructed_object = {}
+                annotation_keys.each do |annotation_key|
+                  reconstructed_object[(%w[ec_number go_term].include? annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
+                end
+                reconstructed_objects << reconstructed_object
               end
-              reconstructed_objects << reconstructed_object
+              output_row[original_key] = reconstructed_objects
             end
-            output_row[annotation_type] = reconstructed_objects
+          else
+            output_row[original_key] = row[original_key]
           end
-        end
-
-        # We still need to copy the other keys (that have nothing to do with ec or go)
-        (row.keys - processed_keys).each do |key|
-          output_row[key] = row[key]
         end
 
         output << output_row
