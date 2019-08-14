@@ -204,8 +204,8 @@ module Unipept
         
         non_empty_items.each do |annotation_type, non_empty_item|
           if non_empty_item
+            keys += (non_empty_item.keys - processed_keys)
             processed_keys += non_empty_item.keys
-            keys += non_empty_item.keys
 
             idx = keys.index(annotation_type)
             keys.delete_at(idx)
