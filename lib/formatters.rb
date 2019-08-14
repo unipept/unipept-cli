@@ -183,49 +183,38 @@ module Unipept
     #
     # @return [String] The header row
     def header(data, fasta_mapper = nil)
-      # First we need to check whether some input is non-empty (and keep track
-      # of these inputs for EC and GO respectively).
-      non_empty_ec = nil
-      non_empty_go = nil
-
+      # This global variable is necessary because we need to know how many items should be
+      # nil in the convert function.
       $keys_length = 0
+      # This array keeps track of items that are certainly filled in for each type of annotation
+      non_empty_items = {"ec" => nil, "go" => nil}
 
+      # First we look for items for both ec numbers and go terms that are fully filled in.
       data.each do |row|
-        if row["ec"] && row["ec"].length > 0
-          non_empty_ec = row
-        end
-
-        if row["go"] && row["go"].length > 0
-          non_empty_go = row
+        non_empty_items.keys.each do |annotation_type|
+          if row[annotation_type] && row[annotation_type].length > 0
+            non_empty_items[annotation_type] = row
+          end
         end
       end
 
       CSV.generate do |csv|
         keys = fasta_mapper ? ['fasta_header'] : []
         processed_keys = []
-        
-        if non_empty_ec
-          processed_keys += non_empty_ec.keys
-          keys += non_empty_ec.keys
 
-          idx = keys.index("ec")
-          keys.delete_at(idx)
-          keys.insert(idx, *non_empty_ec["ec"].first.keys.map { |el| el == 'protein_count' ? "ec" + '_protein_count' : el })
-          $keys_length = *non_empty_ec["ec"].first.keys.length
+        non_empty_items.each do |annotation_type, non_empty_item|
+          if non_empty_item
+            processed_keys += non_empty_item.keys
+            keys += non_empty_item.keys
+
+            idx = keys.index(annotation_type)
+            keys.delete_at(idx)
+            keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| el == 'protein_count' ? annotation_type + '_protein_count' : el })
+            $keys_length = *non_empty_item[annotation_type].first.keys.length
+          end
         end
 
-        if non_empty_go
-          keys += (non_empty_go.keys - processed_keys)
-
-          idx = keys.index("go")
-          keys.delete_at(idx)
-          keys.insert(idx, *non_empty_go["go"].first.keys.map { |el| el == 'protein_count' ? "go" + '_protein_count' : el })
-          $keys_length = *non_empty_go["go"].first.keys.length
-        end
-
-        # This global variable is necessary because we need to know how many items should be
-        # nil in the convert function.
-        csv << keys.map(&:to_s) if non_empty_ec || non_empty_go
+        csv << keys.map(&:to_s) if true
       end
     end
 
