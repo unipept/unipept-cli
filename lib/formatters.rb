@@ -201,7 +201,7 @@ module Unipept
       CSV.generate do |csv|
         keys = fasta_mapper ? ['fasta_header'] : []
         processed_keys = []
-
+        
         non_empty_items.each do |annotation_type, non_empty_item|
           if non_empty_item
             processed_keys += non_empty_item.keys
@@ -214,7 +214,7 @@ module Unipept
           end
         end
 
-        csv << keys.map(&:to_s) if true
+        csv << keys.map(&:to_s) if non_empty_items.values.any? {|item| item != nil}
       end
     end
 
@@ -246,7 +246,7 @@ module Unipept
               row << (v == '' ? nil : v)
             end
           end
-          csv << row
+          csv << row if $keys_length[0] > 0
         end
       end
     end
