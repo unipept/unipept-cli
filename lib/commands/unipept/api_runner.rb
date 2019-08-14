@@ -248,7 +248,7 @@ module Unipept
               end
               output_row[original_key] = reconstructed_objects
             end
-          else
+          elsif row.key? original_key
             output_row[original_key] = row[original_key]
           end
         end

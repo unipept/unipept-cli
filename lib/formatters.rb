@@ -198,7 +198,8 @@ module Unipept
 
       CSV.generate do |csv|
         keys = fasta_mapper ? ['fasta_header'] : []
-        processed_keys = []
+        keys += (data.first.keys - %w[ec go])
+        processed_keys = keys
 
         non_empty_items.each do |annotation_type, non_empty_item|
           next unless non_empty_item
@@ -212,7 +213,7 @@ module Unipept
           $keys_length = *non_empty_item[annotation_type].first.keys.length # rubocop:disable Style/GlobalVars
         end
 
-        csv << keys.map(&:to_s) if non_empty_items.values.any? { |item| !item.nil? }
+        csv << keys.map(&:to_s) if keys.length.positive?
       end
     end
 
@@ -244,7 +245,7 @@ module Unipept
               row << (v == '' ? nil : v)
             end
           end
-          csv << row if $keys_length[0].positive? # rubocop:disable Style/GlobalVars
+          csv << row
         end
       end
     end
