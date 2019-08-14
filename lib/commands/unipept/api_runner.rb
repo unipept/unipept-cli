@@ -190,8 +190,38 @@ module Unipept
     def filter_result(json_response)
       result = JSON[json_response] rescue []
       result = [result] unless result.is_a? Array
+      result = flatten_functional_fields(result)
+      # puts result.inspect
       result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
       result
+    end
+
+    def flatten_functional_fields(data)
+      output = []
+      data.each do |row|
+        output_row = {}
+        row.each do |k, v|
+          if %w[ec go].include? k
+            v.each do |item|
+              item.each do |field_name, field_value|
+                new_field_name = (field_name == "protein_count" ? k + "_protein_count" : field_name)
+                if !(output_row.key? new_field_name)
+                  output_row[new_field_name] = []
+                end
+                output_row[new_field_name] << field_value
+              end
+            end
+          else
+            output_row[k] = v
+          end
+        end
+        output << output_row
+      end
+      return output
+    end
+
+    def inflate_functional_fields(data)
+      
     end
 
     def glob_to_regex(string)
