@@ -209,7 +209,7 @@ module Unipept
 
             idx = keys.index(annotation_type)
             keys.delete_at(idx)
-            keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| el == 'protein_count' ? annotation_type + '_protein_count' : el })
+            keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| (%w[ec_number go_term].include? el) ? el: annotation_type + '_' + el })
             $keys_length = *non_empty_item[annotation_type].first.keys.length
           end
         end

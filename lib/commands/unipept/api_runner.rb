@@ -191,11 +191,14 @@ module Unipept
       result = JSON[json_response] rescue []
       result = [result] unless result.is_a? Array
       result = flatten_functional_fields(result)
-      # puts result.inspect
       result.map! { |r| r.select! { |k, _v| selected_fields.any? { |f| f.match k } } } unless selected_fields.empty?
+      result = inflate_functional_fields(result)
       result
     end
 
+    # Transforms the hierarchical input to something without hierarchy. All fields
+    # associated with functional annotations are transformed to a flat alternative.
+    # Example: {"go" => {"go_term": xxx, "protein_count": yyy}} --> {"go_term" => [xxx], "protein_count" => [yyy]}
     def flatten_functional_fields(data)
       output = []
       data.each do |row|
@@ -204,7 +207,7 @@ module Unipept
           if %w[ec go].include? k
             v.each do |item|
               item.each do |field_name, field_value|
-                new_field_name = (field_name == "protein_count" ? k + "_protein_count" : field_name)
+                new_field_name = (%w[ec_number go_term].include? field_name) ? field_name : k + '_' + field_name
                 if !(output_row.key? new_field_name)
                   output_row[new_field_name] = []
                 end
@@ -220,8 +223,41 @@ module Unipept
       return output
     end
 
+    # Transforms a flattened input created by flatten_functional_fields to the original
+    # hierarchy.
     def inflate_functional_fields(data)
-      
+      output = []
+      data.each do |row|
+        output_row = {}
+
+        processed_keys = []
+        %w[ec go].each do |annotation_type|
+          # First, we take all distinct keys that start with "ec" or "go"
+          annotation_keys = row.keys.select { |key| key.start_with? annotation_type }
+          processed_keys += annotation_keys
+          if annotation_keys.length > 0
+            # Each of the values of the annotation_keys is an array. All respective values of each of
+            # these arrays need to be put together into one hash. (E.g. {a => [1, 2], b=> [x, y]} --> [{a: 1, b: x}, {a: 2, b: y}])
+            reconstructed_objects = []
+            for i in 0..annotation_keys[0].length
+              reconstructed_object = {}
+              annotation_keys.each do |annotation_key|
+                reconstructed_object[(%w[ec_number go_term].include? annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
+              end
+              reconstructed_objects << reconstructed_object
+            end
+            output_row[annotation_type] = reconstructed_objects
+          end
+        end
+
+        # We still need to copy the other keys (that have nothing to do with ec or go)
+        (row.keys - processed_keys).each do |key|
+          output_row[key] = row[key]
+        end
+
+        output << output_row
+      end
+      return output
     end
 
     def glob_to_regex(string)
