@@ -1,9 +1,6 @@
 # unipept-cli
 
 [![Gem Version](https://badge.fury.io/rb/unipept.svg)](http://badge.fury.io/rb/unipept)
-[![Build Status](https://api.travis-ci.org/unipept/unipept-cli.svg)](https://travis-ci.org/unipept/unipept-cli)
-[![Coverage Status](https://coveralls.io/repos/unipept/unipept-cli/badge.svg)](https://coveralls.io/r/unipept/unipept-cli)
-[![Code Climate](https://codeclimate.com/github/unipept/unipept-cli/badges/gpa.svg)](https://codeclimate.com/github/unipept/unipept-cli)
 
 Unipept-cli offers a command line interface to the [Unipept](http://unipept.ugent.be) web service.
 Documentation about the web service can be found at [http://unipept.ugent.be/apidocs](http://unipept.ugent.be/apidocs), documentation about the command line tools at [http://unipept.ugent.be/clidocs](http://unipept.ugent.be/clidocs).
@@ -19,7 +16,7 @@ ruby 2.2.2p95 (2015-04-13 revision 50295) [x86_64-darwin14]
 
 More information on installing Ruby can be found at https://www.ruby-lang.org/en/installation/
 
-The Unipept CLI is available as a *gem*. This means it can easily be installed with the following command:
+The Unipept CLI is available as a _gem_. This means it can easily be installed with the following command:
 
 ```bash
 $ gem install unipept
