@@ -43,7 +43,7 @@ end
 
 RuboCop::RakeTask.new(:test_style)
 
-task test: %i[test_unit test_style]
+task test: %i[test_unit]
 
 task default: :test
 
