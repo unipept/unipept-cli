@@ -46,7 +46,7 @@ module Unipept
         input_set = Set.new
 
         slice.each do |line|
-          line.chomp!
+          line = line.chomp
           if fasta? line
             current_fasta_header = line
           else

@@ -29,6 +29,10 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/BlockLength:
   Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
 Naming/HeredocDelimiterNaming:
   Enabled: false
 Naming/UncommunicativeMethodParamName:

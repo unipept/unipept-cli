@@ -183,21 +183,37 @@ module Unipept
     #
     # @return [String] The header row
     def header(data, fasta_mapper = nil)
+      # This global variable is necessary because we need to know how many items should be
+      # nil in the convert function.
+      $keys_length = 0 # rubocop:disable Style/GlobalVars
+      # This array keeps track of items that are certainly filled in for each type of annotation
+      non_empty_items = { 'ec' => nil, 'go' => nil }
+
+      # First we look for items for both ec numbers and go terms that are fully filled in.
+      data.each do |row|
+        non_empty_items.keys.each do |annotation_type|
+          non_empty_items[annotation_type] = row if row[annotation_type] && !row[annotation_type].empty?
+        end
+      end
+
       CSV.generate do |csv|
-        first = data.first
         keys = fasta_mapper ? ['fasta_header'] : []
+        keys += (data.first.keys - %w[ec go])
+        processed_keys = keys
 
-        keys += first.keys
+        non_empty_items.each do |annotation_type, non_empty_item|
+          next unless non_empty_item
 
-        %w[ec go].each do |annotation|
-          next unless keys.include?(annotation)
+          keys += (non_empty_item.keys - processed_keys)
+          processed_keys += non_empty_item.keys
 
-          idx = keys.index(annotation)
+          idx = keys.index(annotation_type)
           keys.delete_at(idx)
-          keys.insert(idx, *first[annotation].first.keys.map { |el| el == 'protein_count' ? annotation + '_protein_count' : el })
+          keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| %w[ec_number go_term].include?(el) ? el : annotation_type + '_' + el })
+          $keys_length = *non_empty_item[annotation_type].first.keys.length # rubocop:disable Style/GlobalVars
         end
 
-        csv << keys.map(&:to_s) if first
+        csv << keys.map(&:to_s) if keys.length.positive?
       end
     end
 
@@ -218,8 +234,12 @@ module Unipept
           row = []
           o.each do |k, v|
             if %w[ec go].include? k
-              v.first.keys.each do |key|
-                row << (v.map { |el| el[key] }).join(' ')
+              if v && !v.empty?
+                v.first.keys.each do |key|
+                  row << (v.map { |el| el[key] }).join(' ')
+                end
+              else
+                row = row.concat(Array.new($keys_length[0], nil)) # rubocop:disable Style/GlobalVars
               end
             else
               row << (v == '' ? nil : v)
