@@ -111,6 +111,7 @@ module Unipept
         Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY])
       end
       lines = out.each_line
+      assert_equal('', err)
       assert_raises(StopIteration) { lines.next }
     end
 
@@ -119,6 +120,7 @@ module Unipept
         Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY AALTER])
       end
       lines = out.each_line
+      assert_equal('', err)
       assert(lines.next.start_with?('peptide,total_protein_count,ec_number,ec_protein_count'))
       assert(lines.next.start_with?('AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,111 11 11 8 8 7 6 4 4 3'))
       assert_raises(StopIteration) { lines.next }
@@ -129,6 +131,7 @@ module Unipept
         Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be MDGTEYIIVK])
       end
       lines = out.each_line
+      assert_equal('', err)
       assert(lines.next.start_with?('peptide,total_protein_count'))
       assert(lines.next.start_with?('MDGTEYIIVK,4'))
       assert_raises(StopIteration) { lines.next }
