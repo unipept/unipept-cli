@@ -105,33 +105,33 @@ module Unipept
       assert(output.end_with?('</results>'))
       assert(output.include?('<fasta_header>'))
     end
-  end
 
-  def test_run_with_empty_peptide
-    out, err = capture_io_while do
-      Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY])
+    def test_run_with_empty_peptide
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY])
+      end
+      lines = out.each_line
+      assert_raises(StopIteration) { lines.next }
     end
-    lines = out.each_line
-    assert_raises(StopIteration) { lines.next }
-  end
 
-  def test_run_with_empty_and_existing_peptide
-    out, err = capture_io_while do
-      Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY AALTER])
+    def test_run_with_empty_and_existing_peptide
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be AKVYSKY AALTER])
+      end
+      lines = out.each_line
+      assert(lines.next.start_with?('peptide,total_protein_count,ec_number,ec_protein_count'))
+      assert(lines.next.start_with?('AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,111 11 11 8 8 7 6 4 4 3'))
+      assert_raises(StopIteration) { lines.next }
     end
-    lines = out.each_line
-    assert(lines.next.start_with?('peptide,total_protein_count,ec_number,ec_protein_count'))
-    assert(lines.next.start_with?('AALTER,1425,2.3.2.27 2.7.13.3 6.2.1.3 6.1.1.6 6.3.2.13 2.7.4.25 6.1.1.22 3.1.26.- 2.3.1.29 2.7.1.15,111 11 11 8 8 7 6 4 4 3'))
-    assert_raises(StopIteration) { lines.next }
-  end
 
-  def test_run_existing_peptide_no_ec_numbers
-    out, err = capture_io_while do
-      Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be MDGTEYIIVK])
+    def test_run_existing_peptide_no_ec_numbers
+      out, err = capture_io_while do
+        Commands::Unipept.run(%w[pept2ec --host http://api.unipept.ugent.be MDGTEYIIVK])
+      end
+      lines = out.each_line
+      assert(lines.next.start_with?('peptide,total_protein_count'))
+      assert(lines.next.start_with?('MDGTEYIIVK,4'))
+      assert_raises(StopIteration) { lines.next }
     end
-    lines = out.each_line
-    assert(lines.next.start_with?('peptide,total_protein_count'))
-    assert(lines.next.start_with?('MDGTEYIIVK,4'))
-    assert_raises(StopIteration) { lines.next }
   end
 end
