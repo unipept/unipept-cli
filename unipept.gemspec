@@ -45,6 +45,7 @@ Gem::Specification.new do |s|
     "lib/commands/unipept/pept2ec.rb",
     "lib/commands/unipept/pept2funct.rb",
     "lib/commands/unipept/pept2go.rb",
+    "lib/commands/unipept/pept2interpro.rb",
     "lib/commands/unipept/pept2lca.rb",
     "lib/commands/unipept/pept2prot.rb",
     "lib/commands/unipept/pept2taxa.rb",
