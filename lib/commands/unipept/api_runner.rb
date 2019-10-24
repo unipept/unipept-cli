@@ -205,10 +205,10 @@ module Unipept
       data.each do |row|
         output_row = {}
         row.each do |k, v|
-          if %w[ec go].include? k
+          if %w[ec go ipr].include? k
             v.each do |item|
               item.each do |field_name, field_value|
-                new_field_name = %w[ec_number go_term].include?(field_name) ? field_name : k + '_' + field_name
+                new_field_name = %w[ec_number go_term ipr_code].include?(field_name) ? field_name : k + '_' + field_name
                 output_row[new_field_name] = [] unless output_row.key? new_field_name
                 output_row[new_field_name] << field_value
               end
@@ -231,8 +231,8 @@ module Unipept
 
         processed_keys = []
         original_key_order.each do |original_key|
-          if %w[ec go].include? original_key
-            # First, we take all distinct keys that start with "ec" or "go"
+          if %w[ec go ipr].include? original_key
+            # First, we take all distinct keys that start with "ec", "go" or "ipr"
             annotation_keys = row.keys.select { |key| key.start_with? original_key }
             processed_keys += annotation_keys
             unless annotation_keys.empty?
@@ -242,7 +242,7 @@ module Unipept
               (0..annotation_keys[0].length).each do |i|
                 reconstructed_object = {}
                 annotation_keys.each do |annotation_key|
-                  reconstructed_object[%w[ec_number go_term].include?(annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
+                  reconstructed_object[%w[ec_number go_term ipr_code].include?(annotation_key) ? annotation_key : annotation_key[annotation_key.index('_') + 1, annotation_key.length]] = row[annotation_key][i]
                 end
                 reconstructed_objects << reconstructed_object
               end

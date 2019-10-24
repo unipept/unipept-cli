@@ -189,7 +189,7 @@ module Unipept
       # This array keeps track of items that are certainly filled in for each type of annotation
       non_empty_items = { 'ec' => nil, 'go' => nil, 'ipr' => nil }
 
-      # First we look for items for both ec numbers and go terms that are fully filled in.
+      # First we look for items for both ec numbers, go terms and ipr codes that are fully filled in.
       data.each do |row|
         non_empty_items.keys.each do |annotation_type|
           non_empty_items[annotation_type] = row if row[annotation_type] && !row[annotation_type].empty?

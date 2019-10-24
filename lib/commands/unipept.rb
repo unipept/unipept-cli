@@ -151,8 +151,8 @@ module Unipept
 
     def add_pept2funct_command
       @root_command.define_command('pept2funct') do
-        usage 'pept2ec[options]'
-        summary 'Fetch EC numbers and GO terms of UniProt entries that match tryptic peptides.'
+        usage 'pept2funct[options]'
+        summary 'Fetch EC numbers, GO terms and InterPro codes of UniProt entries that match tryptic peptides.'
         description <<-EOS
         For each tryptic peptide the unipept pept2funct command retrieves from Unipept the set of EC numbers and GO terms from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
@@ -166,7 +166,7 @@ module Unipept
         EOS
 
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
-        flag :a, :all, 'Also return the names of the EC numbers and GO terms. Note that this may have a performance penalty.'
+        flag :a, :all, 'Also return the names of the EC numbers, GO terms and InterPro codes. Note that this may have a performance penalty.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Pept2funct
