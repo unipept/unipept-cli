@@ -89,7 +89,7 @@ module Unipept
       return @selected_fields unless @selected_fields.nil?
 
       fields = [*options[:select]].map { |f| f.split(',') }.flatten
-      fields.concat(required_fields) if @fasta && !fields.empty?
+      fields.concat(required_fields) unless fields.empty?
       @selected_fields = fields.map { |f| glob_to_regex(f) }
     end
 
