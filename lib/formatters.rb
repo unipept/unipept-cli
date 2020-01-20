@@ -187,9 +187,9 @@ module Unipept
       # nil in the convert function.
       $keys_length = 0 # rubocop:disable Style/GlobalVars
       # This array keeps track of items that are certainly filled in for each type of annotation
-      non_empty_items = { 'ec' => nil, 'go' => nil }
+      non_empty_items = { 'ec' => nil, 'go' => nil, 'ipr' => nil }
 
-      # First we look for items for both ec numbers and go terms that are fully filled in.
+      # First we look for items for both ec numbers, go terms and ipr codes that are fully filled in.
       data.each do |row|
         non_empty_items.keys.each do |annotation_type|
           non_empty_items[annotation_type] = row if row[annotation_type] && !row[annotation_type].empty?
@@ -198,7 +198,7 @@ module Unipept
 
       CSV.generate do |csv|
         keys = fasta_mapper ? ['fasta_header'] : []
-        keys += (data.first.keys - %w[ec go])
+        keys += (data.first.keys - %w[ec go ipr])
         processed_keys = keys
 
         non_empty_items.each do |annotation_type, non_empty_item|
@@ -209,7 +209,7 @@ module Unipept
 
           idx = keys.index(annotation_type)
           keys.delete_at(idx)
-          keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| %w[ec_number go_term].include?(el) ? el : annotation_type + '_' + el })
+          keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| %w[ec_number go_term ipr_code].include?(el) ? el : annotation_type + '_' + el })
           $keys_length = *non_empty_item[annotation_type].first.keys.length # rubocop:disable Style/GlobalVars
         end
 
@@ -233,7 +233,7 @@ module Unipept
         data.each do |o|
           row = []
           o.each do |k, v|
-            if %w[ec go].include? k
+            if %w[ec go ipr].include? k
               if v && !v.empty?
                 v.first.keys.each do |key|
                   row << (v.map { |el| el[key] }).join(' ')
