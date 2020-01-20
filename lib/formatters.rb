@@ -236,7 +236,7 @@ module Unipept
             if %w[ec go].include? k
               if v && !v.empty?
                 v.first.keys.each do |key|
-                  row << (v.map { |el| el[key] }).join(' ').strip()
+                  row << (v.map { |el| el[key] }).join(' ').strip
                 end
               else
                 row = row.concat(Array.new($keys_length[0], nil)) # rubocop:disable Style/GlobalVars
