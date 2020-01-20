@@ -12,6 +12,7 @@ require_relative 'unipept/config'
 require_relative 'unipept/pept2ec'
 require_relative 'unipept/pept2funct'
 require_relative 'unipept/pept2go'
+require_relative 'unipept/pept2interpro'
 require_relative 'unipept/pept2lca'
 require_relative 'unipept/pept2prot'
 require_relative 'unipept/pept2taxa'
@@ -28,6 +29,7 @@ module Unipept
       add_pept2ec_command
       add_pept2funct_command
       add_pept2go_command
+      add_pept2interpro_command
       add_pept2lca_command
       add_peptinfo_command
       add_taxa2lca_command
@@ -149,8 +151,8 @@ module Unipept
 
     def add_pept2funct_command
       @root_command.define_command('pept2funct') do
-        usage 'pept2ec[options]'
-        summary 'Fetch EC numbers and GO terms of UniProt entries that match tryptic peptides.'
+        usage 'pept2funct[options]'
+        summary 'Fetch EC numbers, GO terms and InterPro codes of UniProt entries that match tryptic peptides.'
         description <<-EOS
         For each tryptic peptide the unipept pept2funct command retrieves from Unipept the set of EC numbers and GO terms from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
 
@@ -164,7 +166,7 @@ module Unipept
         EOS
 
         flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
-        flag :a, :all, 'Also return the names of the EC numbers and GO terms. Note that this may have a performance penalty.'
+        flag :a, :all, 'Also return the names of the EC numbers, GO terms and InterPro codes. Note that this may have a performance penalty.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Pept2funct
@@ -192,6 +194,30 @@ module Unipept
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Pept2go
+      end
+    end
+
+    def add_pept2interpro_command
+      @root_command.define_command('pept2interpro') do
+        usage 'pept2interpro [options]'
+        summary 'Fetch InterPro entries of UniProt entries that match tryptic peptides.'
+        description <<-EOS
+        For each tryptic peptide the unipept pept2interpro command retrieves from Unipept the set of InterPro entries from all UniProt entries whose protein sequence contains an exact matches to the tryptic peptide. The command expects a list of tryptic peptides that are passed
+
+        - as separate command line arguments
+
+        - in a text file that is passed as an argument to the -i option
+
+        - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        flag :e, :equate, 'equate isoleucine (I) and leucine (L) when matching peptides'
+        flag :a, :all, 'Also return the names and types of the InterPro entries. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Pept2interpro
       end
     end
 
