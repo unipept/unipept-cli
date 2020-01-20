@@ -239,7 +239,7 @@ module Unipept
               # Each of the values of the annotation_keys is an array. All respective values of each of
               # these arrays need to be put together into one hash. (E.g. {a => [1, 2], b=> [x, y]} --> [{a: 1, b: x}, {a: 2, b: y}])
               reconstructed_objects = []
-              (0..annotation_keys[0].length).each do |i|
+              (0..row[annotation_keys[0]].length).each do |i|
                 reconstructed_object = {}
                 annotation_keys.each do |annotation_key|
                   reconstructed_object[%w[ec_number go_term].include?(annotation_key) ? annotation_key : annotation_key[3, annotation_key.length]] = row[annotation_key][i]
