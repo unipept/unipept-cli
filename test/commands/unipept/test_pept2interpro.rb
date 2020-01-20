@@ -138,4 +138,3 @@ module Unipept
     end
   end
 end
-
