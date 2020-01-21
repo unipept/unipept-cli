@@ -19,14 +19,14 @@ jobs:
       - name: Cache Ruby dependencies
         uses: actions/cache@v1
         with:
-          path: /usr/local/bundle
+          path: vendor/bundle
           key: v2-${{ runner.os }}-${{ matrix.ruby }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.ruby }}-gem-
       - name: Install dependencies
         run: |
           gem install bundler:1.17.2
-          bundle config path "/usr/local/bundle"
+          bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
       - name: Test
         run: |
@@ -41,14 +41,14 @@ jobs:
       - name: Cache Ruby dependencies
         uses: actions/cache@v1
         with:
-          path: /usr/local/bundle
+          path: vendor/bundle
           key: v2-${{ runner.os }}-${{ matrix.ruby }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.ruby }}-gem-
       - name: Install dependencies
         run: |
           gem install bundler:1.17.2
-          bundle config path "/usr/local/bundle"
+          bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
       - name: Test
         run: |
