@@ -23,7 +23,7 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
-Metrics/LineLength:
+Layout/LineLength:
   Enabled: false
 Metrics/MethodLength:
   Enabled: false
@@ -35,5 +35,5 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Naming/HeredocDelimiterNaming:
   Enabled: false
-Naming/UncommunicativeMethodParamName:
+Naming/MethodParameterName:
   Enabled: false
