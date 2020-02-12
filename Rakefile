@@ -25,7 +25,7 @@ begin
     commands for handling proteins using the command line.
     EOS
     gem.email = 'unipept@ugent.be'
-    gem.authors = ['Toon Willems', 'Bart Mesuere', 'Tom Naessens']
+    gem.authors = ['Bart Mesuere', 'Pieter Verschaffelt', 'Toon Willems', 'Tom Naessens']
     gem.required_ruby_version = '>= 2.0.0'
   end
   Jeweler::RubygemsDotOrgTasks.new
