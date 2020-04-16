@@ -123,6 +123,8 @@ module Unipept
           method: :post,
           body: construct_request_body(input_slice),
           accept_encoding: 'gzip',
+          followlocation: true,
+          postredir: :post_all,
           headers: { 'User-Agent' => @user_agent }
         )
 
