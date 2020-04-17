@@ -150,7 +150,7 @@ module Unipept
       warn "API request failed! log can be found in #{path}"
     end
 
-    private
+    protected
 
     def error_file_path
       File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))

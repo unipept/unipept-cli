@@ -310,8 +310,9 @@ module Unipept
         The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
         EOS
 
-        flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
-        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+        flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty. Only applicable in combination with ``--format=json``.'
+        flag :html, :html, 'return the result as a HTML-file containing Unipept visualizations.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used. Only applicable in combination with `--format json`', argument: :required, multiple: true
 
         runner Commands::Taxa2Tree
       end
