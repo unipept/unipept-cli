@@ -19,6 +19,7 @@ require_relative 'unipept/pept2taxa'
 require_relative 'unipept/peptinfo'
 require_relative 'unipept/taxa2lca'
 require_relative 'unipept/taxonomy'
+require_relative 'unipept/taxa2tree'
 
 module Unipept
   class Commands::Unipept
@@ -35,6 +36,7 @@ module Unipept
       add_taxa2lca_command
       add_pept2prot_command
       add_taxonomy_command
+      add_taxa2tree_command
     end
 
     def run(args)
@@ -289,6 +291,29 @@ module Unipept
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Taxa2lca
+      end
+    end
+
+    def add_taxa2tree_command
+      @root_command.define_command('taxa2tree') do
+        usage 'taxa2tree [options]'
+        summary 'Compute lineage tree for given list of taxa'
+        description <<-EOS
+        The unipept taxa2tree command computes a lineage tree of a given list of NCBI Taxonomy Identifiers. A frequency table is computed for the given list of taxa. Secondly, the lineages for all taxa are looked up. These are then used to build a lineage tree with all counts set. The command expects a list of NCBI Taxonomy Identifiers that are passed
+
+         - as separate command line arguments
+
+         - in a text file that is passed as an argument to the -i option
+
+         - to standard input
+
+        The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
+        EOS
+
+        flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.'
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Taxa2Tree
       end
     end
 

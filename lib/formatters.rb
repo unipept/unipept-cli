@@ -336,4 +336,64 @@ module Unipept
         .join
     end
   end
+
+  class HtmlFormatter < Formatter
+    register :html
+
+    # @return [String] The type of the current formatter: html
+    def type
+      'html'
+    end
+
+    def self.hidden?
+      false
+    end
+
+    def header(_data, _fasta_mapper = nil)
+      '
+      <!DOCTYPE html>
+      <html>
+          <head>
+              <script src="https://code.jquery.com/jquery-3.5.0.slim.min.js" integrity="sha256-MlusDLJIP1GRgLrOflUQtshyP0TwT/RHXsI1wWGnQhs=" crossorigin="anonymous"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" integrity="sha256-dsOXGNHAo/syFnazt+KTBsCQeRmlcW1XKL0bCK4Baec=" crossorigin="anonymous"></script>
+              <script src="https://cdn.jsdelivr.net/npm/unipept-visualizations@1.7.3/dist/unipept-visualizations.min.js" integrity="sha256-X40vVFfGbi55N33QuZEMmw3nxi7Swljq5OJ1UHWdBhQ=" crossorigin="anonymous"></script>
+          </head>'
+    end
+
+    def footer
+      '</html>'
+    end
+
+    # Converts the given input data to an HTML page that contains the Unipept visualizations
+    #
+    # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
+    #
+    # @return [String] The converted input data in the Blast format
+    def convert(data, _first)
+      "
+      <body>
+        <div id='sunburst'></div>
+        <script>
+          const data = #{JSON.dump(data[0])};
+
+          function tooltipContent(d) {
+              return '<b>' + d.name + '</b> (' + d.rank + ')<br/>' +
+                  (!d.data.self_count ? '0' : d.data.self_count) +
+                  (d.data.self_count && d.data.self_count === 1 ? ' sequence' : ' sequences') + ' specific to this level<br/>' +
+                  (!d.data.count ? '0' : d.data.count) +
+                  (d.data.count && d.data.count === 1 ? ' sequence' : ' sequences') + ' specific to this level or lower';
+          };
+
+          const options = {
+            getTooltip: tooltipContent
+          };
+
+          $('#sunburst').sunburst(data, options);
+        </script>
+      </body>
+      "
+    end
+  end
 end
