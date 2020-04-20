@@ -308,7 +308,6 @@ module Unipept
          - to standard input
 
         The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one NCBI Taxonomy Identifier per line.
-
         EOS
 
         flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty. Only applicable in combination with ``--format=json``.'

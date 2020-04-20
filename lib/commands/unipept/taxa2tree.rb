@@ -46,6 +46,24 @@ module Unipept::Commands
         1000
       end
     end
+
+    def construct_request_body(input)
+      if input.length > 0 and input[0].include? ','
+        data = input.map do |item|
+          splitted = item.rstrip.split ','
+          splitted[1] = splitted[1].to_i
+          splitted
+        end
+
+        {
+            counts: Hash[data]
+        }
+      else
+        {
+            input: input
+        }
+      end
+    end
   end
 end
 
