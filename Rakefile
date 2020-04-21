@@ -36,7 +36,12 @@ end
 task :test_unit do
   require './test/helper.rb'
 
-  FileList['./test/**/test_*.rb', './test/**/*_spec.rb'].each do |fn|
+  # FileList['./test/**/test_*.rb', './test/**/*_spec.rb'].each do |fn|
+  #   require fn
+  # end
+  #
+
+  FileList['./test/commands/unipept/test_pept2ec.rb'].each do |fn|
     require fn
   end
 end

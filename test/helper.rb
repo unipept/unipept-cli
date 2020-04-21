@@ -1,5 +1,8 @@
 require 'rubygems'
 require 'bundler'
+# require 'webmock/minitest'
+
+require_relative 'support/api_stub'
 
 begin
   Bundler.setup(:default, :development)
@@ -21,6 +24,8 @@ module Unipept
       FileUtils.cd(@tmp_dir)
 
       @orig_io = capture_io
+
+      setup_api_stubs
     end
 
     def teardown
@@ -70,6 +75,12 @@ module Unipept
       $stdout = orig_stdout
       $stderr = orig_stderr
       $stdin = orig_stdin
+    end
+
+    # Setup the interceptors for API requests, that will reply with a predefined (static) set of data
+    def setup_api_stubs
+      api_stub = ApiStub.new
+      api_stub.setup_stubs
     end
   end
 end
