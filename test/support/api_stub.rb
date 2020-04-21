@@ -8,6 +8,9 @@ class ApiStub
     %w[pept2ec pept2go pept2interpro pept2funct pept2lca pept2prot pept2taxa peptinfo].each do |endpoint|
       setup_endpoint endpoint
     end
+
+    setup_taxa2lca
+    setup_taxonomy
   end
 
   def setup_endpoint(name)
@@ -16,6 +19,27 @@ class ApiStub
       peptides = req.options[:body][:input]
 
       filtered = items.filter { |item| peptides.include? item['peptide'] }
+
+      Typhoeus::Response.new(code: 200, body: JSON.dump(filtered))
+    end
+  end
+
+  def setup_taxa2lca
+    Typhoeus.stub("http://api.unipept.ugent.be/api/v1/taxa2lca.json").and_return do |req|
+      Typhoeus::Response.new(code: 200, body: '{
+        "taxon_id": 1678,
+        "taxon_name": "Bifidobacterium",
+        "taxon_rank": "genus"
+      }')
+    end
+  end
+
+  def setup_taxonomy
+    items = JSON.parse(File.read(File.join(File.dirname(__FILE__), "resources/taxonomy.json")))
+    Typhoeus.stub("http://api.unipept.ugent.be/api/v1/taxonomy.json").and_return do |req|
+      taxa = req.options[:body][:input].map(&:to_i)
+
+      filtered = items.filter { |item| taxa.include? item['taxon_id'] }
 
       Typhoeus::Response.new(code: 200, body: JSON.dump(filtered))
     end
