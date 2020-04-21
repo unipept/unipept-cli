@@ -1,0 +1,14 @@
+[
+    {
+        "peptide": "AALTER",
+        "taxon_id": 1,
+        "taxon_name": "root",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "AALER",
+        "taxon_id": 1,
+        "taxon_name": "root",
+        "taxon_rank": "no rank"
+    }
+]

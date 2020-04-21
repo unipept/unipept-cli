@@ -1,0 +1,43 @@
+[
+    {
+        "peptide": "AALTER",
+        "total_protein_count": 7,
+        "go": [
+            {
+                "go_term": "GO:0000287",
+                "protein_count": 5
+            },
+            {
+                "go_term": "GO:0005737",
+                "protein_count": 5
+            },
+            {
+                "go_term": "GO:0042803",
+                "protein_count": 1
+            }
+        ]
+    },
+    {
+        "peptide": "AALER",
+        "total_protein_count": 208,
+        "go": [
+            {
+                "go_term": "GO:0005737",
+                "protein_count": 106
+            },
+            {
+                "go_term": "GO:0005524",
+                "protein_count": 75
+            },
+            {
+                "go_term": "GO:0008270",
+                "protein_count": 48
+            }
+        ]
+    },
+    {
+        "peptide": "AAEVALVGTEK",
+        "total_protein_count": 0,
+        "go": []
+    }
+]

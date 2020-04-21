@@ -1,0 +1,422 @@
+[
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "P42654",
+        "protein_name": "14-3-3-like protein B",
+        "taxon_id": 3906
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "Q96453",
+        "protein_name": "14-3-3-like protein D",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "C6TH93",
+        "protein_name": "Casparian strip membrane protein 4",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2Z6PAC3",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3900
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B7A3K5",
+        "protein_name": "Putative 14-3-3-like protein D isoform X1",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A396GNG6",
+        "protein_name": "Putative 14-3-3 protein",
+        "taxon_id": 3880
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A072VBW0",
+        "protein_name": "Putative 14-3-3 protein",
+        "taxon_id": 3880
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "I1LUM3",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1S3WXW9",
+        "protein_name": "14-3-3 protein 9-like isoform X1",
+        "taxon_id": 4097
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H5N535",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 55188
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A438E5J2",
+        "protein_name": "14-3-3-like protein D",
+        "taxon_id": 29760
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445HT97",
+        "protein_name": "14-3-3-like protein D isoform A",
+        "taxon_id": 3848
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5J5A607",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 561372
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1S4A416",
+        "protein_name": "14-3-3 protein 9-like",
+        "taxon_id": 4097
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1U7VM87",
+        "protein_name": "14-3-3 protein 9-like isoform X2",
+        "taxon_id": 4096
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2N9J4Q3",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 28930
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445IBP6",
+        "protein_name": "14-3-3-like protein D isoform A",
+        "taxon_id": 3848
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445HTA3",
+        "protein_name": "14-3-3-like protein D isoform C",
+        "taxon_id": 3848
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "T2DN83",
+        "protein_name": "14-3-3-like protein D",
+        "taxon_id": 3885
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445CI86",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3818
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A444Y3Q8",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3818
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2K3PKW1",
+        "protein_name": "14-3-3-like protein d-like",
+        "taxon_id": 57577
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A200QJZ5",
+        "protein_name": "14-3-3 protein",
+        "taxon_id": 56857
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B6YWQ8",
+        "protein_name": "Putative 14-3-3-like protein D",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5J5A796",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 561372
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "C6TM63",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1S3WXS1",
+        "protein_name": "14-3-3 protein 9-like isoform X2",
+        "taxon_id": 4097
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1U7VVV5",
+        "protein_name": "14-3-3 protein 9-like isoform X1",
+        "taxon_id": 4096
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H3Y4D2",
+        "protein_name": "14-3-3-like protein D isoform X2",
+        "taxon_id": 42345
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B6YWR0",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A067GE20",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 2711
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B6Z3E6",
+        "protein_name": "Putative 14-3-3-like protein D isoform X2",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5J5A2G8",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 561372
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445IC54",
+        "protein_name": "14-3-3-like protein D isoform C",
+        "taxon_id": 3848
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "E1U3Z1",
+        "protein_name": "14-3-3-like protein B",
+        "taxon_id": 3827
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "I1M3M0",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A0R0HF31",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H3ZH40",
+        "protein_name": "14-3-3-like protein D isoform X2",
+        "taxon_id": 42345
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B7A4U9",
+        "protein_name": "Putative 14-3-3 domain-containing protein",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "M0TAI1",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 214687
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1S4CN65",
+        "protein_name": "14-3-3 protein 9-like isoform X2",
+        "taxon_id": 4097
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H5N3C1",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 55188
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H3ZHX0",
+        "protein_name": "14-3-3-like protein D isoform X1",
+        "taxon_id": 42345
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "M0TY03",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 214687
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445CI73",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3818
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A3S3NBY5",
+        "protein_name": "14-3-3-like protein D isoform X1",
+        "taxon_id": 337451
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "V4U9U4",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 85681
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A151SEM7",
+        "protein_name": "14-3-3-like protein D",
+        "taxon_id": 3821
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445IBK9",
+        "protein_name": "14-3-3-like protein D isoform D",
+        "taxon_id": 3848
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1S4CMF0",
+        "protein_name": "14-3-3 protein 9-like isoform X1",
+        "taxon_id": 4097
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1J6KH36",
+        "protein_name": "14-3-3 protein 9",
+        "taxon_id": 49451
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B7A5K1",
+        "protein_name": "Putative 14-3-3-like protein D isoform X1",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "F6H2P0",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 29760
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A1J6IP66",
+        "protein_name": "14-3-3 protein 9",
+        "taxon_id": 49451
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5B7A8T8",
+        "protein_name": "Putative 14-3-3-like protein D isoform X1",
+        "taxon_id": 16924
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A0R0H7R6",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3847
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A067GDS1",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 2711
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A445BBW8",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 3818
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "V4W919",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 85681
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "G7LIR4",
+        "protein_name": "General regulatory factor 2",
+        "taxon_id": 3880
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A2H3Y3V0",
+        "protein_name": "14-3-3-like protein D isoform X1",
+        "taxon_id": 42345
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "uniprot_id": "A0A5J4ZBP6",
+        "protein_name": "14_3_3 domain-containing protein",
+        "taxon_id": 561372
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A370PI74",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 1353007
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "G3Y2A8",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 380704
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A401KHS6",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 105351
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A3F3RJX9",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 5061
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A370CDF7",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 1353008
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A319AT72",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 1450533
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A2QCE4",
+        "protein_name": "Aspergillus niger contig An02c0090, genomic contig",
+        "taxon_id": 425011
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "uniprot_id": "A0A3F3PXY4",
+        "protein_name": "Uncharacterized protein",
+        "taxon_id": 1341132
+    }
+]
