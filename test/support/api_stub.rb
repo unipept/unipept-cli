@@ -44,6 +44,4 @@ class ApiStub
       Typhoeus::Response.new(code: 200, body: JSON.dump(filtered))
     end
   end
-
-
 end
