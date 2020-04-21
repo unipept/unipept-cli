@@ -239,12 +239,12 @@ module Unipept
 
       CSV.generate do |csv|
         data.each do |o|
-          row = Hash.new
+          row = {}
           o.each do |k, v|
             if %w[ec go ipr].include? k
               if v && !v.empty?
                 v.first.keys.each do |key|
-                  row[key == "protein_count" ? k + "_protein_count" : key] = (v.map { |el| el[key] }).join(' ').strip
+                  row[key == 'protein_count' ? k + '_protein_count' : key] = (v.map { |el| el[key] }).join(' ').strip
                 end
               else
                 row[k] = row.concat(Array.new($keys_length[0], nil)) # rubocop:disable Style/GlobalVars

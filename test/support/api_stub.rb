@@ -25,18 +25,18 @@ class ApiStub
   end
 
   def setup_taxa2lca
-    Typhoeus.stub("http://api.unipept.ugent.be/api/v1/taxa2lca.json").and_return do |req|
+    Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxa2lca.json').and_return(
       Typhoeus::Response.new(code: 200, body: '{
         "taxon_id": 1678,
         "taxon_name": "Bifidobacterium",
         "taxon_rank": "genus"
       }')
-    end
+    )
   end
 
   def setup_taxonomy
-    items = JSON.parse(File.read(File.join(File.dirname(__FILE__), "resources/taxonomy.json")))
-    Typhoeus.stub("http://api.unipept.ugent.be/api/v1/taxonomy.json").and_return do |req|
+    items = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'resources/taxonomy.json')))
+    Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxonomy.json').and_return do |req|
       taxa = req.options[:body][:input].map(&:to_i)
 
       filtered = items.filter { |item| taxa.include? item['taxon_id'] }
