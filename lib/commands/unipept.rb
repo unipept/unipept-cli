@@ -68,7 +68,7 @@ module Unipept
         option nil, :batch, 'specify the batch size', argument: :required, hidden: true
         option nil, :parallel, 'specify the number of parallel requests', argument: :required, hidden: true
         option :o, :output, 'write output to file', argument: :required
-        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.filter{ |f| f != "html" and f != "url"}.join ', '}) (default: #{Unipept::Formatter.default}).", argument: :required
+        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.select { |f| f != 'html' && f != 'url' }.join(', ')}) (default: #{Unipept::Formatter.default}).", argument: :required
 
         # Configuration options
         option nil, 'host', 'specify the server running the Unipept web service', argument: :required
@@ -312,7 +312,7 @@ module Unipept
 
         flag :a, :all, 'report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty. Only applicable in combination with ``--format=json``.'
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used. Only applicable in combination with `--format json`', argument: :required, multiple: true
-        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.filter{ |f| f != "xml" and f != "csv" }.join ', '}) (default: 'json'). Note that xml and csv are not available for taxa2tree. html and url are used as an output format for visualizations.", argument: :required
+        option :f, :format, "define the output format (available: #{Unipept::Formatter.available.select { |f| f != 'xml' && f != 'csv' }.join ', '}) (default: 'json'). Note that xml and csv are not available for taxa2tree. html and url are used as an output format for visualizations.", argument: :required
 
         runner Commands::Taxa2Tree
       end
