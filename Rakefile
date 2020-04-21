@@ -41,7 +41,7 @@ task :test_unit do
   # end
   #
 
-  FileList['./test/commands/unipept/test_pept2go.rb'].each do |fn|
+  FileList['./test/commands/unipept/test_pept2funct.rb'].each do |fn|
     require fn
   end
 end
