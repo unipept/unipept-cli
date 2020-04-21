@@ -1,0 +1,70 @@
+[
+    {
+        "peptide": "AALTER",
+        "total_protein_count": 7,
+        "ec": [
+            {
+                "ec_number": "3.1.3.3",
+                "protein_count": 2
+            }
+        ],
+        "go": [
+            {
+                "go_term": "GO:0000287",
+                "protein_count": 5
+            }
+        ],
+        "ipr": [
+            {
+                "code": "IPR013221",
+                "protein_count": 2
+            }
+        ],
+        "taxon_id": 1,
+        "taxon_name": "root",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "AALER",
+        "total_protein_count": 208,
+        "ec": [
+            {
+                "ec_number": "6.1.1.16",
+                "protein_count": 44
+            }
+        ],
+        "go": [
+            {
+                "go_term": "GO:0005737",
+                "protein_count": 106
+            }
+        ],
+        "ipr": [
+            {
+                "code": "IPR014729",
+                "protein_count": 48
+            },
+            {
+                "code": "IPR009080",
+                "protein_count": 45
+            },
+            {
+                "code": "IPR015803",
+                "protein_count": 44
+            }
+        ],
+        "taxon_id": 1,
+        "taxon_name": "root",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "AAEVALVGTEK",
+        "total_protein_count": 0,
+        "ec": [],
+        "go": [],
+        "ipr": [],
+        "taxon_id": 1,
+        "taxon_name": "root",
+        "taxon_rank": "no rank"
+    }
+]

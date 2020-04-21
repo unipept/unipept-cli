@@ -5,10 +5,9 @@ class ApiStub
   def setup_stubs
     @base_url = 'http://unipept.ugent.be/'
 
-    setup_endpoint "pept2ec"
-    setup_endpoint "pept2go"
-    setup_endpoint "pept2interpro"
-    setup_endpoint "pept2funct"
+    %w[pept2ec pept2go pept2interpro pept2funct pept2lca pept2prot pept2taxa peptinfo].each do |endpoint|
+      setup_endpoint endpoint
+    end
   end
 
   def setup_endpoint(name)
