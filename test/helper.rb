@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'bundler'
-# require 'webmock/minitest'
 
 require_relative 'support/api_stub'
 

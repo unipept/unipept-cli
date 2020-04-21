@@ -18,7 +18,7 @@ class ApiStub
     Typhoeus.stub("http://api.unipept.ugent.be/api/v1/#{name}.json").and_return do |req|
       peptides = req.options[:body][:input]
 
-      filtered = items.filter { |item| peptides.include? item['peptide'] }
+      filtered = items.select { |item| peptides.include? item['peptide'] }
 
       Typhoeus::Response.new(code: 200, body: JSON.dump(filtered))
     end
@@ -39,9 +39,11 @@ class ApiStub
     Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxonomy.json').and_return do |req|
       taxa = req.options[:body][:input].map(&:to_i)
 
-      filtered = items.filter { |item| taxa.include? item['taxon_id'] }
+      filtered = items.select { |item| taxa.include? item['taxon_id'] }
 
       Typhoeus::Response.new(code: 200, body: JSON.dump(filtered))
     end
   end
+
+
 end
