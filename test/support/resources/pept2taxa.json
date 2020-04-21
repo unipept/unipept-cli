@@ -1,0 +1,194 @@
+[
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 2711,
+        "taxon_name": "Citrus sinensis",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3818,
+        "taxon_name": "Arachis hypogaea",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3821,
+        "taxon_name": "Cajanus cajan",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3827,
+        "taxon_name": "Cicer arietinum",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3847,
+        "taxon_name": "Glycine max",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3848,
+        "taxon_name": "Glycine soja",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3880,
+        "taxon_name": "Medicago truncatula",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3885,
+        "taxon_name": "Phaseolus vulgaris",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3900,
+        "taxon_name": "Trifolium subterraneum",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 3906,
+        "taxon_name": "Vicia faba",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 4096,
+        "taxon_name": "Nicotiana sylvestris",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 4097,
+        "taxon_name": "Nicotiana tabacum",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 16924,
+        "taxon_name": "Davidia involucrata",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 28930,
+        "taxon_name": "Fagus sylvatica",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 29760,
+        "taxon_name": "Vitis vinifera",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 42345,
+        "taxon_name": "Phoenix dactylifera",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 49451,
+        "taxon_name": "Nicotiana attenuata",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 55188,
+        "taxon_name": "Citrus unshiu",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 56857,
+        "taxon_name": "Macleaya cordata",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 57577,
+        "taxon_name": "Trifolium pratense",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 85681,
+        "taxon_name": "Citrus clementina",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 214687,
+        "taxon_name": "Musa acuminata subsp. malaccensis",
+        "taxon_rank": "subspecies"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 337451,
+        "taxon_name": "Cinnamomum micranthum f. kanehirae",
+        "taxon_rank": "forma"
+    },
+    {
+        "peptide": "ENFVYIAK",
+        "taxon_id": 561372,
+        "taxon_name": "Nyssa sinensis",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 5061,
+        "taxon_name": "Aspergillus niger",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 105351,
+        "taxon_name": "Aspergillus awamori",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 380704,
+        "taxon_name": "Aspergillus niger ATCC 1015",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 425011,
+        "taxon_name": "Aspergillus niger CBS 513.88",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 1341132,
+        "taxon_name": "Aspergillus welwitschiae",
+        "taxon_rank": "species"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 1353007,
+        "taxon_name": "Aspergillus phoenicis ATCC 13157",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 1353008,
+        "taxon_name": "Aspergillus niger ATCC 13496",
+        "taxon_rank": "no rank"
+    },
+    {
+        "peptide": "EGGAGSSTGQR",
+        "taxon_id": 1450533,
+        "taxon_name": "Aspergillus niger CBS 101883",
+        "taxon_rank": "no rank"
+    }
+]
