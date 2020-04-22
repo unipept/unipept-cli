@@ -1,0 +1,194 @@
+{
+    "id": 1,
+    "name": "Organism",
+    "rank": "root",
+    "data": {
+        "count": 4,
+        "self_count": 0
+    },
+    "children": [
+        {
+            "id": 2,
+            "name": "Bacteria",
+            "rank": "superkingdom",
+            "data": {
+                "count": 4,
+                "self_count": 0
+            },
+            "children": [
+                {
+                    "id": 28,
+                    "name": "halophilic eubacterium",
+                    "rank": "species",
+                    "data": {
+                        "count": 1,
+                        "self_count": 1
+                    },
+                    "children": []
+                },
+                {
+                    "id": 1224,
+                    "name": "Proteobacteria",
+                    "rank": "phylum",
+                    "data": {
+                        "count": 3,
+                        "self_count": 0
+                    },
+                    "children": [
+                        {
+                            "id": 68525,
+                            "name": "delta/epsilon subdivisions",
+                            "rank": "subphylum",
+                            "data": {
+                                "count": 1,
+                                "self_count": 0
+                            },
+                            "children": [
+                                {
+                                    "id": 28221,
+                                    "name": "Deltaproteobacteria",
+                                    "rank": "class_",
+                                    "data": {
+                                        "count": 1,
+                                        "self_count": 0
+                                    },
+                                    "children": [
+                                        {
+                                            "id": 29,
+                                            "name": "Myxococcales",
+                                            "rank": "order",
+                                            "data": {
+                                                "count": 1,
+                                                "self_count": 0
+                                            },
+                                            "children": [
+                                                {
+                                                    "id": 80812,
+                                                    "name": "Sorangiineae",
+                                                    "rank": "suborder",
+                                                    "data": {
+                                                        "count": 1,
+                                                        "self_count": 0
+                                                    },
+                                                    "children": [
+                                                        {
+                                                            "id": 49,
+                                                            "name": "Polyangiaceae",
+                                                            "rank": "family",
+                                                            "data": {
+                                                                "count": 1,
+                                                                "self_count": 0
+                                                            },
+                                                            "children": [
+                                                                {
+                                                                    "id": 55,
+                                                                    "name": "Polyangium",
+                                                                    "rank": "genus",
+                                                                    "data": {
+                                                                        "count": 1,
+                                                                        "self_count": 1
+                                                                    },
+                                                                    "children": []
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 28211,
+                            "name": "Alphaproteobacteria",
+                            "rank": "class_",
+                            "data": {
+                                "count": 1,
+                                "self_count": 0
+                            },
+                            "children": [
+                                {
+                                    "id": 204458,
+                                    "name": "Caulobacterales",
+                                    "rank": "order",
+                                    "data": {
+                                        "count": 1,
+                                        "self_count": 0
+                                    },
+                                    "children": [
+                                        {
+                                            "id": 76892,
+                                            "name": "Caulobacteraceae",
+                                            "rank": "family",
+                                            "data": {
+                                                "count": 1,
+                                                "self_count": 0
+                                            },
+                                            "children": [
+                                                {
+                                                    "id": 75,
+                                                    "name": "Caulobacter",
+                                                    "rank": "genus",
+                                                    "data": {
+                                                        "count": 1,
+                                                        "self_count": 1
+                                                    },
+                                                    "children": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "id": 28216,
+                            "name": "Betaproteobacteria",
+                            "rank": "class_",
+                            "data": {
+                                "count": 1,
+                                "self_count": 0
+                            },
+                            "children": [
+                                {
+                                    "id": 80840,
+                                    "name": "Burkholderiales",
+                                    "rank": "order",
+                                    "data": {
+                                        "count": 1,
+                                        "self_count": 0
+                                    },
+                                    "children": [
+                                        {
+                                            "id": 88,
+                                            "name": "Leptothrix",
+                                            "rank": "genus",
+                                            "data": {
+                                                "count": 1,
+                                                "self_count": 0
+                                            },
+                                            "children": [
+                                                {
+                                                    "id": 89,
+                                                    "name": "Leptothrix discophora",
+                                                    "rank": "species",
+                                                    "data": {
+                                                        "count": 1,
+                                                        "self_count": 1
+                                                    },
+                                                    "children": []
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
