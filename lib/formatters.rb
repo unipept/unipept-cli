@@ -405,8 +405,7 @@ module Unipept
     #
     # @return [String] The converted input data in the Blast format
     def convert(data, _first)
-      data = JSON.parse(data)
-      data['gist'].sub!('https://gist.github.com/', 'https://bl.ocks.org/') + "\n"
+      data[0]['gist'].sub!('https://gist.github.com/', 'https://bl.ocks.org/') + "\n"
     end
   end
 end
