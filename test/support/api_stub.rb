@@ -50,7 +50,7 @@ class ApiStub
     Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxa2tree.json').and_return do |_|
       link = req.options[:body][:link] == 'true'
       if link
-        Typhoeus::Response.new(code: 200, body: JSON.dump(:gist => 'https://gist.github.com/8837824df7ef9831a9b4216f3fb547ee'))
+        Typhoeus::Response.new(code: 200, body: JSON.dump(gist: 'https://gist.github.com/8837824df7ef9831a9b4216f3fb547ee'))
       else
         result = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'resources/taxa2tree.json')))
         Typhoeus::Response.new(code: 200, body: JSON.dump(result))
