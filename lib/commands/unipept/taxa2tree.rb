@@ -24,19 +24,26 @@ module Unipept::Commands
       ['taxon_id']
     end
 
-    def default_batch_size
-      if options[:all]
-        100
-      else
-        1000
-      end
+    def batch_size
+      return arguments.length unless arguments.empty?
+      return File.foreach(options[:input]).inject(0) { |c, _| c + 1 } if options[:input]
+
+      @stdin_contents = $stdin.readlines
+      @stdin_contents.length
+    end
+
+    def input_iterator
+      return arguments.each unless arguments.empty?
+      return IO.foreach(options[:input]) if options[:input]
+
+      @stdin_contents
     end
 
     protected
 
     def filter_result(json_response)
       # We do not filter here, since select is not supported by the taxa2tree-command
-      json_response
+      [JSON[json_response]] rescue []
     end
 
     def construct_request_body(input)
