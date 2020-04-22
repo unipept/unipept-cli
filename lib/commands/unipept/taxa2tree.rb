@@ -41,9 +41,11 @@ module Unipept::Commands
 
     protected
 
-    def filter_result(json_response)
+    def filter_result(response)
+      return response if response.start_with?('<!DOCTYPE')
+
       # We do not filter here, since select is not supported by the taxa2tree-command
-      [JSON[json_response]] rescue []
+      [JSON[response]] rescue []
     end
 
     def construct_request_body(input)
