@@ -115,6 +115,8 @@ module Unipept
       batch_order = Unipept::BatchOrder.new
       last_id = 0
 
+      # puts input_iterator.inspect
+
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         last_id = batch_id
         @fasta = !fasta_mapper.nil?

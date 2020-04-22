@@ -36,7 +36,7 @@ module Unipept::Commands
       return arguments.each unless arguments.empty?
       return IO.foreach(options[:input]) if options[:input]
 
-      @stdin_contents
+      @stdin_contents.each
     end
 
     protected
