@@ -61,7 +61,7 @@ module Unipept::Commands
       else
         data = Hash.new 0
         input.each do |i|
-          data[i] += 1
+          data[i.rstrip] += 1
         end
       end
 
