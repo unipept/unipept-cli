@@ -49,23 +49,26 @@ module Unipept::Commands
     end
 
     def construct_request_body(input)
-      if input.empty? && input[0].include?(',')
+      data = nil
+
+      if input[0].include?(',')
         data = input.map do |item|
           splitted = item.rstrip.split ','
           splitted[1] = splitted[1].to_i
           splitted
         end
-
-        {
-          counts: Hash[data],
-          link: @link
-        }
+        data = Hash[data]
       else
-        {
-          input: input,
-          link: @link
-        }
+        data = Hash.new 0
+        input.each do |i|
+          data[i] += 1
+        end
       end
+
+      {
+        counts: data,
+        link: @link
+      }
     end
   end
 end
