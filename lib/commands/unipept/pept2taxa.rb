@@ -6,11 +6,7 @@ module Unipept::Commands
     end
 
     def default_batch_size
-      if options[:all]
-        5
-      else
-        10
-      end
+      5
     end
   end
 end
