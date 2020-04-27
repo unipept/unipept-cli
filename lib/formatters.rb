@@ -344,4 +344,68 @@ module Unipept
         .join
     end
   end
+
+  class HtmlFormatter < Formatter
+    register :html
+
+    # @return [String] The type of the current formatter: html
+    def type
+      'html'
+    end
+
+    def self.hidden?
+      false
+    end
+
+    def header(_data, _fasta_mapper = nil)
+      ''
+    end
+
+    def footer
+      ''
+    end
+
+    # Converts the given input data to an HTML page that contains the Unipept visualizations
+    #
+    # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
+    #
+    # @return [String] The converted input data in the Blast format
+    def convert(data, _first)
+      data
+    end
+  end
+
+  class UrlFormatter < Formatter
+    register :url
+
+    # @return [String] The type of the current formatter: html
+    def type
+      'url'
+    end
+
+    def self.hidden?
+      false
+    end
+
+    def header(_data, _fasta_mapper = nil)
+      ''
+    end
+
+    def footer
+      ''
+    end
+
+    # Converts the given input data to an HTML page that contains the Unipept visualizations
+    #
+    # @param [Array] data The data we wish to convert
+    #
+    # @param [Boolean] Is this the first output batch?
+    #
+    # @return [String] The converted input data in the Blast format
+    def convert(data, _first)
+      data[0]['gist'].sub!('https://gist.github.com/', 'https://bl.ocks.org/') + "\n"
+    end
+  end
 end

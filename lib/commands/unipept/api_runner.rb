@@ -115,6 +115,8 @@ module Unipept
       batch_order = Unipept::BatchOrder.new
       last_id = 0
 
+      # puts input_iterator.inspect
+
       batch_iterator.iterate(input_iterator) do |input_slice, batch_id, fasta_mapper|
         last_id = batch_id
         @fasta = !fasta_mapper.nil?
@@ -150,7 +152,7 @@ module Unipept
       warn "API request failed! log can be found in #{path}"
     end
 
-    private
+    protected
 
     def error_file_path
       File.expand_path(File.join(Dir.home, '.unipept', "unipept-#{Time.now.strftime('%F-%T')}.log"))
