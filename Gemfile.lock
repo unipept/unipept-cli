@@ -37,7 +37,7 @@ GEM
     jwt (2.2.1)
     mime-types (2.99.3)
     mini_portile2 (2.4.0)
-    minitest (5.14.0)
+    minitest (5.14.1)
     multi_json (1.14.1)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
