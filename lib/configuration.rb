@@ -2,8 +2,7 @@ require 'yaml'
 
 module Unipept
   class Configuration
-    attr_reader :config
-    attr_reader :file_name
+    attr_reader :config, :file_name
 
     # Creates a new config object, based on a given YAML file. If no filename
     # given, '.unipeptrc' in the home dir of the user will be used.
@@ -14,10 +13,10 @@ module Unipept
     # config from
     def initialize(file = nil)
       @file_name = file || File.join(Dir.home, '.unipeptrc')
-      @config = if !File.exist? file_name
-                  {}
-                else
+      @config = if File.exist? file_name
                   YAML.load_file file_name
+                else
+                  {}
                 end
     end
 
@@ -39,7 +38,7 @@ module Unipept
 
     # forwards =[] to the internal config hash
     def []=(*args)
-      config.[]=(*args)
+      config.[]=(*args) # rubocop:disable Layout/SpaceBeforeBrackets
     end
   end
 end

@@ -57,7 +57,7 @@ module Unipept::Commands
           splitted[1] = splitted[1].to_i
           splitted
         end
-        data = Hash[data]
+        data = data.to_h
       else
         data = Hash.new 0
         input.each do |i|

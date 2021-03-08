@@ -2,18 +2,14 @@ require_relative '../../retryable_typhoeus'
 
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
-    attr_reader :configuration
-
-    attr_reader :url
-
-    attr_reader :user_agent
+    attr_reader :configuration, :url, :user_agent
 
     def initialize(args, opts, cmd)
       super
       @configuration = Unipept::Configuration.new
 
       @host = host
-      @user_agent = 'Unipept CLI - unipept ' + Unipept::VERSION
+      @user_agent = "Unipept CLI - unipept #{Unipept::VERSION}"
       @url = "#{@host}/api/v1/#{cmd.name}.json"
       @fasta = false
     end
@@ -183,7 +179,7 @@ module Unipept
       if response.timed_out?
         -> { save_error('request timed out, continuing anyway, but results might be incomplete') }
       elsif response.code.zero?
-        -> { save_error('could not get an http response, continuing anyway, but results might be incomplete' + response.return_message) }
+        -> { save_error("could not get an http response, continuing anyway, but results might be incomplete#{response.return_message}") }
       else
         -> { save_error("Got #{response.code}: #{response.response_body}\nRequest headers: #{response.request.options}\nRequest body:\n#{response.request.encoded_body}\n\n") }
       end
@@ -212,7 +208,7 @@ module Unipept
           if %w[ec go ipr].include? k
             v.each do |item|
               item.each do |field_name, field_value|
-                new_field_name = %w[ec_number go_term ipr_code].include?(field_name) ? field_name : k + '_' + field_name
+                new_field_name = %w[ec_number go_term ipr_code].include?(field_name) ? field_name : "#{k}_#{field_name}"
                 output_row[new_field_name] = [] unless output_row.key? new_field_name
                 output_row[new_field_name] << field_value
               end
