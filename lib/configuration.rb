@@ -38,7 +38,7 @@ module Unipept
 
     # forwards =[] to the internal config hash
     def []=(*args)
-      config.[]=(*args)
+      config.[]=(*args) # rubocop:disable Layout/SpaceBeforeBrackets
     end
   end
 end
