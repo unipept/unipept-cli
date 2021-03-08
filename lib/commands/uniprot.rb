@@ -20,7 +20,7 @@ module Unipept::Commands
 
       The uniprot command yields just the protein sequences as a default, but can return several formats.
       EOS
-      required :f, :format, 'specify output format (available: ' + valid_formats.to_a.join(', ') + ') (default: sequence)'
+      required :f, :format, "specify output format (available: #{valid_formats.to_a.join(', ')}) (default: sequence)"
       flag :h, :help, 'show help for this command' do |_value, cmd|
         puts cmd.help
         exit 0
@@ -28,7 +28,7 @@ module Unipept::Commands
       run do |opts, args, _cmd|
         format = opts.fetch(:format, 'sequence')
         unless valid_formats.include? format
-          warn format + ' is not a valid output format. Available formats are: ' + valid_formats.to_a.join(', ')
+          warn "#{format} is not a valid output format. Available formats are: #{valid_formats.to_a.join(', ')}"
           exit 1
         end
         iterator = args.empty? ? $stdin.each_line : args
@@ -57,7 +57,7 @@ module Unipept::Commands
     # @return [String] The requested UniProt entry in the requested format
     def self.get_uniprot_entry(accession, format)
       if format == 'sequence'
-        get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..-1].join('')
+        get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..-1].join
       else
         # other format has been specified, just download and output
         resp = Typhoeus.get("https://www.uniprot.org/uniprot/#{accession}.#{format}")

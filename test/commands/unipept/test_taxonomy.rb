@@ -70,7 +70,7 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      output = lines.to_a.join('').chomp
+      output = lines.to_a.join.chomp
       assert(output.start_with?('['))
       assert(output.end_with?(']'))
       assert(!output.include?('}{'))
@@ -83,7 +83,7 @@ module Unipept
       end
       lines = out.each_line
       assert_equal('', err)
-      output = lines.to_a.join('').chomp
+      output = lines.to_a.join.chomp
       assert(output.start_with?('<results>'))
       assert(output.end_with?('</results>'))
       assert(output.include?('<fasta_header>'))

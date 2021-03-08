@@ -156,7 +156,7 @@ module Unipept
     # @return [String] The converted input data in the JSON format
     def convert(data, first)
       output = data.map(&:to_json).join(',')
-      first ? output : ',' + output
+      first ? output : ",#{output}"
     end
   end
 
@@ -178,7 +178,7 @@ module Unipept
 
       # First we look for items for both ec numbers, go terms and ipr codes that are fully filled in.
       data.each do |row|
-        non_empty_items.keys.each do |annotation_type|
+        non_empty_items.each_key do |annotation_type|
           non_empty_items[annotation_type] = row if row[annotation_type] && !row[annotation_type].empty?
         end
       end
@@ -195,7 +195,7 @@ module Unipept
 
         idx = keys.index(annotation_type)
         keys.delete_at(idx)
-        keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| %w[ec_number go_term ipr_code].include?(el) ? el : annotation_type + '_' + el })
+        keys.insert(idx, *non_empty_item[annotation_type].first.keys.map { |el| %w[ec_number go_term ipr_code].include?(el) ? el : "#{annotation_type}_#{el}" })
         $keys_length = *non_empty_item[annotation_type].first.keys.length # rubocop:disable Style/GlobalVars
       end
 
@@ -243,8 +243,8 @@ module Unipept
           o.each do |k, v|
             if %w[ec go ipr].include? k
               if v && !v.empty?
-                v.first.keys.each do |key|
-                  row[key == 'protein_count' ? k + '_protein_count' : key] = (v.map { |el| el[key] }).join(' ').strip
+                v.first.each_key do |key|
+                  row[key == 'protein_count' ? "#{k}_protein_count" : key] = (v.map { |el| el[key] }).join(' ').strip
                 end
               else
                 row[k] = row.concat(Array.new($keys_length[0], nil)) # rubocop:disable Style/GlobalVars
@@ -304,7 +304,7 @@ module Unipept
     #
     # @return [String] The converted input data in the XML format
     def convert(data, _first)
-      data.map { |row| '<result>' + row.to_xml + '</result>' }.join('')
+      data.map { |row| "<result>#{row.to_xml}</result>" }.join
     end
   end
 
@@ -405,7 +405,7 @@ module Unipept
     #
     # @return [String] The converted input data in the Blast format
     def convert(data, _first)
-      data[0]['gist'].sub!('https://gist.github.com/', 'https://bl.ocks.org/') + "\n"
+      "#{data[0]['gist'].sub!('https://gist.github.com/', 'https://bl.ocks.org/')}\n"
     end
   end
 end

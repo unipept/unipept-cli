@@ -44,7 +44,7 @@ module Unipept
       out, _err = capture_io_while do
         Commands::Unipept.run(['config', 'test', value])
       end
-      assert_equal('test was set to ' + value, out.chomp)
+      assert_equal("test was set to #{value}", out.chomp)
       assert_equal(value, Unipept::Configuration.new['test'])
     end
 

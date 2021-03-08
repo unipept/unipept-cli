@@ -36,7 +36,7 @@ module Unipept
       Commands::Unipept.run(%w[taxa2tree --host http://api.unipept.ugent.be 78 57 89 28 67])
     end
     lines = out.each_line
-    output = lines.to_a.join('').chomp
+    output = lines.to_a.join.chomp
     assert_equal('', err)
 
     assert(output.start_with?('{'))
@@ -60,7 +60,7 @@ module Unipept
     end
     lines = out.each_line
     assert_equal('', err)
-    output = lines.to_a.join('').chomp
+    output = lines.to_a.join.chomp
     assert(output.start_with?('<!DOCTYPE html>'))
     assert(output.end_with?('</html>'))
     assert(output.include?('</body>'))

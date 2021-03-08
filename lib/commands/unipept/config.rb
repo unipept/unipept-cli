@@ -7,7 +7,7 @@ module Unipept
 
       if arguments.size == 2
         set_config(key, value)
-        puts key + ' was set to ' + value
+        puts "#{key} was set to #{value}"
       else
         puts get_config(key)
       end

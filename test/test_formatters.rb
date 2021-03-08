@@ -114,7 +114,7 @@ module Unipept
 
     def test_convert
       assert_equal(TestObject.as_json, formatter.convert([TestObject.test_object], true))
-      assert_equal(',' + TestObject.as_json, formatter.convert([TestObject.test_object], false))
+      assert_equal(",#{TestObject.as_json}", formatter.convert([TestObject.test_object], false))
     end
 
     def test_format_with_fasta
@@ -159,7 +159,7 @@ module Unipept
       fasta = [['peptide', '>test']]
       object = [TestObject.test_object, TestObject.test_object]
       assert_equal(TestObject.as_csv_header, formatter.header(object))
-      assert_equal('fasta_header,' + TestObject.as_csv_header, formatter.header(object, fasta))
+      assert_equal("fasta_header,#{TestObject.as_csv_header}", formatter.header(object, fasta))
     end
 
     def test_footer
@@ -180,7 +180,7 @@ module Unipept
     def test_format_with_fasta
       fasta = [['>test', '5']]
       object = [TestObject.test_object, TestObject.test_object]
-      csv = ['>test,' + TestObject.as_csv, '>test,' + TestObject.as_csv, ''].join("\n")
+      csv = [">test,#{TestObject.as_csv}", ">test,#{TestObject.as_csv}", ''].join("\n")
       assert_equal(csv, formatter.format(object, fasta, false))
     end
   end
@@ -203,7 +203,7 @@ module Unipept
     end
 
     def test_convert
-      xml = '<result>' + TestObject.as_xml + '</result>'
+      xml = "<result>#{TestObject.as_xml}</result>"
       assert_equal(xml, formatter.convert([TestObject.test_object], true))
       assert_equal(xml, formatter.convert([TestObject.test_object], false))
     end
@@ -211,7 +211,7 @@ module Unipept
     def test_format_with_fasta
       fasta = [['>test', '5']]
       output = formatter.format([TestObject.test_object], fasta, false)
-      xml = '<result><fasta_header>>test</fasta_header>' + TestObject.as_xml + '</result>'
+      xml = "<result><fasta_header>>test</fasta_header>#{TestObject.as_xml}</result>"
       assert_equal(xml, output)
     end
   end

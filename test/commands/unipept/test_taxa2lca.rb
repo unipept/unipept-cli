@@ -47,7 +47,7 @@ module Unipept
         Commands::Unipept.run(%w[taxa2lca --host http://api.unipept.ugent.be --format xml 216816 1680])
       end
       lines = out.each_line
-      output = lines.to_a.join('').chomp
+      output = lines.to_a.join.chomp
       assert_equal('', err)
       assert(output.start_with?('<results>'))
       assert(output.end_with?('</results>'))
@@ -58,7 +58,7 @@ module Unipept
         Commands::Unipept.run(%w[taxa2lca --host http://api.unipept.ugent.be --format json 216816 1680])
       end
       lines = out.each_line
-      output = lines.to_a.join('').chomp
+      output = lines.to_a.join.chomp
       assert_equal('', err)
       assert(output.start_with?('['))
       assert(output.end_with?(']'))
