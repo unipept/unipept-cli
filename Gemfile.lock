@@ -55,7 +55,7 @@ GEM
     psych (3.1.0)
     rack (2.2.3)
     rainbow (3.0.0)
-    rake (13.0.1)
+    rake (13.0.3)
     rdoc (6.2.1)
     rubocop (0.79.0)
       jaro_winkler (~> 1.5.1)
