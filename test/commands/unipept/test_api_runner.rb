@@ -409,6 +409,7 @@ module Unipept
     def new_response(values)
       response = Class.new do
         def initialize(values)
+          super()
           @values = values
         end
 
