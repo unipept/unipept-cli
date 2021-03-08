@@ -38,7 +38,7 @@ module Unipept
 
     # forwards =[] to the internal config hash
     def []=(*args)
-      config(*args)
+      config.[]=(*args)
     end
   end
 end
