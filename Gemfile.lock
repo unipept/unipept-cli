@@ -4,7 +4,7 @@ GEM
     addressable (2.4.0)
     ast (2.4.0)
     builder (3.2.4)
-    cri (2.15.10)
+    cri (2.15.11)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     ethon (0.12.0)
