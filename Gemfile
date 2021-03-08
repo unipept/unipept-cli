@@ -11,5 +11,5 @@ group :development do
 end
 
 group :release do
-  gem 'jeweler'
+  gem 'juwelier'
 end

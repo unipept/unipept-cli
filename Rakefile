@@ -11,8 +11,8 @@ require 'rake'
 require 'rake/testtask'
 require 'rubocop/rake_task'
 begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
+  require 'juwelier'
+  Juwelier::Tasks.new do |gem|
     # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
     gem.name = 'unipept'
     gem.executables = %w[unipept prot2pept peptfilter uniprot]
@@ -28,7 +28,7 @@ begin
     gem.authors = ['Bart Mesuere', 'Pieter Verschaffelt', 'Toon Willems', 'Tom Naessens']
     gem.required_ruby_version = '>= 2.0.0'
   end
-  Jeweler::RubygemsDotOrgTasks.new
+  Juwelier::RubygemsDotOrgTasks.new
 rescue LoadError
   # do nothing
 end
