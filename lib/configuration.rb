@@ -2,8 +2,7 @@ require 'yaml'
 
 module Unipept
   class Configuration
-    attr_reader :config
-    attr_reader :file_name
+    attr_reader :config, :file_name
 
     # Creates a new config object, based on a given YAML file. If no filename
     # given, '.unipeptrc' in the home dir of the user will be used.

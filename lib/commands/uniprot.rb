@@ -2,8 +2,7 @@ require 'typhoeus'
 
 module Unipept::Commands
   class Uniprot
-    attr_reader :root_command
-    attr_reader :valid_formats
+    attr_reader :root_command, :valid_formats
 
     valid_formats = Set.new %w[fasta txt xml rdf gff sequence]
     @root_command = Cri::Command.define do

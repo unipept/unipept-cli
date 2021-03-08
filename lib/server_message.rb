@@ -4,9 +4,7 @@ require_relative 'configuration'
 
 module Unipept
   class ServerMessage
-    attr_reader :message_url
-
-    attr_reader :configuration
+    attr_reader :message_url, :configuration
 
     def initialize(host)
       @message_url = "#{host}/api/v1/messages.json"

@@ -1,7 +1,6 @@
 module Unipept::Commands
   class Prot2pept
-    attr_reader :root_command
-    attr_reader :valid_formats
+    attr_reader :root_command, :valid_formats
 
     @root_command = Cri::Command.define do
       name 'prot2pept'

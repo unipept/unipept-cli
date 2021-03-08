@@ -2,11 +2,7 @@ require_relative '../../retryable_typhoeus'
 
 module Unipept
   class Commands::ApiRunner < Cri::CommandRunner
-    attr_reader :configuration
-
-    attr_reader :url
-
-    attr_reader :user_agent
+    attr_reader :configuration, :url, :user_agent
 
     def initialize(args, opts, cmd)
       super
