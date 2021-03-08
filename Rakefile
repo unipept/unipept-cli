@@ -26,7 +26,7 @@ begin
     EOS
     gem.email = 'unipept@ugent.be'
     gem.authors = ['Bart Mesuere', 'Pieter Verschaffelt', 'Toon Willems', 'Tom Naessens']
-    gem.required_ruby_version = '>= 2.0.0'
+    gem.required_ruby_version = '>= 2.5.0'
   end
   Juwelier::RubygemsDotOrgTasks.new
 rescue LoadError
