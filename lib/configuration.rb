@@ -13,10 +13,10 @@ module Unipept
     # config from
     def initialize(file = nil)
       @file_name = file || File.join(Dir.home, '.unipeptrc')
-      @config = if !File.exist? file_name
-                  {}
-                else
+      @config = if File.exist? file_name
                   YAML.load_file file_name
+                else
+                  {}
                 end
     end
 
@@ -38,7 +38,7 @@ module Unipept
 
     # forwards =[] to the internal config hash
     def []=(*args)
-      config.[]=(*args)
+      config(*args)
     end
   end
 end
