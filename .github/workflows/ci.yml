@@ -7,27 +7,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ["2.4", "2.5", "2.6"]
+        ruby: ["2.5", "2.6", "2.7"]
       fail-fast: false
     name: Test Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v1
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - name: Cache Ruby dependencies
-        uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ matrix.ruby }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.ruby }}-gem-
-      - name: Install dependencies
-        run: |
-          gem install bundler:1.17.2
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          bundler-cache: true
       - name: Test
         run: |
           bundle exec rake test
@@ -37,19 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Setup Ruby
-        uses: actions/setup-ruby@v1
-      - name: Cache Ruby dependencies
-        uses: actions/cache@v1
+        uses: ruby/setup-ruby@v1
         with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-${{ matrix.ruby }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.ruby }}-gem-
-      - name: Install dependencies
-        run: |
-          gem install bundler:1.17.2
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+          bundler-cache: true
       - name: Test
         run: |
           bundle exec rake test_style
