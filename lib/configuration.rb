@@ -14,7 +14,7 @@ module Unipept
     def initialize(file = nil)
       @file_name = file || File.join(Dir.home, '.unipeptrc')
       @config = if File.exist? file_name
-                  YAML.load_file file_name
+                  YAML.load_file file_name, permitted_classes: [Time]
                 else
                   {}
                 end
