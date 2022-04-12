@@ -34,7 +34,7 @@ module Unipept::Commands
 
     def input_iterator
       return arguments.each unless arguments.empty?
-      return IO.foreach(options[:input]) if options[:input]
+      return File.foreach(options[:input]) if options[:input]
 
       @stdin_contents.each
     end

@@ -9,7 +9,7 @@ module Unipept
 
     def test_load_with_file
       hash = { 'key' => 'value' }
-      File.open('new_file', 'w') { |f| f.write hash.to_yaml }
+      File.write('new_file', hash.to_yaml)
       config = Configuration.new('new_file')
       assert_equal(hash, config.config)
     end

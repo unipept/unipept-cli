@@ -35,7 +35,7 @@ module Unipept
     # - if none of the previous are given, uses stdin
     def input_iterator
       return arguments.each unless arguments.empty?
-      return IO.foreach(options[:input]) if options[:input]
+      return File.foreach(options[:input]) if options[:input]
 
       $stdin.each_line
     end
@@ -144,7 +144,7 @@ module Unipept
     def save_error(message)
       path = error_file_path
       FileUtils.mkdir_p File.dirname(path)
-      File.open(path, 'w') { |f| f.write message }
+      File.write(path, message)
       warn "API request failed! log can be found in #{path}"
     end
 
@@ -169,7 +169,7 @@ module Unipept
 
       lambda do
         unless result.empty?
-          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id.zero? && !options[:"no-header"]
+          output_writer.write_line formatter.header(result, fasta_mapper) if batch_id.zero? && !options[:'no-header']
           output_writer.write_line formatter.format(result, fasta_mapper, batch_id.zero?)
         end
       end
