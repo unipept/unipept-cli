@@ -67,8 +67,8 @@ module Unipept
     end
 
     def test_input_iterator_file
-      File.open('input_file', 'w') { |file| file.write(%w[a b c].join("\n")) }
-      runner = new_runner('test',  host: 'https://param_host', input: 'input_file')
+      File.write('input_file', %w[a b c].join("\n"))
+      runner = new_runner('test', host: 'https://param_host', input: 'input_file')
       output = []
       runner.input_iterator.each { |el| output << el.chomp }
       assert_equal(%w[a b c], output)
@@ -84,7 +84,7 @@ module Unipept
     end
 
     def test_input_iterator_arguments_priority
-      File.open('input_file', 'w') { |file| file.write(%w[1 2 3].join("\n")) }
+      File.write('input_file', %w[1 2 3].join("\n"))
       runner = new_runner('test', { host: 'https://param_host', input: 'input_file' }, %w[a b c])
       output = []
       _out, _err = capture_io_with_input(%w[1 2 3]) do
@@ -94,8 +94,8 @@ module Unipept
     end
 
     def test_input_iterator_file_priority
-      File.open('input_file', 'w') { |file| file.write(%w[a b c].join("\n")) }
-      runner = new_runner('test',  host: 'https://param_host', input: 'input_file')
+      File.write('input_file', %w[a b c].join("\n"))
+      runner = new_runner('test', host: 'https://param_host', input: 'input_file')
       output = []
       _out, _err = capture_io_with_input(%w[1 2 3]) do
         runner.input_iterator.each { |el| output << el.chomp }
@@ -280,7 +280,7 @@ module Unipept
           runner.save_error('error message')
         end
         assert(err.start_with?('API request failed! log can be found in'))
-        assert_equal('error message', IO.foreach('errordir/error.log').next.chomp)
+        assert_equal('error message', File.foreach('errordir/error.log').next.chomp)
       end
     end
 

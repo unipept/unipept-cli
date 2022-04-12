@@ -23,7 +23,7 @@ module Unipept
         writer.output.flush
       end
       assert_equal('', out)
-      assert_equal('hello world', IO.foreach('output_file').next.chomp)
+      assert_equal('hello world', File.foreach('output_file').next.chomp)
     end
   end
 end

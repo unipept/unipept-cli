@@ -79,13 +79,13 @@ module Unipept
 
     def test_old_recently_fetched
       server = ServerMessage.new('http://api.unipept.ugent.be')
-      server.configuration['last_fetch_date'] = Time.now - 60 * 60 * 25
+      server.configuration['last_fetch_date'] = Time.now - (60 * 60 * 25)
       assert(!server.recently_fetched?)
     end
 
     def test_recently_recently_fetched
       server = ServerMessage.new('http://api.unipept.ugent.be')
-      server.configuration['last_fetch_date'] = Time.now - 60 * 60 * 1
+      server.configuration['last_fetch_date'] = Time.now - (60 * 60 * 1)
       assert(server.recently_fetched?)
     end
   end

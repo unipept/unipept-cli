@@ -57,7 +57,7 @@ module Unipept::Commands
     # @return [String] The requested UniProt entry in the requested format
     def self.get_uniprot_entry(accession, format)
       if format == 'sequence'
-        get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..-1].join
+        get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..].join
       else
         # other format has been specified, just download and output
         resp = Typhoeus.get("https://www.uniprot.org/uniprot/#{accession}.#{format}")

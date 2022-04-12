@@ -32,7 +32,7 @@ module Unipept
     # ago.
     def recently_fetched?
       last_fetched = @configuration['last_fetch_date']
-      !last_fetched.nil? && (last_fetched + 60 * 60 * 24) > Time.now
+      !last_fetched.nil? && (last_fetched + (60 * 60 * 24)) > Time.now
     end
 
     # Updates the last checked timestamp
