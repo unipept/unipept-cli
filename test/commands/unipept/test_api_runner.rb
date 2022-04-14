@@ -13,7 +13,7 @@ module Unipept
       assert_equal('test_host', runner.options[:host])
       assert_equal(%w[a b c], runner.arguments)
       assert(!runner.configuration.nil?)
-      assert_equal('http://test_host/api/v1/test.json', runner.url)
+      assert_equal('http://test_host/api/v2/test.json', runner.url)
       assert(/Unipept CLI - unipept [0-9]*\.[0-9]*\.[0-9]*/.match runner.user_agent)
     end
 

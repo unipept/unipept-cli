@@ -15,7 +15,7 @@ class ApiStub
 
   def setup_endpoint(name)
     items = JSON.parse(File.read(File.join(File.dirname(__FILE__), "resources/#{name}.json")))
-    Typhoeus.stub("http://api.unipept.ugent.be/api/v1/#{name}.json").and_return do |req|
+    Typhoeus.stub("http://api.unipept.ugent.be/api/v2/#{name}.json").and_return do |req|
       peptides = req.options[:body][:input]
 
       filtered = items.select { |item| peptides.include? item['peptide'] }
@@ -25,7 +25,7 @@ class ApiStub
   end
 
   def setup_taxa2lca
-    Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxa2lca.json').and_return(
+    Typhoeus.stub('http://api.unipept.ugent.be/api/v2/taxa2lca.json').and_return(
       Typhoeus::Response.new(code: 200, body: '{
         "taxon_id": 1678,
         "taxon_name": "Bifidobacterium",
@@ -36,7 +36,7 @@ class ApiStub
 
   def setup_taxonomy
     items = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'resources/taxonomy.json')))
-    Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxonomy.json').and_return do |req|
+    Typhoeus.stub('http://api.unipept.ugent.be/api/v2/taxonomy.json').and_return do |req|
       taxa = req.options[:body][:input].map(&:to_i)
 
       filtered = items.select { |item| taxa.include? item['taxon_id'] }
@@ -47,7 +47,7 @@ class ApiStub
 
   # Expects to be called with taxa "78", "57", "89", "28" and "67"
   def setup_taxa2tree
-    Typhoeus.stub('http://api.unipept.ugent.be/api/v1/taxa2tree.json').and_return do |_|
+    Typhoeus.stub('http://api.unipept.ugent.be/api/v2/taxa2tree.json').and_return do |_|
       link = req.options[:body][:link] == 'true'
       if link
         Typhoeus::Response.new(code: 200, body: JSON.dump(gist: 'https://gist.github.com/8837824df7ef9831a9b4216f3fb547ee'))

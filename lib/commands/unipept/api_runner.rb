@@ -10,7 +10,7 @@ module Unipept
 
       @host = host
       @user_agent = "Unipept CLI - unipept #{Unipept::VERSION}"
-      @url = "#{@host}/api/v1/#{cmd.name}.json"
+      @url = "#{@host}/api/v2/#{cmd.name}.json"
       @fasta = false
     end
 
