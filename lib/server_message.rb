@@ -7,7 +7,7 @@ module Unipept
     attr_reader :message_url, :configuration
 
     def initialize(host)
-      @message_url = "#{host}/api/v1/messages.json"
+      @message_url = "#{host}/api/v2/messages.json"
       @configuration = Unipept::Configuration.new
     end
 

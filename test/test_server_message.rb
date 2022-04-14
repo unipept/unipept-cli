@@ -3,7 +3,7 @@ require_relative '../lib/server_message'
 module Unipept
   class ServerMessageTestCase < Unipept::TestCase
     def test_init
-      assert_equal('http://test_host/api/v1/messages.json', ServerMessage.new('http://test_host').message_url)
+      assert_equal('http://test_host/api/v2/messages.json', ServerMessage.new('http://test_host').message_url)
     end
 
     def test_fetch_server_message
