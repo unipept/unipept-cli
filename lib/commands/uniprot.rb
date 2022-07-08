@@ -60,7 +60,7 @@ module Unipept::Commands
         get_uniprot_entry(accession, 'fasta').lines.map(&:chomp)[1..].join
       else
         # other format has been specified, just download and output
-        resp = Typhoeus.get("https://www.uniprot.org/uniprot/#{accession}.#{format}")
+        resp = Typhoeus.get("https://rest.uniprot.org/uniprotkb/#{accession}.#{format}")
         resp.response_body if resp.success?
       end
     end
