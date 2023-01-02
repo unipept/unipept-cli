@@ -8,7 +8,7 @@ gem 'typhoeus', '~> 1.4.0'
 gem 'psych', '~> 5.0.1'
 
 group :development do
-  gem 'minitest', '~> 5.14'
+  gem 'minitest', '~> 5.17'
   gem 'rake', '~> 13.0.1'
   gem 'rubocop', '~>1.39'
 end
