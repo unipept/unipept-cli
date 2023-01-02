@@ -5,7 +5,7 @@ gem 'cri', '~>2.15.10'
 gem 'typhoeus', '~> 1.4.0'
 
 # this is not explicitly used, but an older incompatible version comes bundled with ruby
-gem 'psych', '~> 4.0.3'
+gem 'psych', '~> 5.0.1'
 
 group :development do
   gem 'minitest', '~> 5.14'
