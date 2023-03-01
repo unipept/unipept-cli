@@ -10,7 +10,7 @@ gem 'psych', '~> 5.1.0'
 group :development do
   gem 'minitest', '~> 5.17'
   gem 'rake', '~> 13.0.1'
-  gem 'rubocop', '~>1.44'
+  gem 'rubocop', '~>1.47'
 end
 
 group :release do
