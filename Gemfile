@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 # Add dependencies required to use your gem here.
 
 gem 'cri', '~>2.15.10'
-gem 'typhoeus', '~> 1.3.1'
+gem 'typhoeus', '~> 1.4.0'
 
 group :development do
   gem 'minitest', '~> 5.14'
