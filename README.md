@@ -7,7 +7,7 @@ Documentation about the web service can be found at [http://unipept.ugent.be/api
 
 ## Installation
 
-To use the Unipept CLI, Ruby version 2.6 or higher needs to be installed. You can check this by running `ruby -v` on the commandline:
+To use the Unipept CLI, Ruby version 2.7 or higher needs to be installed. You can check this by running `ruby -v` on the commandline:
 
 ```
 $ ruby -v
