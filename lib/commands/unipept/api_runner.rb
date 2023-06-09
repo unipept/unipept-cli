@@ -19,7 +19,7 @@ module Unipept
     def host
       # find host in opts first
       host = options[:host] || @configuration['host']
-      host = 'http://localhost:3000' if host.nil? || host.empty?
+      host = 'http://api.unipept.ugent.be' if host.nil? || host.empty?
 
       # add http:// if needed
       if host.start_with?('http://', 'https://')
