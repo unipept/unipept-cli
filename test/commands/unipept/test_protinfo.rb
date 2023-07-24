@@ -41,4 +41,5 @@ module Unipept
       end
       assert(out.include?('show help for this command'))
     end
+  end
 end
