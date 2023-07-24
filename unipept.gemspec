@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
-  s.authors = ["Bart Mesuere".freeze, "Pieter Verschaffelt".freeze, "Tibo Vande Moortele".freeze, "Toon Willems".freeze, "Tom Naessens".freeze]
+  s.authors = ["Bart Mesuere".freeze, "Pieter Verschaffelt".freeze, "Toon Willems".freeze, "Tom Naessens".freeze]
   s.date = "2023-07-24"
   s.description = "    Command line interface to the Unipept (http://unipept.ugent.be) web services\n    (pept2lca, taxa2lca, pept2taxa, pept2prot and taxonomy) and some utility\n    commands for handling proteins using the command line.\n".freeze
   s.email = "unipept@ugent.be".freeze
@@ -108,7 +108,7 @@ Gem::Specification.new do |s|
   ]
   s.homepage = "http://unipept.ugent.be".freeze
   s.licenses = ["MIT".freeze]
-  s.required_ruby_version = Gem::Requirement.new(">= 2.7.0".freeze)
+  s.required_ruby_version = Gem::Requirement.new(">= 2.6.0".freeze)
   s.rubygems_version = "3.4.10".freeze
   s.summary = "Command line interface to Unipept web services.".freeze
 
