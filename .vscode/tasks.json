@@ -23,6 +23,12 @@
 			"command": "bundle exec rake gemspec",
 			"label": "generate gemspec",
 			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"command": "BRANCH=main bundle exec rake release",
+			"label": "release gem",
+			"problemMatcher": []
 		}
 	]
 }
