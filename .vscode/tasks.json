@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "rake",
+			"task": "test_style:autocorrect_all",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "rake: test_style:autocorrect_all"
+		},
+		{
+			"type": "rake",
+			"task": "test",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "rake: test"
+		}
+	]
+}
