@@ -17,6 +17,7 @@ require_relative 'unipept/pept2lca'
 require_relative 'unipept/pept2prot'
 require_relative 'unipept/pept2taxa'
 require_relative 'unipept/peptinfo'
+require_relative 'unipept/protinfo'
 require_relative 'unipept/taxa2lca'
 require_relative 'unipept/taxonomy'
 require_relative 'unipept/taxa2tree'
@@ -33,6 +34,7 @@ module Unipept
       add_pept2interpro_command
       add_pept2lca_command
       add_peptinfo_command
+      add_protinfo_command
       add_taxa2lca_command
       add_pept2prot_command
       add_taxonomy_command
@@ -268,6 +270,28 @@ module Unipept
         option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
 
         runner Commands::Peptinfo
+      end
+    end
+
+    def add_protinfo_command
+      @root_command.define_command('protinfo') do
+        usage 'protinfo [options]'
+        summary 'Fetch functional and taxonomic information of UniProt ids'
+        description <<-EOS
+        For each UniProt id the unipept protinfo command retrieves from Unipept the functional information and the NCBI id. The command expects a list of UniProt ids that are passed
+
+         - as separate command line arguments
+
+         - in a text file that is passed as an argument to the -i option
+
+         - to standard input
+
+        The command will give priority to the first way tryptic peptides are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.
+        EOS
+
+        option :s, :select, 'select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.', argument: :required, multiple: true
+
+        runner Commands::Protinfo
       end
     end
 
