@@ -44,7 +44,7 @@ GEM
     kamelcase (0.0.2)
       semver2 (~> 3)
     mini_portile2 (2.8.0)
-    minitest (5.18.1)
+    minitest (5.19.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
     multipart-post (2.1.1)
@@ -99,7 +99,7 @@ PLATFORMS
 DEPENDENCIES
   cri (~> 2.15.10)
   juwelier
-  minitest (~> 5.18)
+  minitest (~> 5.19)
   psych (~> 5.1.0)
   rake (~> 13.0.1)
   rubocop (~> 1.50)
