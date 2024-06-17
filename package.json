@@ -11,7 +11,8 @@
     "uniprot": "./bin/uniprot.js"
   },
   "scripts": {
-    "build": "yarn run tsc"
+    "build": "yarn run tsc",
+    "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
     "commander": "^12.1.0"
