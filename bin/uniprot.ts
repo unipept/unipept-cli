@@ -33,11 +33,11 @@ if (accessions.length !== 0) {
   };
 }
 
-async function processUniprotEntry(accession) {
+async function processUniprotEntry(accession: string) {
   process.stdout.write(await getUniprotEntry(accession, format) + "\n");
 }
 
-async function getUniprotEntry(accession, format) {
+async function getUniprotEntry(accession: string, format: string): Promise<string> {
   if (format === "sequence") {
     return (await getUniprotEntry(accession, "fasta"))
       .split("\n")

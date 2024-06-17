@@ -49,3 +49,4 @@ pkg
 #*.rbc
 
 node_modules/**
+dist/**

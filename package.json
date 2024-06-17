@@ -10,7 +10,15 @@
   "bin": {
     "uniprot": "./bin/uniprot.js"
   },
+  "scripts": {
+    "build": "yarn run tsc"
+  },
   "dependencies": {
     "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5"
   }
 }
