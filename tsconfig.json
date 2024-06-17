@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "module": "NodeNext",
-    "strict": true
+    "strict": true,
+    "resolveJsonModule": true
   }
 }
