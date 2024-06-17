@@ -6,5 +6,9 @@
   "repository": "git@github.com:unipept/unipept-cli.git",
   "author": "Bart Mesuere <Bart.Mesuere@UGent.be>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "type": "module",
+  "dependencies": {
+    "commander": "^12.1.0"
+  }
 }
