@@ -1,6 +1,7 @@
 {
   "include": [
-    "bin/**/*"
+    "bin/**/*",
+    "lib/**/*",
   ],
   "compilerOptions": {
     "outDir": "./dist",
