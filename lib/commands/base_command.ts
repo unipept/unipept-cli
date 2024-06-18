@@ -3,9 +3,11 @@ import { version } from '../../package.json';
 
 export abstract class BaseCommand {
   public program: Command;
+  args: string[] | undefined;
 
-  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
     this.program = this.create(options);
+    this.args = options?.args;
   }
 
   abstract run(): void;
@@ -27,5 +29,14 @@ export abstract class BaseCommand {
     program.version(version);
 
     return program;
+  }
+
+  parseArguments() {
+    if (this.args) {
+      // custom arg parsing to be able to inject args for testing
+      this.program.parse(this.args, { from: "user" });
+    } else {
+      this.program.parse();
+    }
   }
 }

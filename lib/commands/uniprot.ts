@@ -15,10 +15,9 @@ The uniprot command fetches UniProt entries from the UniProt web services. The c
 The command will give priority to the first way UniProt Accession Numbers are passed, in the order as listed above. The standard input should have one UniProt Accession Number per line.
 
 The uniprot command yields just the protein sequences as a default, but can return several formats.`;
-  format = "sequence";
 
-  constructor() {
-    super();
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+    super(options);
 
     this.program
       .summary("Command line interface to UniProt web services.")
@@ -28,16 +27,14 @@ The uniprot command yields just the protein sequences as a default, but can retu
   }
 
   async run() {
-    this.program.parse(process.argv);
-    this.format = this.program.opts().format;
+    this.parseArguments();
+    const format = this.program.opts().format;
     const accessions = this.program.args;
 
-    if (accessions.length !== 0) { // input from command line arguments
-      accessions.forEach(this.processUniprotEntry);
-    } else { // input from standard input
-      for await (const line of createInterface({ input: process.stdin })) {
-        this.processUniprotEntry(line.trim());
-      };
+    // alternatively, we can also wrap the array in a Readable stream with ReadableStream.from()
+    const input = accessions.length !== 0 ? accessions : createInterface({ input: process.stdin });
+    for await (const line of input) {
+      await Uniprot.processUniprotEntry(line.trim(), format);
     }
   }
 
@@ -46,8 +43,8 @@ The uniprot command yields just the protein sequences as a default, but can retu
    *
    * @param accession UniProt Accession Number
    */
-  async processUniprotEntry(accession: string) {
-    process.stdout.write(await Uniprot.getUniprotEntry(accession, this.format) + "\n");
+  static async processUniprotEntry(accession: string, format: string) {
+    process.stdout.write(await Uniprot.getUniprotEntry(accession, format) + "\n");
   }
 
   /**
