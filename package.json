@@ -13,6 +13,7 @@
   "scripts": {
     "build": "yarn run tsc",
     "lint": "yarn run eslint",
+    "typecheck": "yarn tsc --skipLibCheck --noEmit",
     "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
