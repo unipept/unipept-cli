@@ -3,7 +3,7 @@ import { createInterface } from 'node:readline';
 import { BaseCommand } from './base_command.js';
 
 export class Uniprot extends BaseCommand {
-  readonly VALID_FORMATS = ["fasta", "gff", "json", "rdf", "sequence", "xml"];
+  static readonly VALID_FORMATS = ["fasta", "gff", "json", "rdf", "sequence", "xml"];
 
   readonly description = `Command line interface to UniProt web services.
 
@@ -23,7 +23,7 @@ The uniprot command yields just the protein sequences as a default, but can retu
       .summary("Command line interface to UniProt web services.")
       .description(this.description)
       .argument("[accessions...]", "UniProt Accession Numbers")
-      .addOption(new Option("-f, --format <format>", `output format`).choices(this.VALID_FORMATS).default("sequence"));
+      .addOption(new Option("-f, --format <format>", `output format`).choices(Uniprot.VALID_FORMATS).default("sequence"));
   }
 
   async run() {
