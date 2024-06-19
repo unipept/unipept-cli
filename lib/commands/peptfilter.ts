@@ -22,9 +22,8 @@ The input should have one peptide per line. FASTA headers are preserved in the o
 
   async run() {
     this.parseArguments();
-    console.log(this.program.opts())
-    const minLen = this.program.opts().minLen;
-    const maxlen = this.program.opts().maxLen;
+    const minLen = this.program.opts().minlen;
+    const maxlen = this.program.opts().maxlen;
     const lacks = this.program.opts().lacks || [];
     const contains = this.program.opts().contains || [];
 
@@ -33,6 +32,7 @@ The input should have one peptide per line. FASTA headers are preserved in the o
         process.stdout.write(line + "\n");
         continue;
       }
+
       if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
         process.stdout.write(line + "\n");
       }
