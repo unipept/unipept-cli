@@ -1,4 +1,5 @@
 import { Uniprot } from '../../lib/commands/uniprot';
+import { jest } from '@jest/globals';
 import * as mock from 'mock-stdin';
 
 let output: string[];

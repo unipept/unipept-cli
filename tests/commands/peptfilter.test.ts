@@ -1,4 +1,5 @@
 import { Peptfilter } from '../../lib/commands/peptfilter';
+import { jest } from '@jest/globals';
 import * as mock from 'mock-stdin';
 
 let output: string[];
@@ -54,9 +55,8 @@ test('test default filter from stdin', async () => {
 
   await run;
 
-  expect(writeSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toHaveBeenCalledTimes(0);
-  expect(output.length).toBe(1);
+  expect(output.join("").trimEnd().split("\n").length).toBe(1);
 });
 
 test('test if it passes fasta from stdin', async () => {
@@ -71,8 +71,8 @@ test('test if it passes fasta from stdin', async () => {
 
   await run;
 
-  expect(writeSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toHaveBeenCalledTimes(0);
+  expect(output.join("").trimEnd().split("\n").length).toBe(1);
   expect(output[0]).toBe(">AA\n");
 });
 
@@ -92,7 +92,7 @@ test('test complex example from stdin', async () => {
 
   await run;
 
-  expect(writeSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toHaveBeenCalledTimes(0);
+  expect(output.join("").trimEnd().split("\n").length).toBe(1);
   expect(output[0]).toBe("CCCCCA\n");
 });
