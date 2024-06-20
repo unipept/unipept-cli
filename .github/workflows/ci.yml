@@ -3,32 +3,38 @@ name: CI
 on: [push]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby: ["2.7", "3.0", "3.1", "3.2"]
-      fail-fast: false
-    name: Test Ruby ${{ matrix.ruby }}
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Test
-        run: |
-          bundle exec rake test
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          bundler-cache: true
+          node-version: 22.x
+          cache: yarn
+      - name: Install dependencies
+        run: |
+          yarn install
+      - name: Lint
+        run: |
+          yarn lint
+      - name: Type check
+        run: |
+          yarn typecheck
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: yarn
+      - name: Install dependencies
+        run: |
+          yarn install
       - name: Test
         run: |
-          bundle exec rake test_style
+          yarn test

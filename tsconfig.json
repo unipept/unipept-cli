@@ -1,11 +1,12 @@
 {
   "include": [
-    "bin/**/*"
+    "bin/**/*",
+    "lib/**/*",
   ],
   "compilerOptions": {
     "outDir": "./dist",
     "module": "NodeNext",
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   }
 }
