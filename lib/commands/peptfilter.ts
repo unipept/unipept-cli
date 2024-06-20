@@ -1,4 +1,3 @@
-import { Option } from 'commander';
 import { createInterface } from 'node:readline';
 import { BaseCommand } from './base_command.js';
 
@@ -20,6 +19,11 @@ The input should have one peptide per line. FASTA headers are preserved in the o
       .option("-c, --contains <amino acids>", "only retain peptides that contain all of the specified amino acids", (d) => d.split(""));
   }
 
+  /**
+   * Performance note: this implementation takes 4 seconds to run on swissprot. It can be made faster by using line events instead of
+   * async iterators. This alternative implementation runs in 2.5 seconds. However, I decided that the async iterator implementation is
+   * both more readable and more in line with the implementation of the other commands.
+   */
   async run() {
     this.parseArguments();
     const minLen = this.program.opts().minlen;
@@ -27,16 +31,25 @@ The input should have one peptide per line. FASTA headers are preserved in the o
     const lacks = this.program.opts().lacks || [];
     const contains = this.program.opts().contains || [];
 
-    for await (const line of createInterface({ input: process.stdin })) {
-      if (line.startsWith(">")) {
-        process.stdout.write(line + "\n");
-        continue;
-      }
+    let output = [];
+    let i = 0;
 
-      if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
-        process.stdout.write(line + "\n");
+    for await (const line of createInterface({ input: process.stdin })) {
+      i++;
+      if (line.startsWith(">")) {
+        output.push(line);
+      } else if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
+        output.push(line);
+      }
+      if (i % 1000 === 0) {
+        output.push("");
+        process.stdout.write(output.join("\n"));
+        output = [];
       }
     }
+
+    output.push("");
+    process.stdout.write(output.join("\n"));
   }
 
   static checkLength(line: string, minLen: number, maxlen: number): boolean {

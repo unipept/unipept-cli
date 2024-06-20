@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { version } from '../../package.json';
+import { readFileSync } from "fs";
 
 /**
  * This is a base class which provides a common interface for all commands.
@@ -11,8 +11,10 @@ import { version } from '../../package.json';
 export abstract class BaseCommand {
   public program: Command;
   args: string[] | undefined;
+  version: string;
 
   constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+    this.version = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version;
     this.program = this.create(options);
     this.args = options?.args;
   }
@@ -37,8 +39,7 @@ export abstract class BaseCommand {
         writeErr: () => { }
       });
     }
-
-    program.version(version);
+    program.version(this.version);
 
     return program;
   }
