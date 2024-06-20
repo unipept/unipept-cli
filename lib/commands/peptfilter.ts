@@ -31,18 +31,19 @@ The input should have one peptide per line. FASTA headers are preserved in the o
     const lacks = this.program.opts().lacks || [];
     const contains = this.program.opts().contains || [];
 
+    // buffering output makes a big difference in performance
     let output = [];
     let i = 0;
 
     for await (const line of createInterface({ input: process.stdin })) {
       i++;
-      if (line.startsWith(">")) {
+      if (line.startsWith(">")) { // pass through FASTA headers
         output.push(line);
       } else if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
         output.push(line);
       }
       if (i % 1000 === 0) {
-        output.push("");
+        output.push(""); //add a newline at the end of the buffer without additional string copy
         process.stdout.write(output.join("\n"));
         output = [];
       }
