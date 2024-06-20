@@ -4,6 +4,7 @@ import * as mock from 'mock-stdin';
 
 let output: string[];
 let error: string[];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const writeSpy = jest
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
