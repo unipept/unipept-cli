@@ -9,6 +9,7 @@
   "type": "module",
   "bin": {
     "peptfilter": "./bin/peptfilter.js",
+    "prot2pept": "./bin/prot2pept.js",
     "uniprot": "./bin/uniprot.js"
   },
   "scripts": {
@@ -17,6 +18,7 @@
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' yarn run jest",
     "typecheck": "yarn tsc --skipLibCheck --noEmit",
     "peptfilter": "yarn run tsx bin/peptfilter.ts",
+    "prot2pept": "yarn run tsx bin/prot2pept.ts",
     "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
