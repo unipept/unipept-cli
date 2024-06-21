@@ -23,7 +23,14 @@ The input should have either one protein sequence per line or contain a FASTA fo
    */
   async run() {
     this.parseArguments();
-    const pattern = new RegExp(this.program.opts().pattern, "g");
+
+    let pattern;
+    try {
+      pattern = new RegExp(this.program.opts().pattern, "g");
+    } catch (e) {
+      this.program.error(`Your pattern was invalid: ${(e as Error).message}`);
+      //process.exit(1);
+    }
 
     let fasta = false;
     let protein = [];
