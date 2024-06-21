@@ -29,7 +29,6 @@ The input should have either one protein sequence per line or contain a FASTA fo
       pattern = new RegExp(this.program.opts().pattern, "g");
     } catch (e) {
       this.program.error(`Your pattern was invalid: ${(e as Error).message}`);
-      //process.exit(1);
     }
 
     let fasta = false;
