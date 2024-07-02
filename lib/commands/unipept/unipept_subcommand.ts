@@ -12,6 +12,8 @@ export abstract class UnipeptSubcommand {
   user_agent: string;
   host = "https://api.unipept.ugent.be";
   url?: string;
+  selectedFields?: RegExp[];
+  fasta: boolean;
 
   constructor(name: string) {
     this.name = name;
@@ -21,6 +23,10 @@ export abstract class UnipeptSubcommand {
     this.fasta = false;
   }
   abstract defaultBatchSize(): number;
+
+  requiredFields(): string[] {
+    return [];
+  }
 
   create(name: string): Command {
     const command = new Command(name);
@@ -47,7 +53,7 @@ export abstract class UnipeptSubcommand {
 
     for await (const input of this.getInputIterator(args, options.input)) {
       slice.push(input);
-      if (slice.length >= this.defaultBatchSize()) {
+      if (slice.length >= this.batchSize) {
         await this.processBatch(slice);
         slice = [];
       }
@@ -68,7 +74,7 @@ export abstract class UnipeptSubcommand {
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
-    const names = this.constructSelectedFields().length === 0 || this.constructSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
+    const names = this.getSelectedFields().length === 0 || this.getSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
     return new URLSearchParams({
       input: JSON.stringify(slice),
       equate_il: this.options.equate,
@@ -77,9 +83,24 @@ export abstract class UnipeptSubcommand {
     });
   }
 
-  // TODO: implement
-  private constructSelectedFields(): RegExp[] {
-    return [];
+  private getSelectedFields(): RegExp[] {
+    if (this.selectedFields) return this.getSelectedFields();
+
+    const fields = (this.options.fields as string[]).flatMap(f => f.split(","));
+    if (this.fasta && fields.length > 0) {
+      fields.push(...this.requiredFields());
+    }
+    this.selectedFields = fields.map(f => this.globToRegex(f));
+
+    return this.selectedFields;
+  }
+
+  private get batchSize(): number {
+    if (this.options.batch) {
+      return +this.options.batch;
+    } else {
+      return this.defaultBatchSize();
+    }
   }
 
   /**
@@ -107,5 +128,9 @@ export abstract class UnipeptSubcommand {
     } else {
       return `http://${host}`;
     }
+  }
+
+  private globToRegex(glob: string): RegExp {
+    return new RegExp(glob.replace(/\*/g, ".*"));
   }
 }
