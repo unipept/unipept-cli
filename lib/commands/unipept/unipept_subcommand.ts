@@ -9,7 +9,7 @@ export abstract class UnipeptSubcommand {
   name: string;
   user_agent: string;
   host = "https://api.unipept.ugent.be";
-  url: string;
+  url?: string;
 
   constructor(name: string) {
     this.name = name;
@@ -34,13 +34,25 @@ export abstract class UnipeptSubcommand {
     return command;
   }
 
-  run(args: string[], options: object): void {
+  async run(args: string[], options: object): Promise<void> {
     this.options = options;
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
+
+    for (const input of args) {
+      const r = await fetch(this.url, {
+        method: "POST",
+        body: new URLSearchParams({ "input": input }),
+        headers: {
+          "Accept-Encoding": "gzip",
+          "User-Agent": this.user_agent,
+        }
+      });
+      console.log(await r.json());
+    }
   }
 
-  getHost(): string {
+  private getHost(): string {
     const host = this.options.host || this.host;
 
     // add http:// if needed

@@ -25,15 +25,6 @@ The command will give priority to the first way tryptic peptides are passed, in 
   }
 
   async run(args: string[], options: object) {
-    super.run(args, options);
-
-    for (const peptide of args) {
-      const r = await fetch(this.url + "?input=" + peptide, {
-        method: "POST",
-        body: JSON.stringify({ input: [peptide] })
-      });
-      console.log(await r.json());
-    }
-
+    await super.run(args, options);
   }
 }
