@@ -18,13 +18,15 @@ export abstract class UnipeptSubcommand {
     const version = JSON.parse(readFileSync(new URL("../../../package.json", import.meta.url), "utf8")).version;
     this.user_agent = `unipept-cli/${version}`;
     this.command = this.create(name);
+    this.fasta = false;
   }
+  abstract defaultBatchSize(): number;
 
   create(name: string): Command {
     const command = new Command(name);
 
     command.option("-q, --quiet", "disable service messages");
-    command.option("-i, -input <file>", "read input from file");
+    command.option("-i, --input <file>", "read input from file");
     command.option("-o, --output <file>", "write output to file");
     command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("json"));
     command.option("--host <host>", "specify the server running the Unipept web service");
@@ -36,14 +38,14 @@ export abstract class UnipeptSubcommand {
     return command;
   }
 
-  async run(args: string[], options: object): Promise<void> {
+  async run(args: string[], options: { input?: string }): Promise<void> {
     this.options = options;
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
 
     let slice = [];
 
-    for await (const input of this.getInputIterator(args, options)) {
+    for await (const input of this.getInputIterator(args, options.input)) {
       slice.push(input);
       if (slice.length >= this.defaultBatchSize()) {
         await this.processBatch(slice);
@@ -56,7 +58,7 @@ export abstract class UnipeptSubcommand {
   async processBatch(slice: string[]): Promise<void> {
     const r = await fetch(this.url as string, {
       method: "POST",
-      body: new URLSearchParams({ "input": JSON.stringify(slice) }),
+      body: this.constructRequestBody(slice),
       headers: {
         "Accept-Encoding": "gzip",
         "User-Agent": this.user_agent,
@@ -65,24 +67,36 @@ export abstract class UnipeptSubcommand {
     console.log(await r.json());
   }
 
+  private constructRequestBody(slice: string[]): URLSearchParams {
+    const names = this.constructSelectedFields().length === 0 || this.constructSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
+    return new URLSearchParams({
+      input: JSON.stringify(slice),
+      equate_il: this.options.equate,
+      extra: this.options.all,
+      names: this.options.all && names
+    });
+  }
+
+  // TODO: implement
+  private constructSelectedFields(): RegExp[] {
+    return [];
+  }
+
   /**
    * Returns an input iterator to use for the request.
    * - if arguments are given, use arguments
    * - if an input file is given, use the file
    * - otherwise, use standard input
    */
-  getInputIterator(args: string[], options: { input?: string }): string[] | Interface {
+  private getInputIterator(args: string[], input?: string): string[] | Interface {
     if (args.length > 0) {
       return args;
-    } else if (options.input) {
-      return createInterface({ input: createReadStream(options.input) });
+    } else if (input) {
+      return createInterface({ input: createReadStream(input) });
     } else {
       return createInterface({ input: process.stdin })
     }
   }
-
-
-  abstract defaultBatchSize(): number;
 
   private getHost(): string {
     const host = this.options.host || this.host;
