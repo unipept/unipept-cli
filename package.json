@@ -10,6 +10,7 @@
   "bin": {
     "peptfilter": "./bin/peptfilter.js",
     "prot2pept": "./bin/prot2pept.js",
+    "unipept": "./bin/unipept.js",
     "uniprot": "./bin/uniprot.js"
   },
   "scripts": {
@@ -19,6 +20,7 @@
     "typecheck": "yarn tsc --skipLibCheck --noEmit",
     "peptfilter": "yarn run tsx bin/peptfilter.ts",
     "prot2pept": "yarn run tsx bin/prot2pept.ts",
+    "unipept": "yarn run tsx bin/unipept.ts",
     "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
