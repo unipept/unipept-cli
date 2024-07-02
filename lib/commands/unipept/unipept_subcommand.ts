@@ -1,5 +1,7 @@
 import { Command, Option } from "commander";
-import { readFileSync } from "fs";
+import { createReadStream, readFileSync } from "fs";
+import { createInterface } from "node:readline";
+import { Interface } from "readline";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -41,7 +43,7 @@ export abstract class UnipeptSubcommand {
 
     let slice = [];
 
-    for (const input of args) {
+    for await (const input of this.getInputIterator(args, options)) {
       slice.push(input);
       if (slice.length >= this.defaultBatchSize()) {
         await this.processBatch(slice);
@@ -49,7 +51,6 @@ export abstract class UnipeptSubcommand {
       }
     }
     await this.processBatch(slice);
-
   }
 
   async processBatch(slice: string[]): Promise<void> {
@@ -62,6 +63,22 @@ export abstract class UnipeptSubcommand {
       }
     });
     console.log(await r.json());
+  }
+
+  /**
+   * Returns an input iterator to use for the request.
+   * - if arguments are given, use arguments
+   * - if an input file is given, use the file
+   * - otherwise, use standard input
+   */
+  getInputIterator(args: string[], options: { input?: string }): string[] | Interface {
+    if (args.length > 0) {
+      return args;
+    } else if (options.input) {
+      return createInterface({ input: createReadStream(options.input) });
+    } else {
+      return createInterface({ input: process.stdin })
+    }
   }
 
 
