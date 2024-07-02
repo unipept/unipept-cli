@@ -24,6 +24,10 @@ The command will give priority to the first way tryptic peptides are passed, in 
       .action((args, options) => this.run(args, options));
   }
 
+  defaultBatchSize(): number {
+    return 100;
+  }
+
   async run(args: string[], options: object) {
     await super.run(args, options);
   }

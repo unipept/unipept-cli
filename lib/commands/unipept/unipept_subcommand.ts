@@ -39,18 +39,33 @@ export abstract class UnipeptSubcommand {
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
 
+    let slice = [];
+
     for (const input of args) {
-      const r = await fetch(this.url, {
-        method: "POST",
-        body: new URLSearchParams({ "input": input }),
-        headers: {
-          "Accept-Encoding": "gzip",
-          "User-Agent": this.user_agent,
-        }
-      });
-      console.log(await r.json());
+      slice.push(input);
+      if (slice.length >= this.defaultBatchSize()) {
+        await this.processBatch(slice);
+        slice = [];
+      }
     }
+    await this.processBatch(slice);
+
   }
+
+  async processBatch(slice: string[]): Promise<void> {
+    const r = await fetch(this.url as string, {
+      method: "POST",
+      body: new URLSearchParams({ "input": JSON.stringify(slice) }),
+      headers: {
+        "Accept-Encoding": "gzip",
+        "User-Agent": this.user_agent,
+      }
+    });
+    console.log(await r.json());
+  }
+
+
+  abstract defaultBatchSize(): number;
 
   private getHost(): string {
     const host = this.options.host || this.host;
