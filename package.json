@@ -24,7 +24,8 @@
     "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "csv-stringify": "^6.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",

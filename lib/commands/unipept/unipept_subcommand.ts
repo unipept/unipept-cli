@@ -2,6 +2,8 @@ import { Command, Option } from "commander";
 import { createReadStream, readFileSync } from "fs";
 import { createInterface } from "node:readline";
 import { Interface } from "readline";
+import { Formatter } from "../../formatters/formatter.js";
+import { FormatterFactory } from "../../formatters/formatter_factory.js";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -14,6 +16,8 @@ export abstract class UnipeptSubcommand {
   url?: string;
   selectedFields?: RegExp[];
   fasta: boolean;
+  formatter?: Formatter;
+  firstBatch = true;
 
   constructor(name: string) {
     this.name = name;
@@ -48,6 +52,7 @@ export abstract class UnipeptSubcommand {
     this.options = options;
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
+    this.formatter = FormatterFactory.getFormatter(this.options.format);
 
     let slice = [];
 
@@ -62,6 +67,8 @@ export abstract class UnipeptSubcommand {
   }
 
   async processBatch(slice: string[]): Promise<void> {
+    if (!this.formatter) throw new Error("Formatter not set");
+
     const r = await fetch(this.url as string, {
       method: "POST",
       body: this.constructRequestBody(slice),
@@ -70,7 +77,14 @@ export abstract class UnipeptSubcommand {
         "User-Agent": this.user_agent,
       }
     });
-    console.log(await r.json());
+    const result = await r.json();
+
+    if (this.firstBatch) {
+      this.firstBatch = false;
+      process.stdout.write(this.formatter.header(result, this.fasta));
+    }
+
+    process.stdout.write(this.formatter.format(result, this.fasta));
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
@@ -84,9 +98,9 @@ export abstract class UnipeptSubcommand {
   }
 
   private getSelectedFields(): RegExp[] {
-    if (this.selectedFields) return this.getSelectedFields();
+    if (this.selectedFields) return this.selectedFields;
 
-    const fields = (this.options.fields as string[]).flatMap(f => f.split(","));
+    const fields = (this.options.select as string[])?.flatMap(f => f.split(",")) ?? [];
     if (this.fasta && fields.length > 0) {
       fields.push(...this.requiredFields());
     }
