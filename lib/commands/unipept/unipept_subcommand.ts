@@ -83,7 +83,7 @@ export abstract class UnipeptSubcommand {
     });
     const result = await r.json();
 
-    if (this.firstBatch) {
+    if (this.firstBatch && this.options.header) {
       this.firstBatch = false;
       this.outputStream.write(this.formatter.header(result, this.fasta));
     }
