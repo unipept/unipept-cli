@@ -1,5 +1,5 @@
 import { Command, Option } from "commander";
-import { createReadStream, readFileSync } from "fs";
+import { createReadStream, createWriteStream, readFileSync } from "fs";
 import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
@@ -14,10 +14,11 @@ export abstract class UnipeptSubcommand {
   user_agent: string;
   host = "https://api.unipept.ugent.be";
   url?: string;
+  formatter?: Formatter;
+  outputStream: NodeJS.WritableStream = process.stdout;
+  firstBatch = true;
   selectedFields?: RegExp[];
   fasta: boolean;
-  formatter?: Formatter;
-  firstBatch = true;
 
   constructor(name: string) {
     this.name = name;
@@ -53,6 +54,9 @@ export abstract class UnipeptSubcommand {
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
     this.formatter = FormatterFactory.getFormatter(this.options.format);
+    if (this.options.output) {
+      this.outputStream = createWriteStream(this.options.output);
+    }
 
     let slice = [];
 
@@ -81,10 +85,10 @@ export abstract class UnipeptSubcommand {
 
     if (this.firstBatch) {
       this.firstBatch = false;
-      process.stdout.write(this.formatter.header(result, this.fasta));
+      this.outputStream.write(this.formatter.header(result, this.fasta));
     }
 
-    process.stdout.write(this.formatter.format(result, this.fasta));
+    this.outputStream.write(this.formatter.format(result, this.fasta));
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
