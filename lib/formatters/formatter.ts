@@ -2,9 +2,9 @@ export abstract class Formatter {
 
   abstract header(sampleData: object, fastaMapper?: boolean): string;
   abstract footer(): string;
-  abstract convert(data: { [key: string]: string }[], first?: boolean): string;
+  abstract convert(data: object[], first?: boolean): string;
 
-  format(data: { [key: string]: string }[], fastaMapper?: boolean, first?: boolean): string {
+  format(data: object[], fastaMapper?: boolean, first?: boolean): string {
     if (fastaMapper) {
       data = this.integrateFastaHeaders(data, fastaMapper);
     }
@@ -12,7 +12,7 @@ export abstract class Formatter {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  integrateFastaHeaders(data: { [key: string]: string }[], fastaMapper: boolean): { [key: string]: string }[] {
+  integrateFastaHeaders(data: object[], fastaMapper: boolean): object[] {
     return data;
   }
 }
