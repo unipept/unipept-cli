@@ -17,8 +17,8 @@ beforeEach(() => {
 });
 
 test('test single argument', async () => {
-  const command = new Uniprot({ args: ["Q6GZX3"] });
-  await command.run();
+  const command = new Uniprot();
+  await command.run(["Q6GZX3"]);
 
   expect(writeSpy).toHaveBeenCalledTimes(1);
   expect(errorSpy).toHaveBeenCalledTimes(0);
@@ -26,8 +26,8 @@ test('test single argument', async () => {
 });
 
 test('test two arguments', async () => {
-  const command = new Uniprot({ args: ["Q6GZX3", "Q6GZX4"] });
-  await command.run();
+  const command = new Uniprot();
+  await command.run(["Q6GZX3", "Q6GZX4"]);
 
   expect(writeSpy).toHaveBeenCalledTimes(2);
   expect(errorSpy).toHaveBeenCalledTimes(0);
@@ -35,8 +35,8 @@ test('test two arguments', async () => {
 });
 
 test('test fasta output', async () => {
-  const command = new Uniprot({ args: ["--format", "fasta", "Q6GZX3", "Q6GZX4"] });
-  await command.run();
+  const command = new Uniprot();
+  await command.run(["--format", "fasta", "Q6GZX3", "Q6GZX4"]);
 
   expect(writeSpy).toHaveBeenCalledTimes(2);
   expect(errorSpy).toHaveBeenCalledTimes(0);
@@ -78,16 +78,16 @@ test('test double line stdin', async () => {
 });
 
 test('test on invalid id', async () => {
-  const command = new Uniprot({ args: ["Bart"] });
-  await command.run();
+  const command = new Uniprot();
+  await command.run(["Bart"]);
 
   expect(errorSpy).toHaveBeenCalledTimes(1);
 });
 
 test('test all valid formats', async () => {
   for (const format of Uniprot.VALID_FORMATS) {
-    const command = new Uniprot({ args: ["--format", format, "Q6GZX3"] });
-    await command.run();
+    const command = new Uniprot();
+    await command.run(["--format", format, "Q6GZX3"]);
 
     expect(errorSpy).toHaveBeenCalledTimes(0);
   }

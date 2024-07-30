@@ -16,7 +16,7 @@ The command will give priority to the first way UniProt Accession Numbers are pa
 
 The uniprot command yields just the protein sequences as a default, but can return several formats.`;
 
-  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
     super(options);
 
     this.program
@@ -26,8 +26,8 @@ The uniprot command yields just the protein sequences as a default, but can retu
       .addOption(new Option("-f, --format <format>", `output format`).choices(Uniprot.VALID_FORMATS).default("sequence"));
   }
 
-  async run() {
-    this.parseArguments();
+  async run(args?: string[]) {
+    this.parseArguments(args);
     const format = this.program.opts().format;
     const accessions = this.program.args;
 

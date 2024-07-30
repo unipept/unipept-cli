@@ -7,7 +7,7 @@ export class Peptfilter extends BaseCommand {
 
 The input should have one peptide per line. FASTA headers are preserved in the output, so that peptides remain bundled.`;
 
-  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
     super(options);
 
     this.program
@@ -24,8 +24,8 @@ The input should have one peptide per line. FASTA headers are preserved in the o
    * async iterators. This alternative implementation runs in 2.5 seconds. However, I decided that the async iterator implementation is
    * both more readable and more in line with the implementation of the other commands.
    */
-  async run() {
-    this.parseArguments();
+  async run(args?: string[]) {
+    this.parseArguments(args);
     const minLen = this.program.opts().minlen;
     const maxlen = this.program.opts().maxlen;
     const lacks = this.program.opts().lacks || [];

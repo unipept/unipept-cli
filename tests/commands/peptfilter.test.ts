@@ -80,8 +80,8 @@ test('test if it passes fasta from stdin', async () => {
 test('test complex example from stdin', async () => {
   const stdin = mock.stdin();
 
-  const command = new Peptfilter({ args: ["--minlen", "4", "--maxlen", "10", "--lacks", "B", "--contains", "A"] });
-  const run = command.run();
+  const command = new Peptfilter();
+  const run = command.run(["--minlen", "4", "--maxlen", "10", "--lacks", "B", "--contains", "A"]);
 
   stdin.send("A\n");
   stdin.send("AAAAAAAAAAA\n");

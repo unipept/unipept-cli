@@ -13,7 +13,7 @@ Subcommands that start with pept expect a list of tryptic peptides as input. Sub
 
 The command will give priority to the first way the input is passed, in the order as listed above. Text files and standard input should have one tryptic peptide or one NCBI Taxonomy Identifier per line.`;
 
-  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
     super(options);
 
     this.program
@@ -22,7 +22,7 @@ The command will give priority to the first way the input is passed, in the orde
       .addCommand(new Pept2lca().command);
   }
 
-  async run() {
-    this.parseArguments();
+  async run(args?: string[]) {
+    this.parseArguments(args);
   }
 }
