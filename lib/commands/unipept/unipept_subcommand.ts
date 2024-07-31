@@ -149,6 +149,6 @@ export abstract class UnipeptSubcommand {
   }
 
   private globToRegex(glob: string): RegExp {
-    return new RegExp(glob.replace(/\*/g, ".*"));
+    return new RegExp(`^${glob.replace(/\*/g, ".*")}$`);
   }
 }
