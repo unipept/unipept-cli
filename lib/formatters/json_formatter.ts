@@ -2,8 +2,7 @@ import { Formatter } from "./formatter.js";
 
 export class JSONFormatter extends Formatter {
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  header(sampleData: { [key: string]: string }[], fastaMapper?: boolean | undefined): string {
+  header(_sampleData: { [key: string]: string }[], _fastaMapper?: boolean | undefined): string {
     return "[";
   }
 

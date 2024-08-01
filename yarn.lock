@@ -2853,6 +2853,11 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
+to-xml@^0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/to-xml/-/to-xml-0.1.11.tgz#fae4dafe89889e5013c86e4ea65933dca97d985b"
+  integrity sha512-deRSQy7vONsawpyrPdhuV0Lh0yXtKQEhAnvfSv3JMahCq3PF0MZJB/BdV1jJANVbuMdnx96zhqD/X0zMMXx0Pw==
+
 ts-api-utils@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/ts-api-utils/-/ts-api-utils-1.3.0.tgz#4b490e27129f1e8e686b45cc4ab63714dc60eea1"
