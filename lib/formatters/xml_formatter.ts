@@ -1,5 +1,5 @@
 import { Formatter } from "./formatter.js";
-import { toXML } from "to-xml";
+import { toXML } from "./to_xml.js";
 
 export class XMLFormatter extends Formatter {
 
