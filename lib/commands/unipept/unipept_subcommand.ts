@@ -84,11 +84,12 @@ export abstract class UnipeptSubcommand {
     const result = await r.json();
 
     if (this.firstBatch && this.options.header) {
-      this.firstBatch = false;
       this.outputStream.write(this.formatter.header(result, this.fasta));
     }
 
-    this.outputStream.write(this.formatter.format(result, this.fasta));
+    this.outputStream.write(this.formatter.format(result, this.fasta, this.firstBatch));
+
+    if (this.firstBatch) this.firstBatch = false;
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
