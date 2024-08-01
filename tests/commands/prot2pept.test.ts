@@ -111,8 +111,8 @@ test('test fasta input 3', async () => {
 test('test custom pattern', async () => {
   const stdin = mock.stdin();
 
-  const command = new Prot2pept({ args: ["--pattern", "([KR])([^A])"] });
-  const run = command.run();
+  const command = new Prot2pept();
+  const run = command.run(["--pattern", "([KR])([^A])"]);
 
   stdin.send("AALTERAALTERPAALTER\n");
   stdin.end();

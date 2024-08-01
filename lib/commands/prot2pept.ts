@@ -8,7 +8,7 @@ export class Prot2pept extends BaseCommand {
 The input should have either one protein sequence per line or contain a FASTA formatted list of protein sequences. FASTA headers are preserved in the output, so that peptides can be bundled per protein sequence.
 `;
 
-  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean, args?: string[] }) {
+  constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
     super(options);
 
     this.program
@@ -21,8 +21,8 @@ The input should have either one protein sequence per line or contain a FASTA fo
    * Performance note: Just as with peptfilter, this implementation can be made faster by using line events instead of
    * async iterators.
    */
-  async run() {
-    this.parseArguments();
+  async run(args?: string[]) {
+    this.parseArguments(args);
 
     let pattern;
     try {

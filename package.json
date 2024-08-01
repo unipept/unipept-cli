@@ -10,6 +10,7 @@
   "bin": {
     "peptfilter": "./bin/peptfilter.js",
     "prot2pept": "./bin/prot2pept.js",
+    "unipept": "./bin/unipept.js",
     "uniprot": "./bin/uniprot.js"
   },
   "scripts": {
@@ -19,10 +20,12 @@
     "typecheck": "yarn tsc --skipLibCheck --noEmit",
     "peptfilter": "yarn run tsx bin/peptfilter.ts",
     "prot2pept": "yarn run tsx bin/prot2pept.ts",
+    "unipept": "yarn run tsx bin/unipept.ts",
     "uniprot": "yarn run tsx bin/uniprot.ts"
   },
   "dependencies": {
-    "commander": "^12.1.0"
+    "commander": "^12.1.0",
+    "csv-stringify": "^6.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.5.0",
