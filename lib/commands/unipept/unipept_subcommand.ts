@@ -20,6 +20,9 @@ export abstract class UnipeptSubcommand {
   selectedFields?: RegExp[];
   fasta: boolean;
 
+  // we must save this to be able to close it properly in tests
+  private streamInterface?: Interface;
+
   constructor(name: string) {
     this.name = name;
     const version = JSON.parse(readFileSync(new URL("../../../package.json", import.meta.url), "utf8")).version;
@@ -27,6 +30,7 @@ export abstract class UnipeptSubcommand {
     this.command = this.create(name);
     this.fasta = false;
   }
+
   abstract defaultBatchSize(): number;
 
   requiredFields(): string[] {
@@ -58,16 +62,10 @@ export abstract class UnipeptSubcommand {
       this.outputStream = createWriteStream(this.options.output);
     }
 
-    let slice = [];
+    const iterator = this.getInputIterator(args, options.input);
+    const firstLine = (await iterator.next()).value;
 
-    for await (const input of this.getInputIterator(args, options.input)) {
-      slice.push(input);
-      if (slice.length >= this.batchSize) {
-        await this.processBatch(slice);
-        slice = [];
-      }
-    }
-    await this.processBatch(slice);
+    await this.normalInputProcessor(firstLine, iterator);
   }
 
   async processBatch(slice: string[]): Promise<void> {
@@ -90,6 +88,19 @@ export abstract class UnipeptSubcommand {
     this.outputStream.write(this.formatter.format(result, this.fasta, this.firstBatch));
 
     if (this.firstBatch) this.firstBatch = false;
+  }
+
+  async normalInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
+    let slice = [firstLine];
+
+    for await (const line of iterator) {
+      slice.push(line);
+      if (slice.length >= this.batchSize) {
+        await this.processBatch(slice);
+        slice = [];
+      }
+    }
+    await this.processBatch(slice);
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
@@ -128,13 +139,15 @@ export abstract class UnipeptSubcommand {
    * - if an input file is given, use the file
    * - otherwise, use standard input
    */
-  private getInputIterator(args: string[], input?: string): string[] | Interface {
+  private getInputIterator(args: string[], input?: string): IterableIterator<string> | AsyncIterableIterator<string> {
     if (args.length > 0) {
-      return args;
+      return args.values();
     } else if (input) {
-      return createInterface({ input: createReadStream(input) });
+      this.streamInterface = createInterface({ input: createReadStream(input) });
+      return this.streamInterface[Symbol.asyncIterator]();
     } else {
-      return createInterface({ input: process.stdin })
+      this.streamInterface = createInterface({ input: process.stdin });
+      return this.streamInterface[Symbol.asyncIterator]();
     }
   }
 

@@ -28,19 +28,18 @@ test('test correct inputIterator', async () => {
   const command = new Pept2lca();
 
   // should be stdin
-  let input = command["getInputIterator"]([]) as Interface;
-  expect(input).toBeInstanceOf(Interface);
-  input.close();
+  let input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+  expect(typeof input[Symbol.asyncIterator]).toBe("function");
+  command['streamInterface']?.close();
 
   // should be a (non-existant) file and error
-  input = command["getInputIterator"]([], "filename") as Interface;
-  input.on("error", (e) => {
-    expect(e.toString()).toMatch(/no such file/);
-  });
+  input = command["getInputIterator"]([], "filename") as AsyncIterableIterator<string>;
+  expect(typeof input[Symbol.asyncIterator]).toBe("function");
+  await expect(async () => { await input.next() }).rejects.toThrow(/no such file/);
 
   // should be array
-  const inputArray = command["getInputIterator"](["A", "B"]);
-  expect(inputArray).toBeInstanceOf(Array);
+  const inputArray = command["getInputIterator"](["A", "B"]) as IterableIterator<string>;
+  expect(typeof inputArray[Symbol.iterator]).toBe("function");
 });
 
 test('test selected fields parsing', () => {
