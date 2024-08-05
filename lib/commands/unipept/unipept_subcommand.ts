@@ -64,11 +64,15 @@ export abstract class UnipeptSubcommand {
 
     const iterator = this.getInputIterator(args, options.input);
     const firstLine = (await iterator.next()).value;
-
-    await this.normalInputProcessor(firstLine, iterator);
+    if (firstLine.startsWith(">")) {
+      this.fasta = true;
+      await this.fastaInputProcessor(firstLine, iterator);
+    } else {
+      await this.normalInputProcessor(firstLine, iterator);
+    }
   }
 
-  async processBatch(slice: string[]): Promise<void> {
+  async processBatch(slice: string[], fastaMapper?: { [key: string]: string }): Promise<void> {
     if (!this.formatter) throw new Error("Formatter not set");
 
     const r = await fetch(this.url as string, {
@@ -85,7 +89,7 @@ export abstract class UnipeptSubcommand {
       this.outputStream.write(this.formatter.header(result, this.fasta));
     }
 
-    this.outputStream.write(this.formatter.format(result, this.fasta, this.firstBatch));
+    this.outputStream.write(this.formatter.format(result, fastaMapper, this.firstBatch));
 
     if (this.firstBatch) this.firstBatch = false;
   }
@@ -101,6 +105,26 @@ export abstract class UnipeptSubcommand {
       }
     }
     await this.processBatch(slice);
+  }
+
+  async fastaInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
+    let currentFastaHeader = firstLine;
+    let slice = [];
+    let fastaMapper: { [key: string]: string } = {};
+    for await (const line of iterator) {
+      if (line.startsWith(">")) {
+        currentFastaHeader = line;
+      } else {
+        fastaMapper[line] = currentFastaHeader;
+        slice.push(line);
+        if (slice.length >= this.batchSize) {
+          await this.processBatch(slice, fastaMapper);
+          slice = [];
+          fastaMapper = {};
+        }
+      }
+    }
+    await this.processBatch(slice, fastaMapper);
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {

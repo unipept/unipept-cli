@@ -1,4 +1,3 @@
-import { Interface } from 'readline';
 import { Pept2lca } from '../../../lib/commands/unipept/pept2lca';
 
 test('test command setup', () => {

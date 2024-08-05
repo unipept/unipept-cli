@@ -4,15 +4,18 @@ export abstract class Formatter {
   abstract footer(): string;
   abstract convert(data: object[], first?: boolean): string;
 
-  format(data: object[], fastaMapper?: boolean, first?: boolean): string {
+  format(data: object[], fastaMapper?: { [key: string]: string }, first?: boolean): string {
     if (fastaMapper) {
-      data = this.integrateFastaHeaders(data, fastaMapper);
+      data = this.integrateFastaHeaders(data as { [key: string]: string }[], fastaMapper);
     }
     return this.convert(data, first);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  integrateFastaHeaders(data: object[], fastaMapper: boolean): object[] {
+  integrateFastaHeaders(data: { [key: string]: string }[], fastaMapper: { [key: string]: string }): object[] {
+    const key = Object.keys(data[0])[0];
+    data.forEach((entry, i) => {
+      data[i] = Object.assign({ fastaHeader: fastaMapper[entry[key]] }, entry);
+    });
     return data;
   }
 }
