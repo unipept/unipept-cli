@@ -250,6 +250,6 @@ function _isArray(array) {
   return array instanceof Array;
 }
 
-export function toXML(value: object, replacer?: function, space?: number | string): string {
-  return _toXML(value, replacer, space);
+export function toXML(value: object): string {
+  return _toXML(value);
 }

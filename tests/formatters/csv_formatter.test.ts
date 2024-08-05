@@ -23,8 +23,8 @@ test('test convert', () => {
 });
 
 test('test format with fasta', () => {
-  //const fasta = [['>test', '5']];
-  //const object = [TestObject.testObject(), TestObject.testObject()];
-  //const csv = [`>test,${TestObject.asCsv()}`, TestObject.asCsv(), ""].join("\n");
-  //expect(formatter.format(object, fasta, false)).toBe(csv);
+  const fasta = { 5: ">test" };
+  const object = [TestObject.testObject(), TestObject.testObject()];
+  const csv = [`>test,${TestObject.asCsv()}`, `>test,${TestObject.asCsv()}`, ""].join("\n");
+  expect(formatter.format(object, fasta, false)).toBe(csv);
 });
