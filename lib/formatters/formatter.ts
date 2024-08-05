@@ -14,7 +14,7 @@ export abstract class Formatter {
   integrateFastaHeaders(data: { [key: string]: string }[], fastaMapper: { [key: string]: string }): object[] {
     const key = Object.keys(data[0])[0];
     data.forEach((entry, i) => {
-      data[i] = Object.assign({ fastaHeader: fastaMapper[entry[key]] }, entry);
+      data[i] = Object.assign({ fasta_header: fastaMapper[entry[key]] }, entry);
     });
     return data;
   }

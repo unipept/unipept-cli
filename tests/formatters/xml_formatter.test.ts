@@ -21,8 +21,8 @@ test('test convert', () => {
 });
 
 test('test format with fasta', () => {
-  //const fasta = [['>test', '5']];
-  //const object = [TestObject.testObject()];
-  //const json = '{"fasta_header":">test","integer":5,"string":"string","list":["a",2,false]}';
-  //expect(formatter.format(object, fasta, true)).toBe(json);
+  const fasta = { 5: ">test" };
+  const object = [TestObject.testObject()];
+  const xml = `<result><fasta_header>&gt;test</fasta_header>${TestObject.asXml()}</result>`;
+  expect(formatter.format(object, fasta, true)).toBe(xml);
 });
