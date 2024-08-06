@@ -43,7 +43,7 @@ export abstract class UnipeptSubcommand {
     command.option("-q, --quiet", "disable service messages");
     command.option("-i, --input <file>", "read input from file");
     command.option("-o, --output <file>", "write output to file");
-    command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("json"));
+    command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("csv"));
     command.option("--host <host>", "specify the server running the Unipept web service");
 
     // internal options
@@ -53,18 +53,26 @@ export abstract class UnipeptSubcommand {
     return command;
   }
 
-  async run(args: string[], options: { input?: string }): Promise<void> {
+  async run(args: string[], options: { [key: string]: unknown }): Promise<void> {
     this.options = options;
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
     this.formatter = FormatterFactory.getFormatter(this.options.format);
     if (this.options.output) {
       this.outputStream = createWriteStream(this.options.output);
+    } else {
+      process.stdout.on("error", (err) => {
+        if (err.code === "EPIPE") {
+          process.exit(0);
+        }
+      })
     }
 
-    const iterator = this.getInputIterator(args, options.input);
+    const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
-    if (firstLine.startsWith(">")) {
+    if (this.command.name() === "taxa2lca") {
+      await this.simpleInputProcessor(firstLine, iterator);
+    } else if (firstLine.startsWith(">")) {
       this.fasta = true;
       await this.fastaInputProcessor(firstLine, iterator);
     } else {
@@ -125,6 +133,14 @@ export abstract class UnipeptSubcommand {
       }
     }
     await this.processBatch(slice, fastaMapper);
+  }
+
+  async simpleInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
+    const slice = [firstLine];
+    for await (const line of iterator) {
+      slice.push(line);
+    }
+    await this.processBatch(slice);
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
