@@ -1,4 +1,5 @@
 import { BaseCommand } from './base_command.js';
+import { Pept2ec } from './unipept/pept2ec.js';
 import { Pept2lca } from './unipept/pept2lca.js';
 
 export class Unipept extends BaseCommand {
@@ -19,6 +20,7 @@ The command will give priority to the first way the input is passed, in the orde
     this.program
       .summary("Command line interface to Unipept web services.")
       .description(this.description)
+      .addCommand(new Pept2ec().command)
       .addCommand(new Pept2lca().command);
   }
 
