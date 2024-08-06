@@ -20,18 +20,20 @@ export class CSVFormatter extends Formatter {
   }
 
   flatten(data: { [key: string]: unknown }[]): { [key: string]: unknown }[] {
-    if (this.getKeys(data).includes("ec")) {
-      // @ts-ignore
-      const keys = Object.keys(data[0].ec[0]);
-      data.forEach(row => {
-        keys.forEach(key => {
-          const newKey = key.startsWith("ec") ? key : `ec_${key}`;
-          // @ts-ignore
-          row[newKey] = row.ec.map(e => e[key]).join(" ");
+    const prefixes = ["ec", "go", "ipr"];
+    prefixes.forEach(prefix => {
+      if (this.getKeys(data).includes(prefix)) {// @ts-ignore
+        const keys = Object.keys(data[0][prefix][0]);
+        data.forEach(row => {
+          keys.forEach(key => {
+            const newKey = key.startsWith(prefix) ? key : `${prefix}_${key}`;
+            // @ts-ignore
+            row[newKey] = row[prefix].map(e => e[key]).join(" ");
+          });
+          delete row[prefix];
         });
-        delete row.ec;
-      });
-    }
+      }
+    });
     return data;
   }
 }
