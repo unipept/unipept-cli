@@ -15,7 +15,7 @@ The command will give priority to the first way tryptic peptides are passed, in 
     super("pept2interpro");
 
     this.command
-      .summary("Fetch GO terms of UniProt entries that match tryptic peptides.")
+      .summary("Fetch InterPro entries of UniProt entries that match tryptic peptides.")
       .description(this.description)
       .option("-e, --equate", "equate isoleucine (I) and leucine (L) when matching peptides")
       .option("-a, --all", "Also return the names of the InterPro entries. Note that this may have a performance penalty.")

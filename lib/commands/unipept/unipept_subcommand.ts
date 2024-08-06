@@ -60,6 +60,12 @@ export abstract class UnipeptSubcommand {
     this.formatter = FormatterFactory.getFormatter(this.options.format);
     if (this.options.output) {
       this.outputStream = createWriteStream(this.options.output);
+    } else {
+      process.stdout.on("error", (err) => {
+        if (err.code === "EPIPE") {
+          process.exit(0);
+        }
+      })
     }
 
     const iterator = this.getInputIterator(args, options.input as string);
