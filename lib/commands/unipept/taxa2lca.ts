@@ -9,7 +9,7 @@ export class Taxa2lca extends UnipeptSubcommand {
 - in a text file that is passed as an argument to the -i option
 - to standard input
 
-The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.`;
+The command will give priority to the first way NCBI Taxonomy Identifiers are passed, in the order as listed above. Text files and standard input should have one taxon id per line.`;
 
   constructor() {
     super("taxa2lca");

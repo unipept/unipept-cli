@@ -9,7 +9,7 @@ export class Protinfo extends UnipeptSubcommand {
 - in a text file that is passed as an argument to the -i option
 - to standard input
 
-The command will give priority to the first way protein id's are passed, in the order as listed above. Text files and standard input should have one tryptic peptide per line.`;
+The command will give priority to the first way protein id's are passed, in the order as listed above. Text files and standard input should have one protein id per line.`;
 
   constructor() {
     super("protinfo");
