@@ -43,7 +43,7 @@ export abstract class UnipeptSubcommand {
     command.option("-q, --quiet", "disable service messages");
     command.option("-i, --input <file>", "read input from file");
     command.option("-o, --output <file>", "write output to file");
-    command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("json"));
+    command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("csv"));
     command.option("--host <host>", "specify the server running the Unipept web service");
 
     // internal options
@@ -53,7 +53,7 @@ export abstract class UnipeptSubcommand {
     return command;
   }
 
-  async run(args: string[], options: { input?: string }): Promise<void> {
+  async run(args: string[], options: { [key: string]: unknown }): Promise<void> {
     this.options = options;
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
@@ -62,7 +62,7 @@ export abstract class UnipeptSubcommand {
       this.outputStream = createWriteStream(this.options.output);
     }
 
-    const iterator = this.getInputIterator(args, options.input);
+    const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
     if (firstLine.startsWith(">")) {
       this.fasta = true;
