@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
 // This file was taken from https://github.com/kawanet/to-xml and modified to have a specific output for arrays.

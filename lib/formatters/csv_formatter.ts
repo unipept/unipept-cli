@@ -1,4 +1,3 @@
-import { get } from "http";
 import { Formatter } from "./formatter.js";
 import { stringify } from "csv-stringify/sync";
 
