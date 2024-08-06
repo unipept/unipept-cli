@@ -70,7 +70,9 @@ export abstract class UnipeptSubcommand {
 
     const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
-    if (firstLine.startsWith(">")) {
+    if (this.command.name() === "taxa2lca") {
+      await this.simpleInputProcessor(firstLine, iterator);
+    } else if (firstLine.startsWith(">")) {
       this.fasta = true;
       await this.fastaInputProcessor(firstLine, iterator);
     } else {
@@ -131,6 +133,14 @@ export abstract class UnipeptSubcommand {
       }
     }
     await this.processBatch(slice, fastaMapper);
+  }
+
+  async simpleInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
+    const slice = [firstLine];
+    for await (const line of iterator) {
+      slice.push(line);
+    }
+    await this.processBatch(slice);
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
