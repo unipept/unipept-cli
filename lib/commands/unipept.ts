@@ -4,6 +4,7 @@ import { Pept2funct } from './unipept/pept2funct.js';
 import { Pept2go } from './unipept/pept2go.js';
 import { Pept2interpro } from './unipept/pept2interpro.js';
 import { Pept2lca } from './unipept/pept2lca.js';
+import { Pept2prot } from './unipept/pept2prot.js';
 
 export class Unipept extends BaseCommand {
 
@@ -27,7 +28,8 @@ The command will give priority to the first way the input is passed, in the orde
       .addCommand(new Pept2funct().command)
       .addCommand(new Pept2go().command)
       .addCommand(new Pept2interpro().command)
-      .addCommand(new Pept2lca().command);
+      .addCommand(new Pept2lca().command)
+      .addCommand(new Pept2prot().command);
   }
 
   async run(args?: string[]) {
