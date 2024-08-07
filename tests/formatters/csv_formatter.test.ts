@@ -4,10 +4,8 @@ import { TestObject } from "./test_object";
 const formatter = FormatterFactory.getFormatter("csv");
 
 test('test header', () => {
-  //const fasta = [["peptide", ">test"]];
   const object = [TestObject.testObject(), TestObject.testObject()];
   expect(formatter.header(object)).toBe(TestObject.asCsvHeader());
-  //expect(formatter.header(object, fasta)).toBe(`fasta_header,${TestObject.asCsvHeader()}`);
 });
 
 test('test footer', () => {

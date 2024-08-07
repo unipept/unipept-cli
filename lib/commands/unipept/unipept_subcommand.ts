@@ -4,6 +4,10 @@ import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
 import { FormatterFactory } from "../../formatters/formatter_factory.js";
+import { CSVFormatter } from "../../formatters/csv_formatter.js";
+import path from "path";
+import os from "os";
+import { appendFile, mkdir } from "fs/promises";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -58,9 +62,12 @@ export abstract class UnipeptSubcommand {
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
     this.formatter = FormatterFactory.getFormatter(this.options.format);
+
     if (this.options.output) {
       this.outputStream = createWriteStream(this.options.output);
     } else {
+      // if we write to stdout, we need to handle the EPIPE error
+      // this happens when the output is piped to another command that stops reading
       process.stdout.on("error", (err) => {
         if (err.code === "EPIPE") {
           process.exit(0);
@@ -71,6 +78,7 @@ export abstract class UnipeptSubcommand {
     const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
     if (this.command.name() === "taxa2lca") {
+      // this subcommand is an exception where the entire input is read before processing
       await this.simpleInputProcessor(firstLine, iterator);
     } else if (firstLine.startsWith(">")) {
       this.fasta = true;
@@ -83,15 +91,29 @@ export abstract class UnipeptSubcommand {
   async processBatch(slice: string[], fastaMapper?: { [key: string]: string }): Promise<void> {
     if (!this.formatter) throw new Error("Formatter not set");
 
-    const r = await fetch(this.url as string, {
-      method: "POST",
-      body: this.constructRequestBody(slice),
-      headers: {
-        "Accept-Encoding": "gzip",
-        "User-Agent": this.user_agent,
-      }
-    });
-    const result = await r.json();
+    let r;
+    try {
+      r = await this.fetchWithRetry(this.url as string, {
+        method: "POST",
+        body: this.constructRequestBody(slice),
+        headers: {
+          "Accept-Encoding": "gzip",
+          "User-Agent": this.user_agent,
+        }
+      });
+    } catch (e) {
+      await this.saveError(e as string);
+      return;
+    }
+
+    let result;
+    try {
+      result = await r.json();
+    } catch (e) {
+      result = [];
+    }
+    if (Array.isArray(result) && result.length === 0) return;
+    result = this.filterResult(result);
 
     if (this.firstBatch && this.options.header) {
       this.outputStream.write(this.formatter.header(result, this.fasta));
@@ -102,6 +124,31 @@ export abstract class UnipeptSubcommand {
     if (this.firstBatch) this.firstBatch = false;
   }
 
+  /**
+   * Filter the result based on the selected fields
+   */
+  filterResult(result: unknown): object[] {
+    if (!Array.isArray(result)) {
+      result = [result];
+    }
+    if (this.formatter && this.formatter instanceof CSVFormatter) {
+      result = this.formatter.flatten(result as { [key: string]: unknown }[]);
+    }
+    if (this.getSelectedFields().length > 0) {
+      (result as { [key: string]: string }[]).forEach(entry => {
+        for (const key of Object.keys(entry)) {
+          if (!this.getSelectedFields().some(regex => regex.test(key))) {
+            delete entry[key];
+          }
+        }
+      });
+    }
+    return result as object[];
+  }
+
+  /**
+   * Reads batchSize lines from the input and processes them
+   */
   async normalInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     let slice = [firstLine];
 
@@ -115,6 +162,10 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice);
   }
 
+  /**
+   * Reads batchSize lines from the input and processes them,
+   * but takes into account the fasta headers.
+   */
   async fastaInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     let currentFastaHeader = firstLine;
     let slice = [];
@@ -135,12 +186,52 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice, fastaMapper);
   }
 
+  /**
+   * Reads the entire input and processes it in one go
+   */
   async simpleInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     const slice = [firstLine];
     for await (const line of iterator) {
       slice.push(line);
     }
     await this.processBatch(slice);
+  }
+
+  /**
+   * Appends the error message to the log file of today and prints it to the console
+   */
+  async saveError(message: string) {
+    const errorPath = this.errorFilePath();
+    mkdir(path.dirname(errorPath), { recursive: true });
+    await appendFile(errorPath, `${message}\n`);
+    console.error(`API request failed! log can be found in ${errorPath}`);
+  }
+
+  /**
+   * Uses fetch to get data from the Unipept API.
+   * Has a retry mechanism that retries the request up to 5 times with a delay of 0-5 seconds.
+   * In addition, handles failed requests by returning a rejected promise.
+   */
+  fetchWithRetry(url: string, options: RequestInit, retries = 5): Promise<Response> {
+    return fetch(url, options)
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          return Promise.reject(`${response.status} ${response.statusText}`);
+        }
+      })
+      .catch(async error => {
+        if (retries > 0) {
+          // retry with delay
+          // console.error("retrying");
+          const delay = 5000 * Math.random();
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return this.fetchWithRetry(url, options, retries - 1);
+        } else {
+          return Promise.reject(`Failed to fetch data from the Unipept API: ${error}`);
+        }
+      });
   }
 
   private constructRequestBody(slice: string[]): URLSearchParams {
@@ -171,6 +262,11 @@ export abstract class UnipeptSubcommand {
     } else {
       return this.defaultBatchSize();
     }
+  }
+
+  private errorFilePath(): string {
+    const timestamp = new Date().toISOString().split('T')[0];
+    return path.join(os.homedir(), '.unipept', `unipept-${timestamp}.log`);
   }
 
   /**
