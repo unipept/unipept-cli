@@ -93,7 +93,12 @@ export abstract class UnipeptSubcommand {
       }
     });
 
-    let result = await r.json();
+    let result;
+    try {
+      result = await r.json();
+    } catch (e) {
+      result = [];
+    }
     if (Array.isArray(result) && result.length === 0) return;
     result = this.filterResult(result);
 
