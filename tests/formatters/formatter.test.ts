@@ -6,7 +6,6 @@ test('test integrate fasta headers', async () => {
   const fasta = { 5: ">test" };
   const object = [TestObject.testObject(), TestObject.testObject()];
   const integrated = [Object.assign({ fasta_header: ">test" }, TestObject.testObject()), Object.assign({ fasta_header: ">test" }, TestObject.testObject())];
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   expect(formatter.integrateFastaHeaders(object, fasta)).toEqual(integrated);
 });

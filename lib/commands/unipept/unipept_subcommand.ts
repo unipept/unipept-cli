@@ -7,7 +7,7 @@ import { FormatterFactory } from "../../formatters/formatter_factory.js";
 import { CSVFormatter } from "../../formatters/csv_formatter.js";
 import path from "path";
 import os from "os";
-import { appendFile, mkdir, writeFile } from "fs/promises";
+import { appendFile, mkdir } from "fs/promises";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
