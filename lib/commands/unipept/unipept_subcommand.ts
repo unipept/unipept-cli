@@ -5,6 +5,9 @@ import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
 import { FormatterFactory } from "../../formatters/formatter_factory.js";
 import { CSVFormatter } from "../../formatters/csv_formatter.js";
+import path from "path";
+import os from "os";
+import { appendFile, mkdir, writeFile } from "fs/promises";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -84,14 +87,20 @@ export abstract class UnipeptSubcommand {
   async processBatch(slice: string[], fastaMapper?: { [key: string]: string }): Promise<void> {
     if (!this.formatter) throw new Error("Formatter not set");
 
-    const r = await fetch(this.url as string, {
-      method: "POST",
-      body: this.constructRequestBody(slice),
-      headers: {
-        "Accept-Encoding": "gzip",
-        "User-Agent": this.user_agent,
-      }
-    });
+    let r;
+    try {
+      r = await this.fetchWithRetry(this.url as string, {
+        method: "POST",
+        body: this.constructRequestBody(slice),
+        headers: {
+          "Accept-Encoding": "gzip",
+          "User-Agent": this.user_agent,
+        }
+      });
+    } catch (e) {
+      await this.saveError(e as string);
+      return;
+    }
 
     let result;
     try {
@@ -171,6 +180,35 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice);
   }
 
+  async saveError(message: string) {
+    const errorPath = this.errorFilePath();
+    mkdir(path.dirname(errorPath), { recursive: true });
+    await appendFile(errorPath, `${message}\n`);
+    console.error(`API request failed! log can be found in ${errorPath}`);
+  }
+
+  fetchWithRetry(url: string, options: RequestInit, retries = 5): Promise<Response> {
+    return fetch(url, options)
+      .then(response => {
+        if (response.ok) {
+          return response;
+        } else {
+          return Promise.reject(`${response.status} ${response.statusText}`);
+        }
+      })
+      .catch(async error => {
+        if (retries > 0) {
+          // retry with delay
+          // console.error("retrying");
+          const delay = 5000 * Math.random();
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return this.fetchWithRetry(url, options, retries - 1);
+        } else {
+          return Promise.reject(`Failed to fetch data from the Unipept API: ${error}`);
+        }
+      });
+  }
+
   private constructRequestBody(slice: string[]): URLSearchParams {
     const names = this.getSelectedFields().length === 0 || this.getSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
     return new URLSearchParams({
@@ -199,6 +237,11 @@ export abstract class UnipeptSubcommand {
     } else {
       return this.defaultBatchSize();
     }
+  }
+
+  private errorFilePath(): string {
+    const timestamp = new Date().toISOString().split('T')[0];
+    return path.join(os.homedir(), '.unipept', `unipept-${timestamp}.log`);
   }
 
   /**
