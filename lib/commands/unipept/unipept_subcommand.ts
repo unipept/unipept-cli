@@ -62,9 +62,12 @@ export abstract class UnipeptSubcommand {
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
     this.formatter = FormatterFactory.getFormatter(this.options.format);
+
     if (this.options.output) {
       this.outputStream = createWriteStream(this.options.output);
     } else {
+      // if we write to stdout, we need to handle the EPIPE error
+      // this happens when the output is piped to another command that stops reading
       process.stdout.on("error", (err) => {
         if (err.code === "EPIPE") {
           process.exit(0);
@@ -75,6 +78,7 @@ export abstract class UnipeptSubcommand {
     const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
     if (this.command.name() === "taxa2lca") {
+      // this subcommand is an exception where the entire input is read before processing
       await this.simpleInputProcessor(firstLine, iterator);
     } else if (firstLine.startsWith(">")) {
       this.fasta = true;
@@ -120,6 +124,9 @@ export abstract class UnipeptSubcommand {
     if (this.firstBatch) this.firstBatch = false;
   }
 
+  /**
+   * Filter the result based on the selected fields
+   */
   filterResult(result: unknown): object[] {
     if (!Array.isArray(result)) {
       result = [result];
@@ -139,6 +146,9 @@ export abstract class UnipeptSubcommand {
     return result as object[];
   }
 
+  /**
+   * Reads batchSize lines from the input and processes them
+   */
   async normalInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     let slice = [firstLine];
 
@@ -152,6 +162,10 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice);
   }
 
+  /**
+   * Reads batchSize lines from the input and processes them,
+   * but takes into account the fasta headers.
+   */
   async fastaInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     let currentFastaHeader = firstLine;
     let slice = [];
@@ -172,6 +186,9 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice, fastaMapper);
   }
 
+  /**
+   * Reads the entire input and processes it in one go
+   */
   async simpleInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
     const slice = [firstLine];
     for await (const line of iterator) {
@@ -180,6 +197,9 @@ export abstract class UnipeptSubcommand {
     await this.processBatch(slice);
   }
 
+  /**
+   * Appends the error message to the log file of today and prints it to the console
+   */
   async saveError(message: string) {
     const errorPath = this.errorFilePath();
     mkdir(path.dirname(errorPath), { recursive: true });
@@ -187,6 +207,11 @@ export abstract class UnipeptSubcommand {
     console.error(`API request failed! log can be found in ${errorPath}`);
   }
 
+  /**
+   * Uses fetch to get data from the Unipept API.
+   * Has a retry mechanism that retries the request up to 5 times with a delay of 0-5 seconds.
+   * In addition, handles failed requests by returning a rejected promise.
+   */
   fetchWithRetry(url: string, options: RequestInit, retries = 5): Promise<Response> {
     return fetch(url, options)
       .then(response => {
