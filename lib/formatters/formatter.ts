@@ -8,9 +8,6 @@ export abstract class Formatter {
     if (fastaMapper) {
       data = this.integrateFastaHeaders(data as { [key: string]: string }[], fastaMapper);
     }
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
     return this.convert(data, first);
   }
 

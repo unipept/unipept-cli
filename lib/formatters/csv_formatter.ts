@@ -16,9 +16,6 @@ export class CSVFormatter extends Formatter {
   }
 
   getKeys(data: { [key: string]: unknown }[], fastaMapper?: boolean | undefined): string[] {
-    if (!Array.isArray(data)) {
-      data = [data];
-    }
     return fastaMapper ? ["fasta_header", ...Object.keys(data[0])] : Object.keys(data[0]);
   }
 

@@ -91,7 +91,7 @@ export abstract class UnipeptSubcommand {
         "User-Agent": this.user_agent,
       }
     });
-    const result = await r.json();
+    const result = this.filterResult(await r.json());
 
     if (this.firstBatch && this.options.header) {
       this.outputStream.write(this.formatter.header(result, this.fasta));
@@ -100,6 +100,22 @@ export abstract class UnipeptSubcommand {
     this.outputStream.write(this.formatter.format(result, fastaMapper, this.firstBatch));
 
     if (this.firstBatch) this.firstBatch = false;
+  }
+
+  filterResult(result: unknown): object[] {
+    if (!Array.isArray(result)) {
+      result = [result];
+    }
+    if (this.getSelectedFields().length > 0) {
+      (result as { [key: string]: string }[]).forEach(entry => {
+        for (const key of Object.keys(entry)) {
+          if (!this.getSelectedFields().some(regex => regex.test(key))) {
+            delete entry[key];
+          }
+        }
+      });
+    }
+    return result as object[];
   }
 
   async normalInputProcessor(firstLine: string, iterator: IterableIterator<string> | AsyncIterableIterator<string>) {
