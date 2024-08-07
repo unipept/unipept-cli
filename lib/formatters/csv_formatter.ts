@@ -4,7 +4,7 @@ import { stringify } from "csv-stringify/sync";
 export class CSVFormatter extends Formatter {
 
   header(sampleData: { [key: string]: string }[], fastaMapper?: boolean | undefined): string {
-    return stringify([this.getKeys(this.flatten(sampleData), fastaMapper)]);
+    return stringify([this.getKeys(sampleData, fastaMapper)]);
   }
 
   footer(): string {
@@ -12,7 +12,7 @@ export class CSVFormatter extends Formatter {
   }
 
   convert(data: object[]): string {
-    return stringify(this.flatten(data as { [key: string]: unknown }[]));
+    return stringify(data);
   }
 
   getKeys(data: { [key: string]: unknown }[], fastaMapper?: boolean | undefined): string[] {

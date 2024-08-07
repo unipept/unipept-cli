@@ -4,6 +4,7 @@ import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
 import { FormatterFactory } from "../../formatters/formatter_factory.js";
+import { CSVFormatter } from "../../formatters/csv_formatter.js";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -105,6 +106,9 @@ export abstract class UnipeptSubcommand {
   filterResult(result: unknown): object[] {
     if (!Array.isArray(result)) {
       result = [result];
+    }
+    if (this.formatter && this.formatter instanceof CSVFormatter) {
+      result = this.formatter.flatten(result as { [key: string]: unknown }[]);
     }
     if (this.getSelectedFields().length > 0) {
       (result as { [key: string]: string }[]).forEach(entry => {
