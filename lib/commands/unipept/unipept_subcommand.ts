@@ -29,7 +29,11 @@ export abstract class UnipeptSubcommand {
 
   constructor(name: string) {
     this.name = name;
-    const version = JSON.parse(readFileSync(new URL("../../../package.json", import.meta.url), "utf8")).version;
+    let p = "";
+    if (import.meta.url.includes("/dist/")) {
+      p = "../";
+    }
+    const version = JSON.parse(readFileSync(new URL(p + "../../../package.json", import.meta.url), "utf8")).version;
     this.user_agent = `unipept-cli/${version}`;
     this.command = this.create(name);
     this.fasta = false;

@@ -13,7 +13,11 @@ export abstract class BaseCommand {
   version: string;
 
   constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
-    this.version = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8")).version;
+    let p = "";
+    if (import.meta.url.includes("/dist/")) {
+      p = "../";
+    }
+    this.version = JSON.parse(readFileSync(new URL(p + "../../package.json", import.meta.url), "utf8")).version;
     this.program = this.create(options);
   }
 

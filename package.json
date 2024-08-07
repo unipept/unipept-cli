@@ -1,6 +1,6 @@
 {
   "name": "unipept-cli",
-  "version": "4.0.0-1",
+  "version": "4.0.0-2",
   "description": "Command line interface to the Unipept web services",
   "repository": "git@github.com:unipept/unipept-cli.git",
   "author": "Bart Mesuere <Bart.Mesuere@UGent.be>",
