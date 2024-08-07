@@ -1,36 +1,33 @@
 # unipept-cli
 
-[![Gem Version](https://badge.fury.io/rb/unipept.svg)](http://badge.fury.io/rb/unipept)
+![NPM Version](https://img.shields.io/npm/v/unipept-cli)
 
 Unipept-cli offers a command line interface to the [Unipept](http://unipept.ugent.be) web service.
 Documentation about the web service can be found at [http://unipept.ugent.be/apidocs](http://unipept.ugent.be/apidocs), documentation about the command line tools at [http://unipept.ugent.be/clidocs](http://unipept.ugent.be/clidocs).
 
 ## Installation
 
-To use the Unipept CLI, Ruby version 2.7 or higher needs to be installed. You can check this by running `ruby -v` on the commandline:
+To use the Unipept CLI, node 22 or higher needs to be installed. You can check this by running `node -v` on the commandline:
 
 ```
-$ ruby -v
-ruby 3.0.0p0 (2020-12-25 revision 95aff21468) [arm64-darwin21]
+$ node -v
+v22.3.0
 ```
 
-More information on installing Ruby can be found at https://www.ruby-lang.org/en/installation/
+More information on installing Ruby can be found at https://nodejs.org/en/download/package-manager
 
-The Unipept CLI is available as a _gem_. This means it can easily be installed with the following command:
+The Unipept CLI is available as an npm package. This means it can easily be installed with the following command:
 
 ```bash
-$ gem install unipept
-Successfully installed unipept-1.0.1
-Parsing documentation for unipept-1.0.1
-Done installing documentation for unipept after 0 seconds
-1 gem installed
+$ npm install -g unipept-cli
+added 3 packages in 986ms
 ```
 
 After successful installation, the unipept command should be available:
 
 ```bash
 $ unipept -v
-1.0.1
+4.0.0
 ```
 
 The help can be accessed by running `unipept -h`.
