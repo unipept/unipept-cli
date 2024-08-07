@@ -92,7 +92,10 @@ export abstract class UnipeptSubcommand {
         "User-Agent": this.user_agent,
       }
     });
-    const result = this.filterResult(await r.json());
+
+    let result = await r.json();
+    if (Array.isArray(result) && result.length === 0) return;
+    result = this.filterResult(result);
 
     if (this.firstBatch && this.options.header) {
       this.outputStream.write(this.formatter.header(result, this.fasta));
