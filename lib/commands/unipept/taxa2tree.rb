@@ -4,6 +4,8 @@ module Unipept::Commands
     def initialize(args, opts, cmd)
       super
 
+      @link = false
+
       # JSON is the default format for this command
       args[:format] = 'json' unless args[:format]
 
