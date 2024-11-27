@@ -26,7 +26,7 @@ added 3 packages in 986ms
 After successful installation, the unipept command should be available:
 
 ```bash
-$ unipept -v
+$ unipept --version
 4.0.0
 ```
 

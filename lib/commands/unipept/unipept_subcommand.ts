@@ -101,6 +101,7 @@ export abstract class UnipeptSubcommand {
         method: "POST",
         body: this.constructRequestBody(slice),
         headers: {
+          "Content-Type": "application/json",
           "Accept-Encoding": "gzip",
           "User-Agent": this.user_agent,
         }
@@ -238,10 +239,10 @@ export abstract class UnipeptSubcommand {
       });
   }
 
-  private constructRequestBody(slice: string[]): URLSearchParams {
+  private constructRequestBody(slice: string[]): string {
     const names = this.getSelectedFields().length === 0 || this.getSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
-    return new URLSearchParams({
-      input: JSON.stringify(slice),
+    return JSON.stringify({
+      input: slice,
       equate_il: this.options.equate,
       extra: this.options.all,
       names: this.options.all && names
