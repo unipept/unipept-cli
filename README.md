@@ -14,7 +14,7 @@ $ node -v
 v22.3.0
 ```
 
-More information on installing Ruby can be found at https://nodejs.org/en/download/package-manager
+More information on installing Node can be found at https://nodejs.org/en/download/package-manager
 
 The Unipept CLI is available as an npm package. This means it can easily be installed with the following command:
 
