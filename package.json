@@ -1,0 +1,50 @@
+{
+  "name": "unipept-cli",
+  "version": "4.0.1",
+  "description": "Command line interface to the Unipept web services",
+  "repository": "git@github.com:unipept/unipept-cli.git",
+  "author": "Bart Mesuere <Bart.Mesuere@UGent.be>",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "peptfilter": "./dist/bin/peptfilter.js",
+    "prot2pept": "./dist/bin/prot2pept.js",
+    "unipept": "./dist/bin/unipept.js",
+    "uniprot": "./dist/bin/uniprot.js"
+  },
+  "scripts": {
+    "build": "yarn run tsc",
+    "lint": "yarn run eslint",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' yarn run jest",
+    "typecheck": "yarn tsc --skipLibCheck --noEmit",
+    "peptfilter": "yarn run tsx bin/peptfilter.ts",
+    "prot2pept": "yarn run tsx bin/prot2pept.ts",
+    "unipept": "yarn run tsx bin/unipept.ts",
+    "uniprot": "yarn run tsx bin/uniprot.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "csv-stringify": "^6.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.5.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.2",
+    "@typescript-eslint/eslint-plugin": "^7.13.1",
+    "@typescript-eslint/parser": "^7.13.1",
+    "eslint": "9.x",
+    "globals": "^15.6.0",
+    "jest": "^29.7.0",
+    "mock-stdin": "^1.0.0",
+    "np": "^10.0.7",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.13.1"
+  }
+}
