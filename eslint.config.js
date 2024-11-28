@@ -9,7 +9,10 @@ export default [
   ...tseslint.configs.recommended,
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", caughtErrors: "none" }
+      ],
       "@typescript-eslint/ban-ts-comment": "off",
     },
     ignores: ["dist/"]
