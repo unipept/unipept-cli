@@ -11,6 +11,8 @@ export class Taxonomy extends UnipeptSubcommand {
 
 The command will give priority to the first way taxon id's are passed, in the order as listed above. Text files and standard input should have one taxon id per line.`;
 
+  castInput = true;
+
   constructor() {
     super("taxonomy");
 

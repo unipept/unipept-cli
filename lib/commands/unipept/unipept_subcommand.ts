@@ -23,6 +23,7 @@ export abstract class UnipeptSubcommand {
   firstBatch = true;
   selectedFields?: RegExp[];
   fasta: boolean;
+  castInput = false;
 
   // we must save this to be able to close it properly in tests
   private streamInterface?: Interface;
@@ -241,8 +242,12 @@ export abstract class UnipeptSubcommand {
 
   private constructRequestBody(slice: string[]): string {
     const names = this.getSelectedFields().length === 0 || this.getSelectedFields().some(regex => regex.toString().includes("name") || regex.toString().includes(".*$"));
+    let input: string[] | number[] = slice;
+    if (this.castInput) {
+      input = slice.map(s => parseInt(s, 10));
+    }
     return JSON.stringify({
-      input: slice,
+      input: input,
       equate_il: this.options.equate,
       extra: this.options.all,
       names: this.options.all && names
