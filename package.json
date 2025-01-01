@@ -27,7 +27,7 @@
     "dist"
   ],
   "dependencies": {
-    "commander": "^12.1.0",
+    "commander": "^13.0.0",
     "csv-stringify": "^6.5.0"
   },
   "devDependencies": {
