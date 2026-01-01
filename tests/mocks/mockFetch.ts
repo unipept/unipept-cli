@@ -2,9 +2,11 @@ import { jest } from '@jest/globals';
 import * as apiData from './apiData';
 
 export function setupMockFetch() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (global as any).fetch = jest.fn((url: string | URL, options?: RequestInit) => {
         const urlString = url.toString();
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let bodyInput: any = [];
         let bodyEquate: boolean = false;
         let bodyExtra: boolean = false;
