@@ -1,10 +1,15 @@
 import { jest } from '@jest/globals';
 import { Pept2go } from "../../../lib/commands/unipept/pept2go";
+import { setupMockFetch } from '../../mocks/mockFetch';
 
 let output: string[];
 jest
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
+
+beforeAll(() => {
+  setupMockFetch();
+});
 
 beforeEach(() => {
   output = [];
