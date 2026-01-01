@@ -1,9 +1,9 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Peptinfo } from "../../../lib/commands/unipept/peptinfo";
 import { setupMockFetch } from '../../mocks/mockFetch';
 
 let output: string[];
-jest
+vi
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
 

@@ -1,14 +1,14 @@
 import { Peptfilter } from '../../lib/commands/peptfilter';
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
 
 let output: string[];
 let error: string[];
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const writeSpy = jest
+const writeSpy = vi
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
-const errorSpy = jest
+const errorSpy = vi
   .spyOn(process.stderr, "write")
   .mockImplementation((data: unknown) => { error.push(data as string); return true; });
 
