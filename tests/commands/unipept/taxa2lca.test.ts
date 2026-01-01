@@ -1,9 +1,9 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { Taxa2lca } from "../../../lib/commands/unipept/taxa2lca";
 import { setupMockFetch } from '../../mocks/mockFetch';
 
 let output: string[];
-jest
+vi
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
 

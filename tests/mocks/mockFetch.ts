@@ -1,9 +1,9 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import * as apiData from './apiData';
 
 export function setupMockFetch() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (global as any).fetch = jest.fn((url: string | URL, options?: RequestInit) => {
+    (global as any).fetch = vi.fn((url: string | URL, options?: RequestInit) => {
         const urlString = url.toString();
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

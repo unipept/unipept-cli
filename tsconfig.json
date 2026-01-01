@@ -8,6 +8,9 @@
     "module": "NodeNext",
     "strict": true,
     "resolveJsonModule": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": [
+      "vitest/globals"
+    ]
   }
 }
