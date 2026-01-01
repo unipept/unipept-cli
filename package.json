@@ -27,22 +27,21 @@
     "dist"
   ],
   "dependencies": {
-    "commander": "^14.0.0",
-    "csv-stringify": "^6.5.0"
+    "commander": "^14.0.2",
+    "csv-stringify": "^6.6.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.5.0",
-    "@types/node": "^24.0.8",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "eslint": "9.x",
-    "globals": "^16.0.0",
+    "@eslint/js": "^9.39.2",
+    "@types/node": "^24",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
+    "eslint": "9.39.2",
+    "globals": "^17.0.0",
     "mock-stdin": "^1.0.0",
     "np": "^10.0.7",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.15.6",
-    "typescript": "^5.4.5",
-    "typescript-eslint": "^8.16.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.51.0",
     "vitest": "^4.0.16"
   }
 }

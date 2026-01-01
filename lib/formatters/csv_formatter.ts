@@ -22,7 +22,8 @@ export class CSVFormatter extends Formatter {
   flatten(data: { [key: string]: unknown }[]): { [key: string]: unknown }[] {
     const prefixes = ["ec", "go", "ipr"];
     prefixes.forEach(prefix => {
-      if (this.getKeys(data).includes(prefix)) {// @ts-ignore
+      if (this.getKeys(data).includes(prefix)) {
+        // @ts-ignore
         const keys = Object.keys(data[0][prefix][0]);
         data.forEach(row => {
           keys.forEach(key => {

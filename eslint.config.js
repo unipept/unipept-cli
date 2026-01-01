@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 
 
 export default [
+  { ignores: ["dist/"] },
   { languageOptions: { globals: globals.node } },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
@@ -14,7 +15,6 @@ export default [
         { argsIgnorePattern: "^_", caughtErrors: "none" }
       ],
       "@typescript-eslint/ban-ts-comment": "off",
-    },
-    ignores: ["dist/"]
+    }
   }
 ];
