@@ -77,6 +77,16 @@ test('test double line stdin', async () => {
   expect(output.length).toBe(2);
 });
 
+test('test multiple batches', async () => {
+  const command = new Uniprot();
+  // 7 items > BATCH_SIZE of 5
+  await command.run(["Q6GZX3", "Q6GZX4", "Q6GZX3", "Q6GZX4", "Q6GZX3", "Q6GZX4", "Q6GZX3"]);
+
+  expect(writeSpy).toHaveBeenCalledTimes(7);
+  expect(errorSpy).toHaveBeenCalledTimes(0);
+  expect(output.length).toBe(7);
+});
+
 test('test on invalid id', async () => {
   const command = new Uniprot();
   await command.run(["Bart"]);
