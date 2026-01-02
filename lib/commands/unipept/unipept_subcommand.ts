@@ -208,9 +208,10 @@ export abstract class UnipeptSubcommand {
    */
   async saveError(message: string) {
     const errorPath = this.errorFilePath();
-    mkdir(path.dirname(errorPath), { recursive: true });
+    await mkdir(path.dirname(errorPath), { recursive: true });
     await appendFile(errorPath, `${message}\n`);
-    console.error(`API request failed! log can be found in ${errorPath}`);
+    console.error(`API request failed: ${message}`);
+    console.error(`Log can be found in ${errorPath}`);
   }
 
   /**
@@ -228,7 +229,17 @@ export abstract class UnipeptSubcommand {
         }
       })
       .catch(async error => {
-        if (retries > 0) {
+        let shouldRetry = retries > 0;
+
+        // check if we should stop retrying based on error message (from the reject above)
+        if (typeof error === 'string') {
+          const status = parseInt(error.split(' ')[0]);
+          if (status >= 400 && status < 500 && status !== 429) {
+            shouldRetry = false;
+          }
+        }
+
+        if (shouldRetry) {
           // retry with delay
           // console.error("retrying");
           const delay = 5000 * Math.random();
