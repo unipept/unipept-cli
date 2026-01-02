@@ -33,9 +33,36 @@ The uniprot command yields just the protein sequences as a default, but can retu
 
     // alternatively, we can also wrap the array in a Readable stream with ReadableStream.from()
     const input = accessions.length !== 0 ? accessions : createInterface({ input: process.stdin });
+
+    const BATCH_SIZE = 5;
+    let batch: string[] = [];
+
     for await (const line of input) {
-      await Uniprot.processUniprotEntry(line.trim(), format);
+      const accession = line.trim();
+      if (!accession) continue;
+
+      batch.push(accession);
+      if (batch.length >= BATCH_SIZE) {
+        await Uniprot.processBatch(batch, format);
+        batch = [];
+      }
     }
+
+    if (batch.length > 0) {
+      await Uniprot.processBatch(batch, format);
+    }
+  }
+
+  /**
+   * Fetches a batch of UniProt entries and writes them to standard output in order.
+   *
+   * @param accessions List of UniProt Accession Numbers
+   * @param format output format
+   */
+  static async processBatch(accessions: string[], format: string) {
+    const promises = accessions.map(acc => Uniprot.getUniprotEntry(acc, format));
+    const results = await Promise.all(promises);
+    results.forEach(result => process.stdout.write(result + "\n"));
   }
 
   /**
