@@ -1,5 +1,5 @@
-import { FormatterFactory } from "../../lib/formatters/formatter_factory";
-import { TestObject } from "./test_object";
+import { FormatterFactory } from "../../lib/formatters/formatter_factory.js";
+import { TestObject } from "./test_object.js";
 
 const formatter = FormatterFactory.getFormatter("csv");
 

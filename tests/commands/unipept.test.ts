@@ -1,4 +1,4 @@
-import { Unipept } from '../../lib/commands/unipept';
+import { Unipept } from '../../lib/commands/unipept.js';
 
 test('test if all commands are available', async () => {
   const command = new Unipept();

@@ -1,4 +1,4 @@
-import { Pept2lca } from '../../../lib/commands/unipept/pept2lca';
+import { Pept2lca } from '../../../lib/commands/unipept/pept2lca.js';
 
 test('test command setup', () => {
   const command = new Pept2lca();

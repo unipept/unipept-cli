@@ -1,4 +1,4 @@
-import { FormatterFactory } from "../../lib/formatters/formatter_factory";
+import { FormatterFactory } from "../../lib/formatters/formatter_factory.js";
 
 test('test if default formatter is csv', async () => {
   const formatter = FormatterFactory.getFormatter("foo");

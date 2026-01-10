@@ -1,14 +1,12 @@
 {
+  "extends": "./tsconfig.build.json",
   "include": [
     "bin/**/*",
     "lib/**/*",
+    "tests/**/*"
   ],
   "compilerOptions": {
-    "outDir": "./dist",
-    "module": "NodeNext",
-    "strict": true,
-    "resolveJsonModule": true,
-    "target": "esnext",
+    "noEmit": true,
     "types": [
       "vitest/globals"
     ]

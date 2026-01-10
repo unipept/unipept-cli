@@ -1,4 +1,4 @@
-import { Uniprot } from '../../lib/commands/uniprot';
+import { Uniprot } from '../../lib/commands/uniprot.js';
 import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
 
