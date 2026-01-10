@@ -1,0 +1,13 @@
+{
+  "include": [
+    "bin/**/*",
+    "lib/**/*",
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "module": "NodeNext",
+    "strict": true,
+    "resolveJsonModule": true,
+    "target": "esnext"
+  }
+}

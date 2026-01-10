@@ -1,6 +1,6 @@
 import { vi, afterAll } from 'vitest';
-import { Pept2funct } from "../../../lib/commands/unipept/pept2funct";
-import { setupPolly } from '../../mocks/polly';
+import { Pept2funct } from "../../../lib/commands/unipept/pept2funct.js";
+import { setupPolly } from '../../mocks/polly.js';
 import { Polly } from '@pollyjs/core';
 
 let output: string[];

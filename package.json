@@ -14,7 +14,7 @@
     "uniprot": "./dist/bin/uniprot.js"
   },
   "scripts": {
-    "build": "yarn run tsc",
+    "build": "yarn run tsc -p tsconfig.build.json",
     "lint": "yarn run eslint",
     "test": "vitest run",
     "test:record": "POLLY_MODE=record vitest run",

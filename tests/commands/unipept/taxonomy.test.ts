@@ -1,6 +1,6 @@
 import { vi, afterAll } from 'vitest';
-import { Taxonomy } from "../../../lib/commands/unipept/taxonomy";
-import { setupPolly } from '../../mocks/polly';
+import { Taxonomy } from "../../../lib/commands/unipept/taxonomy.js";
+import { setupPolly } from '../../mocks/polly.js';
 import { Polly } from '@pollyjs/core';
 
 let output: string[];
