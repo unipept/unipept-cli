@@ -1,14 +1,21 @@
-import { vi } from 'vitest';
+import { vi, afterAll } from 'vitest';
 import { Taxa2lca } from "../../../lib/commands/unipept/taxa2lca";
-import { setupMockFetch } from '../../mocks/mockFetch';
+import { setupPolly } from '../../mocks/polly';
+import { Polly } from '@pollyjs/core';
 
 let output: string[];
+let polly: Polly;
+
 vi
   .spyOn(process.stdout, "write")
   .mockImplementation((data: unknown) => { output.push(data as string); return true; });
 
 beforeAll(() => {
-  setupMockFetch();
+  polly = setupPolly('taxa2lca');
+});
+
+afterAll(async () => {
+  await polly.stop();
 });
 
 beforeEach(() => {
