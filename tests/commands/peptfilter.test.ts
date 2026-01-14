@@ -1,4 +1,4 @@
-import { Peptfilter } from '../../lib/commands/peptfilter';
+import { Peptfilter } from '../../lib/commands/peptfilter.js';
 import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
 

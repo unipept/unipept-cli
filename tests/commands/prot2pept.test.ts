@@ -1,4 +1,4 @@
-import { Prot2pept } from '../../lib/commands/prot2pept';
+import { Prot2pept } from '../../lib/commands/prot2pept.js';
 import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
 

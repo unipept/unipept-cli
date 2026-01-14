@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { UnipeptSubcommand } from '../../../lib/commands/unipept/unipept_subcommand';
+import { UnipeptSubcommand } from '../../../lib/commands/unipept/unipept_subcommand.js';
 
 // Concrete implementation for testing abstract class
 class TestSubcommand extends UnipeptSubcommand {
