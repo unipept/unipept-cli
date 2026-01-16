@@ -241,8 +241,8 @@ export abstract class UnipeptSubcommand {
 
         if (shouldRetry) {
           // retry with delay
-          // console.error("retrying");
-          const delay = 5000 * Math.random();
+          const delay = Math.ceil(5000 * Math.random());
+          process.stderr.write(`> Request failed: ${error}. Retrying in ${(delay / 1000).toFixed(1)}s...\n`);
           await new Promise(resolve => setTimeout(resolve, delay));
           return this.fetchWithRetry(url, options, retries - 1);
         } else {
