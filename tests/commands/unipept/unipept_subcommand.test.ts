@@ -2,8 +2,13 @@ import { Pept2lca } from '../../../lib/commands/unipept/pept2lca.js';
 import { vi, describe, test, expect, afterEach } from 'vitest';
 
 describe('UnipeptSubcommand', () => {
+  const originalIsTTY = process.stdin.isTTY;
+  const originalPlatform = process.platform;
+
   afterEach(() => {
     vi.restoreAllMocks();
+    Object.defineProperty(process.stdin, 'isTTY', { value: originalIsTTY, configurable: true });
+    Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
   });
 
   test('test command setup', () => {
@@ -65,7 +70,6 @@ describe('UnipeptSubcommand', () => {
     const command = new Pept2lca();
 
     // Mock process.stdin.isTTY
-    const originalIsTTY = process.stdin.isTTY;
     Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
 
     // Mock process.stderr.write
@@ -76,16 +80,57 @@ describe('UnipeptSubcommand', () => {
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Reading from standard input..."));
 
     command['streamInterface']?.close();
+  });
 
-    // Restore
-    Object.defineProperty(process.stdin, 'isTTY', { value: originalIsTTY });
+  test('test inputIterator prints correct EOF key for Windows', async () => {
+    const command = new Pept2lca();
+
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
+    Object.defineProperty(process, 'platform', { value: 'win32', configurable: true });
+
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+
+    expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+Z, Enter"));
+
+    command['streamInterface']?.close();
+  });
+
+  test('test inputIterator prints correct EOF key for non-Windows', async () => {
+    const command = new Pept2lca();
+
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
+    Object.defineProperty(process, 'platform', { value: 'linux', configurable: true });
+
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+
+    expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+D"));
+
+    command['streamInterface']?.close();
+  });
+
+  test('test inputIterator prints correct EOF key for macOS', async () => {
+    const command = new Pept2lca();
+
+    Object.defineProperty(process.stdin, 'isTTY', { value: true, configurable: true });
+    Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
+
+    const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
+
+    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+
+    expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+D"));
+
+    command['streamInterface']?.close();
   });
 
   test('test inputIterator does NOT print warning when reading from piped stdin (not TTY)', async () => {
     const command = new Pept2lca();
 
     // Mock process.stdin.isTTY
-    const originalIsTTY = process.stdin.isTTY;
     Object.defineProperty(process.stdin, 'isTTY', { value: false, configurable: true });
 
     // Mock process.stderr.write
@@ -96,8 +141,5 @@ describe('UnipeptSubcommand', () => {
     expect(stderrSpy).not.toHaveBeenCalled();
 
     command['streamInterface']?.close();
-
-    // Restore
-    Object.defineProperty(process.stdin, 'isTTY', { value: originalIsTTY });
   });
 });
