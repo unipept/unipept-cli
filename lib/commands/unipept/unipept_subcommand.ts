@@ -303,6 +303,9 @@ export abstract class UnipeptSubcommand {
       this.streamInterface = createInterface({ input: createReadStream(input) });
       return this.streamInterface[Symbol.asyncIterator]();
     } else {
+      if (process.stdin.isTTY) {
+        process.stderr.write("Reading from standard input... (Press Ctrl+D to finish)\n");
+      }
       this.streamInterface = createInterface({ input: process.stdin });
       return this.streamInterface[Symbol.asyncIterator]();
     }
