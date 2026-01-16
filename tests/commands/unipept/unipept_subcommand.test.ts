@@ -75,7 +75,7 @@ describe('UnipeptSubcommand', () => {
     // Mock process.stderr.write
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
-    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+    command["getInputIterator"]([]);
 
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Reading from standard input..."));
 
@@ -90,7 +90,7 @@ describe('UnipeptSubcommand', () => {
 
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
-    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+    command["getInputIterator"]([]);
 
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+Z, Enter"));
 
@@ -105,7 +105,7 @@ describe('UnipeptSubcommand', () => {
 
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
-    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+    command["getInputIterator"]([]);
 
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+D"));
 
@@ -120,7 +120,7 @@ describe('UnipeptSubcommand', () => {
 
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
-    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+    command["getInputIterator"]([]);
 
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+D"));
 
@@ -136,7 +136,7 @@ describe('UnipeptSubcommand', () => {
     // Mock process.stderr.write
     const stderrSpy = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
 
-    const input = command["getInputIterator"]([]) as AsyncIterableIterator<string>;
+    command["getInputIterator"]([]);
 
     expect(stderrSpy).not.toHaveBeenCalled();
 
