@@ -74,7 +74,7 @@ export abstract class UnipeptSubcommand {
       // if we write to stdout, we need to handle the EPIPE error
       // this happens when the output is piped to another command that stops reading
       process.stdout.on("error", (err) => {
-        if (err.code === "EPIPE") {
+        if ((err as NodeJS.ErrnoException).code === "EPIPE") {
           process.exit(0);
         }
       })
