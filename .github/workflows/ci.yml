@@ -1,6 +1,16 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   lint:
@@ -11,23 +21,27 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24.x
+          node-version-file: .nvmrc
           cache: yarn
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --frozen-lockfile
       - name: Lint
         run: |
           yarn lint
       - name: Type check
         run: |
           yarn typecheck
+      - name: Build
+        run: |
+          yarn build
   test:
     name: Test
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Node
@@ -37,7 +51,7 @@ jobs:
           cache: yarn
       - name: Install dependencies
         run: |
-          yarn install
+          yarn install --frozen-lockfile
       - name: Test
         run: |
           yarn test
