@@ -244,7 +244,7 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/retry/-/retry-0.4.3.tgz#c2b9d2e374ee62c586d3adbea87199b1d7a7a6ba"
   integrity sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==
 
-"@inquirer/ansi@^2.0.5", "@inquirer/ansi@^2.0.7":
+"@inquirer/ansi@^2.0.7":
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/@inquirer/ansi/-/ansi-2.0.7.tgz#86de22810cac3ed406ec10f8d66016815b8226b4"
   integrity sha512-3eTuUO1vH2cZm2ZKHeQxnOqlTi9EfZDGgIe3BL3I4u+rJHocr9Fz86M4fjYABPvFnQG/gGK551HqDiIcETwU6Q==
@@ -267,7 +267,7 @@
     "@inquirer/core" "^11.2.1"
     "@inquirer/type" "^4.0.7"
 
-"@inquirer/core@^11.1.10", "@inquirer/core@^11.2.1":
+"@inquirer/core@^11.2.1":
   version "11.2.1"
   resolved "https://registry.yarnpkg.com/@inquirer/core/-/core-11.2.1.tgz#54ccd8f7d47852140b6066cbd77d63b2c2b168fd"
   integrity sha512-Qd6GJT1yVyrZZCfN8W2qKF5ApmqryXRhRKCuip8h01x2w/esJQ2XIYc6f9abMIHgKQdBfFTSOdbHRLAhuM09UA==
@@ -335,7 +335,7 @@
     "@inquirer/core" "^11.2.1"
     "@inquirer/type" "^4.0.7"
 
-"@inquirer/prompts@^8.4.3":
+"@inquirer/prompts@^8.5.2":
   version "8.5.2"
   resolved "https://registry.yarnpkg.com/@inquirer/prompts/-/prompts-8.5.2.tgz#09c0132ada2bbba94c91d341115e1e41cb3f1525"
   integrity sha512-IYR/3C/paEVVQYQvdDlFZVjRCJVYHHON0XXMH91KO9GSxs0TdKYWlUdvfQl2EfAHDxUaN3IBffkE/BDTh5nJ6g==
@@ -378,7 +378,7 @@
     "@inquirer/figures" "^2.0.7"
     "@inquirer/type" "^4.0.7"
 
-"@inquirer/type@^4.0.5", "@inquirer/type@^4.0.7":
+"@inquirer/type@^4.0.7":
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/@inquirer/type/-/type-4.0.7.tgz#9c6f0d857fe6ad549a3a932343b64e76acb34b10"
   integrity sha512-t28inv14nMQ1PhKpsJPY+kEs/c00qzeCOS2gTNRyTjG5d6qsVA2fItxW4hkvGZ5lvanGLdtCzVIx5dwdRpN1+g==
@@ -2146,18 +2146,17 @@ inquirer-autosubmit-prompt@^0.2.0:
     inquirer "^6.2.1"
     rxjs "^6.3.3"
 
-inquirer@^13.4.1:
-  version "13.4.3"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-13.4.3.tgz#6a0b841b253cbd40796aaa28981885a56095509b"
-  integrity sha512-EPd3IqieHSavSOXh+LZhrIkdQcOELWeRblLT6kslQr+cF9XTh/HxZdSt1YkHH1iq4dvqBnV42uwg2YlorgOy6g==
+inquirer@^14.0.2:
+  version "14.0.2"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-14.0.2.tgz#1fea4944933349cb8bca90ad05e9535ee3dbb54a"
+  integrity sha512-VsSx1JneSNp3ld1veMTLe+UDcUD8Tw2/jjOthhkX3/IX2q+xHhVELifeb/hsb1fBw31pabEPNUf/xUOyb+KZjA==
   dependencies:
-    "@inquirer/ansi" "^2.0.5"
-    "@inquirer/core" "^11.1.10"
-    "@inquirer/prompts" "^8.4.3"
-    "@inquirer/type" "^4.0.5"
+    "@inquirer/ansi" "^2.0.7"
+    "@inquirer/core" "^11.2.1"
+    "@inquirer/prompts" "^8.5.2"
+    "@inquirer/type" "^4.0.7"
     mute-stream "^3.0.0"
     run-async "^4.0.6"
-    rxjs "^7.8.2"
 
 inquirer@^6.2.1:
   version "6.5.2"
@@ -2722,7 +2721,7 @@ mimic-fn@^2.1.0:
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-2.1.0.tgz#7ed2c2ccccaf84d3ffcb7a69b57711fc2083401b"
   integrity sha512-OqbOk5oEQeAZ8WXWydlu9HJjz9WVdEIvamMCcXmuqUYjTknH/sqsWvhQ3vgwKFRR1HpjvNBKQ37nbJgYzGqGcg==
 
-mimic-function@^5.0.0, mimic-function@^5.0.1:
+mimic-function@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/mimic-function/-/mimic-function-5.0.1.tgz#acbe2b3349f99b9deaca7fb70e48b83e94e67076"
   integrity sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==
@@ -2816,10 +2815,10 @@ normalize-package-data@^8.0.0:
     semver "^7.3.5"
     validate-npm-package-license "^3.0.4"
 
-np@^11.0.2:
-  version "11.2.1"
-  resolved "https://registry.yarnpkg.com/np/-/np-11.2.1.tgz#371887c97c2bfe1235477702daa4d2fc951f37eb"
-  integrity sha512-OBvNC8ipTHzRNY44opIUxptDaI1NukIBxVvof2vvLe8XLfw87TyfOdR6/QYSQEMqtRSL0XkNj0N/6Bsn//S6Qg==
+np@^12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/np/-/np-12.0.0.tgz#4d600b27a02bd7ee7110f9487929a1c791ab34a9"
+  integrity sha512-1PzxJkmDHBe0rLTo6selMguD6WPCdYHrxK3PZKdn45dkuhQXXCwaOLTtWOo0PSzSotqr+518r7nzD5eSStg7Dg==
   dependencies:
     chalk "^5.6.2"
     chalk-template "^1.1.2"
@@ -2834,7 +2833,7 @@ np@^11.0.2:
     hosted-git-info "^9.0.2"
     ignore-walk "^8.0.0"
     import-local "^3.2.0"
-    inquirer "^13.4.1"
+    inquirer "^14.0.2"
     is-installed-globally "^1.0.0"
     is-interactive "^2.0.0"
     is-scoped "^3.0.0"
@@ -2845,7 +2844,7 @@ np@^11.0.2:
     meow "^14.1.0"
     new-github-release-url "^2.0.0"
     npm-name "^8.1.0"
-    onetime "^7.0.0"
+    onetime "^8.0.0"
     open "^11.0.0"
     p-memoize "^8.0.0"
     package-directory "^8.2.0"
@@ -2934,12 +2933,12 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-onetime@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/onetime/-/onetime-7.0.0.tgz#9f16c92d8c9ef5120e3acd9dd9957cceecc1ab60"
-  integrity sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==
+onetime@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/onetime/-/onetime-8.0.0.tgz#ce03ca837d5089fa7e637c22d9f4188ffff2ada6"
+  integrity sha512-ODz2CnF+9043eG3exS38Efor4ekggmKvIydHaXWr1n9mXA5Afn8BdSsvVpa5AhBWricxhdBMfyeG3Yo3SB+VWA==
   dependencies:
-    mimic-function "^5.0.0"
+    mimic-function "^5.0.1"
 
 open@^11.0.0:
   version "11.0.0"
