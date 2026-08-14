@@ -25,15 +25,15 @@ beforeEach(() => {
 test('test with default args', async () => {
   const command = new Pept2lca();
   await command.run(["AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("peptide,taxon_id")).toBeTruthy();
-  expect(output[1].startsWith("AALTER,1,root,no rank")).toBeTruthy();
+  expect(output[0].startsWith("peptide,cutoff_used,taxon_id")).toBeTruthy();
+  expect(output[1].startsWith("AALTER,1,1,root,no rank")).toBeTruthy();
   expect(output.length).toBeGreaterThanOrEqual(2);
 });
 
 test('test with fasta', async () => {
   const command = new Pept2lca();
   await command.run([">test", "AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("fasta_header,peptide,taxon_id")).toBeTruthy();
-  expect(output[1].startsWith(">test,AALTER,1,root,no rank")).toBeTruthy();
+  expect(output[0].startsWith("fasta_header,peptide,cutoff_used,taxon_id")).toBeTruthy();
+  expect(output[1].startsWith(">test,AALTER,1,1,root,no rank")).toBeTruthy();
   expect(output.length).toBeGreaterThanOrEqual(2);
 });

@@ -28,5 +28,12 @@ export function setupPolly(recordingName: string) {
     mode: mode,
     recordIfMissing: true,
     flushRequestsOnStop: true,
+    matchRequestsBy: {
+      headers: {
+        // The user agent contains the version number, which would invalidate
+        // all recordings on every release.
+        exclude: ['user-agent'],
+      },
+    },
   });
 }
