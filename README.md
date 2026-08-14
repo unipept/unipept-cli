@@ -27,7 +27,7 @@ After successful installation, the unipept command should be available:
 
 ```bash
 $ unipept --version
-4.0.1
+4.1.0
 ```
 
 The help can be accessed by running `unipept -h`.
