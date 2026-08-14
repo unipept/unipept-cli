@@ -25,7 +25,7 @@ beforeEach(() => {
 test('test with default args', async () => {
   const command = new Pept2taxa();
   await command.run(["AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("peptide,taxon_id,taxon_name,taxon_rank")).toBeTruthy();
+  expect(output[0].startsWith("peptide,cutoff_used,taxon_id,taxon_name,taxon_rank")).toBeTruthy();
   expect(output[1].startsWith("AALTER,")).toBeTruthy();
   // Check for presence of known taxon from AALTER (e.g. Nonomuraea rubra or similar)
   // Since we are using live recordings, we check for a known result.
@@ -37,7 +37,7 @@ test('test with default args', async () => {
 test('test with fasta', async () => {
   const command = new Pept2taxa();
   await command.run([">test", "AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("fasta_header,peptide,taxon_id,taxon_name,taxon_rank")).toBeTruthy();
+  expect(output[0].startsWith("fasta_header,peptide,cutoff_used,taxon_id,taxon_name,taxon_rank")).toBeTruthy();
   expect(output[1].startsWith(">test,AALTER,")).toBeTruthy();
   expect(output.length).toBeGreaterThanOrEqual(2);
 });

@@ -25,7 +25,7 @@ beforeEach(() => {
 test('test with default args', async () => {
   const command = new Pept2prot();
   await command.run(["AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("peptide,uniprot_id,protein_name,taxon_id,protein")).toBeTruthy();
+  expect(output[0].startsWith("peptide,cutoff_used,uniprot_id,protein_name,taxon_id,protein")).toBeTruthy();
   expect(output[1].startsWith("AALTER,")).toBeTruthy();
   // Ensure we got some protein data (not just empty commas)
   expect(output[1].length).toBeGreaterThan(10);
@@ -35,7 +35,7 @@ test('test with default args', async () => {
 test('test with fasta', async () => {
   const command = new Pept2prot();
   await command.run([">test", "AALTER"], { header: true, format: "csv" });
-  expect(output[0].startsWith("fasta_header,peptide,uniprot_id,protein_name,taxon_id,protein")).toBeTruthy();
+  expect(output[0].startsWith("fasta_header,peptide,cutoff_used,uniprot_id,protein_name,taxon_id,protein")).toBeTruthy();
   expect(output[1].startsWith(">test,AALTER,")).toBeTruthy();
   expect(output[1].length).toBeGreaterThan(10);
   expect(output.length).toBeGreaterThanOrEqual(2);

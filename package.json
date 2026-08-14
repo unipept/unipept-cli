@@ -1,6 +1,6 @@
 {
   "name": "unipept-cli",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "description": "Command line interface to the Unipept web services",
   "repository": {
     "type": "git",
