@@ -34,7 +34,7 @@ After a successful installation, the commands are available on your `PATH`:
 
 ```console
 $ unipept --version
-4.2.1 (UniProt 2026.02)
+4.2.2 (UniProt 2026.02)
 ```
 
 `unipept --version` also reports the UniProt release that the server built its database from, so
@@ -42,6 +42,29 @@ that results can be traced back to a specific release. It falls back to just the
 the server cannot be reached, and the other three commands report the cli version on its own.
 
 Run any command with `-h` to see its full help, for example `unipept -h` or `unipept pept2lca -h`.
+
+### Running without installing
+
+The CLI can also be run straight through `npx`, which is useful for trying it out and for pinning an
+exact version in a reproducible analysis:
+
+```console
+$ npx unipept-cli pept2lca AALTER
+peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
+AALTER,1,1,root,no rank
+
+$ npx unipept-cli@4.2.2 --version
+4.2.2 (UniProt 2026.02)
+```
+
+`npx unipept-cli` runs the `unipept` command. The other three commands are separate binaries in the
+same package, so they need `-p` to say which package to take them from:
+
+```console
+$ echo "AALTERSVKAAPKR" | npx -p unipept-cli prot2pept
+$ npx -p unipept-cli peptfilter --minlen 5
+$ npx -p unipept-cli uniprot P78330
+```
 
 ## Commands
 
