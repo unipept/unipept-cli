@@ -1,33 +1,168 @@
 # unipept-cli
 
-![NPM Version](https://img.shields.io/npm/v/unipept-cli)
+[![NPM Version](https://img.shields.io/npm/v/unipept-cli)](https://www.npmjs.com/package/unipept-cli)
+[![CI](https://github.com/unipept/unipept-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/unipept/unipept-cli/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/npm/l/unipept-cli)](LICENSE.txt)
 
-Unipept-cli offers a command line interface to the [Unipept](http://unipept.ugent.be) web service.
-Documentation about the web service can be found at [http://unipept.ugent.be/apidocs](http://unipept.ugent.be/apidocs), documentation about the command line tools at [http://unipept.ugent.be/clidocs](http://unipept.ugent.be/clidocs).
+Unipept-cli offers a command line interface to the [Unipept](https://unipept.ugent.be) web services for metaproteomics
+data analysis. It ships four commands: `unipept`, `prot2pept`, `peptfilter` and `uniprot`.
+
+Every command reads from standard input and writes to standard output, so they compose with each other and with the
+usual shell tools.
+
+- Web service documentation: <https://unipept.ugent.be/apidocs>
+- Command line documentation: <https://unipept.ugent.be/clidocs>
 
 ## Installation
 
-To use the Unipept CLI, node 22 or higher needs to be installed. You can check this by running `node -v` on the commandline:
+The Unipept CLI needs Node 22 or higher. Check your version with `node -v`:
 
-```
+```console
 $ node -v
 v22.3.0
 ```
 
-More information on installing Node can be found at https://nodejs.org/en/download/package-manager
+See the [Node download page](https://nodejs.org/en/download/package-manager) if you need to install or upgrade it.
 
-The Unipept CLI is available as an npm package. This means it can easily be installed with the following command:
+The CLI is published as an npm package:
 
-```bash
+```console
 $ npm install -g unipept-cli
-added 3 packages in 986ms
 ```
 
-After successful installation, the unipept command should be available:
+After a successful installation, the commands are available on your `PATH`:
 
-```bash
+```console
 $ unipept --version
 4.1.0
 ```
 
-The help can be accessed by running `unipept -h`.
+Run any command with `-h` to see its full help, for example `unipept -h` or `unipept pept2lca -h`.
+
+## Commands
+
+### `unipept`
+
+Wraps the Unipept web services. Subcommands starting with `pept` take tryptic peptides, subcommands starting with
+`tax` take NCBI Taxonomy identifiers.
+
+| Subcommand      | Returns                                                                            |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `pept2ec`       | EC numbers of the UniProt entries matching each peptide                             |
+| `pept2funct`    | EC numbers, GO terms and InterPro entries in one call                               |
+| `pept2go`       | GO terms of the UniProt entries matching each peptide                               |
+| `pept2interpro` | InterPro entries of the UniProt entries matching each peptide                       |
+| `pept2lca`      | Taxonomic lowest common ancestor of the UniProt entries matching each peptide       |
+| `pept2prot`     | UniProt entries matching each peptide                                               |
+| `pept2taxa`     | Taxa of the UniProt entries matching each peptide                                   |
+| `peptinfo`      | Functional information and the taxonomic lowest common ancestor for each peptide    |
+| `protinfo`      | Functional and taxonomic information for UniProt ids                                |
+| `taxa2lca`      | Taxonomic lowest common ancestor of a list of taxon ids                             |
+| `taxonomy`      | Taxonomic information from the Unipept taxonomy                                     |
+
+Input can be passed as command line arguments, in a file given with `-i`, or on standard input. The first of these
+that is present wins.
+
+```console
+$ unipept pept2lca AALTER ENFVYIAK
+peptide,cutoff_used,taxon_id,taxon_name,taxon_rank
+AALTER,1,1,root,no rank
+ENFVYIAK,,1,root,no rank
+
+$ cat peptides.txt | unipept pept2lca
+$ unipept pept2lca -i peptides.txt -o results.csv
+```
+
+Output is CSV by default; `-f json`, `-f xml` and `-f blast` are also available. Use `-s` (repeatable, and
+comma-separated lists are accepted) to select a subset of the fields, with `*` as a wildcard:
+
+```console
+$ unipept pept2go -s peptide -s go_term ENFVYIAK
+```
+
+If the input is FASTA, headers are preserved and added to the output as a `fasta_header` column, so results stay
+bundled per protein.
+
+### `prot2pept`
+
+Splits protein sequences into peptides using a cleavage pattern. The default pattern produces tryptic peptides.
+
+```console
+$ echo "AALTERSVKAAPKR" | prot2pept
+AALTER
+SVK
+AAPK
+R
+```
+
+Use `-p` to supply your own cleavage regex. Plain sequences (one per line) and FASTA input are both accepted; FASTA
+headers are preserved.
+
+### `peptfilter`
+
+Filters a list of peptides on length and amino acid content. FASTA headers pass through untouched.
+
+```console
+$ printf "AALTER\nAA\nAALTERSVKAAPKRQWERTY\n" | peptfilter --minlen 5 --maxlen 10
+AALTER
+```
+
+Options: `--minlen` (default 5), `--maxlen` (default 50), `-c/--contains` and `-l/--lacks`.
+
+### `uniprot`
+
+Fetches UniProt entries by accession number from the UniProt web services. It returns bare protein sequences by
+default, and supports the `fasta`, `gff`, `json`, `rdf`, `sequence` and `xml` formats through `-f`.
+
+```console
+$ uniprot P78330
+MVSHSELRKLFYSADAVCFDVDSTVIREEGIDELAKICGVEDAVSEMTRRAMGGAVPFKAALTERLALIQPSREQVQRLIAEQPPHLTPGIRELVSRLQER...
+
+$ uniprot -f fasta P78330 Q9UBQ7
+```
+
+### Composing commands
+
+Because everything is a stream, the commands chain naturally:
+
+```console
+$ cat proteins.fasta | prot2pept | peptfilter --minlen 5 | unipept pept2lca -o lca.csv
+```
+
+## Development
+
+```bash
+git clone https://github.com/unipept/unipept-cli.git
+cd unipept-cli
+yarn install
+```
+
+| Command          | What it does                                                        |
+| ---------------- | ------------------------------------------------------------------- |
+| `yarn test`      | Run the test suite against recorded HTTP responses                   |
+| `yarn lint`      | Run ESLint                                                           |
+| `yarn typecheck` | Type check without emitting                                          |
+| `yarn build`     | Compile TypeScript to `dist/`                                        |
+
+To run a command from source without building, use the matching script: `yarn unipept pept2lca AALTER`,
+`yarn prot2pept`, `yarn peptfilter` or `yarn uniprot`.
+
+API responses used by the tests are recorded with [Polly.js](https://netflix.github.io/pollyjs/) and stored in
+`tests/recordings`. Refresh them against the live API with `yarn test:record`.
+
+Releases are published to npm by the `publish` workflow when a `v*` tag is pushed. The tag must match the version in
+`package.json`.
+
+## Citing
+
+If you use the Unipept CLI in your research, please cite:
+
+> Verschaffelt, P., Van Thienen, P., Van Den Bossche, T., Van der Jeugt, F., De Tender, C., Martens, L., Dawyndt, P.,
+> & Mesuere, B. (2020). Unipept CLI 2.0: adding support for visualizations and functional annotations.
+> *Bioinformatics*, 36(14), 4220–4221. <https://doi.org/10.1093/bioinformatics/btaa553>
+
+See [CITATION.cff](CITATION.cff) for a machine readable version.
+
+## License
+
+MIT, see [LICENSE.txt](LICENSE.txt).
