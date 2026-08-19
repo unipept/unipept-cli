@@ -1,4 +1,5 @@
 import { Option } from "commander";
+import { collect } from "../../io/input.js";
 import { UnipeptSubcommand } from "./unipept_subcommand.js";
 
 export class Protinfo extends UnipeptSubcommand {
@@ -17,7 +18,7 @@ The command will give priority to the first way protein id's are passed, in the 
     this.command
       .summary("Fetch functional and taxonomic information of UniProt ids")
       .description(this.description)
-      .addOption(new Option("-s --select <fields...>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used."))
+      .addOption(new Option("-s, --select <fields>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.").argParser(collect))
       .argument("[proteins...]", "optionally, 1 or more UniProt ids")
       .action((args, options) => this.run(args, options));
   }

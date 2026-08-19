@@ -1,4 +1,5 @@
 import { Option } from "commander";
+import { collect } from "../../io/input.js";
 import { UnipeptSubcommand } from "./unipept_subcommand.js";
 
 export class Taxonomy extends UnipeptSubcommand {
@@ -20,7 +21,7 @@ The command will give priority to the first way taxon id's are passed, in the or
       .summary("Fetch taxonomic information from Unipept Taxonomy.")
       .description(this.description)
       .option("-a, --all", "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.")
-      .addOption(new Option("-s --select <fields...>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used."))
+      .addOption(new Option("-s, --select <fields>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.").argParser(collect))
       .argument("[peptides...]", "optionally, 1 or more peptides")
       .action((args, options) => this.run(args, options));
   }

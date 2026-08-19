@@ -34,7 +34,7 @@ After a successful installation, the commands are available on your `PATH`:
 
 ```console
 $ unipept --version
-4.2.0 (UniProt 2026.02)
+4.2.1 (UniProt 2026.02)
 ```
 
 `unipept --version` also reports the UniProt release that the server built its database from, so
