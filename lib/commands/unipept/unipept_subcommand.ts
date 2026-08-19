@@ -13,11 +13,12 @@ import { version } from "../../version.js";
 export abstract class UnipeptSubcommand {
   public command: Command;
   static readonly VALID_FORMATS = ["blast", "csv", "json", "xml"];
+  static readonly DEFAULT_HOST = "https://api.unipept.ugent.be";
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   options: any = {};
   name: string;
   user_agent: string;
-  host = "https://api.unipept.ugent.be";
+  host = UnipeptSubcommand.DEFAULT_HOST;
   url?: string;
   formatter?: Formatter;
   outputStream: NodeJS.WritableStream = process.stdout;

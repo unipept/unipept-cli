@@ -34,8 +34,12 @@ After a successful installation, the commands are available on your `PATH`:
 
 ```console
 $ unipept --version
-4.1.0
+4.1.0 (UniProt 2026.02)
 ```
+
+`unipept --version` also reports the UniProt release that the server built its database from, so
+that results can be traced back to a specific release. It falls back to just the cli version when
+the server cannot be reached, and the other three commands report the cli version on its own.
 
 Run any command with `-h` to see its full help, for example `unipept -h` or `unipept pept2lca -h`.
 
