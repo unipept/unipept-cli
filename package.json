@@ -1,6 +1,6 @@
 {
   "name": "unipept-cli",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Command line interface to the Unipept web services",
   "keywords": [
     "unipept",
@@ -29,6 +29,7 @@
     "peptfilter": "./dist/bin/peptfilter.js",
     "prot2pept": "./dist/bin/prot2pept.js",
     "unipept": "./dist/bin/unipept.js",
+    "unipept-cli": "./dist/bin/unipept.js",
     "uniprot": "./dist/bin/uniprot.js"
   },
   "scripts": {
