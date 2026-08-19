@@ -82,6 +82,10 @@ export abstract class UnipeptSubcommand {
 
     const iterator = this.getInputIterator(args, options.input as string);
     const firstLine = (await iterator.next()).value;
+
+    // empty input has nothing to process, so we exit without contacting the API
+    if (firstLine === undefined) return;
+
     if (this.command.name() === "taxa2lca") {
       // this subcommand is an exception where the entire input is read before processing
       await this.simpleInputProcessor(firstLine, iterator);
