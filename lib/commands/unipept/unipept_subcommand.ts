@@ -1,5 +1,5 @@
 import { Command, Option } from "commander";
-import { createReadStream, createWriteStream, readFileSync } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
@@ -8,6 +8,7 @@ import { CSVFormatter } from "../../formatters/csv_formatter.js";
 import path from "path";
 import os from "os";
 import { appendFile, mkdir } from "fs/promises";
+import { version } from "../../version.js";
 
 export abstract class UnipeptSubcommand {
   public command: Command;
@@ -30,11 +31,6 @@ export abstract class UnipeptSubcommand {
 
   constructor(name: string) {
     this.name = name;
-    let p = "";
-    if (import.meta.url.includes("/dist/")) {
-      p = "../";
-    }
-    const version = JSON.parse(readFileSync(new URL(p + "../../../package.json", import.meta.url), "utf8")).version;
     this.user_agent = `unipept-cli/${version}`;
     this.command = this.create(name);
     this.fasta = false;
