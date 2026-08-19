@@ -1,6 +1,9 @@
 import { Formatter } from "./formatter.js";
 import { stringify } from "csv-stringify/sync";
 
+/** A single ec, go or ipr annotation as returned by the Unipept API. */
+type Annotation = { [key: string]: unknown };
+
 export class CSVFormatter extends Formatter {
 
   header(sampleData: { [key: string]: string }[], fastaMapper?: boolean | undefined): string {
@@ -19,17 +22,25 @@ export class CSVFormatter extends Formatter {
     return fastaMapper ? ["fasta_header", ...Object.keys(data[0])] : Object.keys(data[0]);
   }
 
+  /**
+   * Collapses the nested annotation arrays (ec, go, ipr) into space separated columns,
+   * so that every result stays a single flat CSV row.
+   */
   flatten(data: { [key: string]: unknown }[]): { [key: string]: unknown }[] {
     const prefixes = ["ec", "go", "ipr"];
     prefixes.forEach(prefix => {
       if (this.getKeys(data).includes(prefix)) {
-        // @ts-ignore
-        const keys = Object.keys(data[0][prefix][0]);
+        // the annotations of a peptide can be empty, so look for the first row that has any
+        const keys = data
+          .map(row => (row[prefix] as Annotation[])[0])
+          .filter(annotation => annotation !== undefined)
+          .map(annotation => Object.keys(annotation))[0] ?? [];
+
         data.forEach(row => {
+          const annotations = row[prefix] as Annotation[];
           keys.forEach(key => {
             const newKey = key.startsWith(prefix) ? key : `${prefix}_${key}`;
-            // @ts-ignore
-            row[newKey] = row[prefix].map(e => e[key]).join(" ");
+            row[newKey] = annotations.map(annotation => annotation[key]).join(" ");
           });
           delete row[prefix];
         });

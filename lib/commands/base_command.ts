@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { readFileSync } from "fs";
+import { version } from "../version.js";
 
 /**
  * This is a base class which provides a common interface for all commands.
@@ -13,11 +13,7 @@ export abstract class BaseCommand {
   version: string;
 
   constructor(options?: { exitOverride?: boolean, suppressOutput?: boolean }) {
-    let p = "";
-    if (import.meta.url.includes("/dist/")) {
-      p = "../";
-    }
-    this.version = JSON.parse(readFileSync(new URL(p + "../../package.json", import.meta.url), "utf8")).version;
+    this.version = version;
     this.program = this.create(options);
   }
 
