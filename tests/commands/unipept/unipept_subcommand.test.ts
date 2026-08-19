@@ -1,12 +1,36 @@
 import { Pept2lca } from '../../../lib/commands/unipept/pept2lca.js';
-import { vi, describe, test, expect, afterEach } from 'vitest';
+import { vi, describe, test, expect, afterEach, beforeEach } from 'vitest';
+import { mkdtempSync, rmSync, writeFileSync } from 'fs';
+import { tmpdir } from 'os';
+import path from 'path';
 
 describe('UnipeptSubcommand', () => {
   const originalIsTTY = process.stdin.isTTY;
   const originalPlatform = process.platform;
 
+  let directory: string;
+
+  /** Writes a file with the given lines and returns its path. */
+  const file = (name: string, ...lines: string[]): string => {
+    const filePath = path.join(directory, name);
+    writeFileSync(filePath, lines.map(line => `${line}\n`).join(""));
+    return filePath;
+  };
+
+  /** Drains an input iterator into an array. */
+  const collect = async (iterator: AsyncIterableIterator<string>): Promise<string[]> => {
+    const lines: string[] = [];
+    for await (const line of iterator) lines.push(line);
+    return lines;
+  };
+
+  beforeEach(() => {
+    directory = mkdtempSync(path.join(tmpdir(), 'unipept-cli-test-'));
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
+    rmSync(directory, { recursive: true, force: true });
     Object.defineProperty(process.stdin, 'isTTY', { value: originalIsTTY, configurable: true });
     Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
   });
@@ -125,6 +149,55 @@ describe('UnipeptSubcommand', () => {
     expect(stderrSpy).toHaveBeenCalledWith(expect.stringContaining("Ctrl+D"));
 
     command['streamInterface']?.close();
+  });
+
+  test('test inputIterator reads a single file', async () => {
+    const command = new Pept2lca();
+    const input = command["getInputIterator"]([], file("a.txt", "AALTER", "MLGIIR")) as AsyncIterableIterator<string>;
+
+    expect(await collect(input)).toStrictEqual(["AALTER", "MLGIIR"]);
+  });
+
+  test('test inputIterator reads several files in order', async () => {
+    const command = new Pept2lca();
+    const files = [file("a.txt", "AALTER"), file("b.txt", "ENFVYIAK", "MLGIIR"), file("c.txt", "QWERTYK")];
+    const input = command["getInputIterator"]([], files) as AsyncIterableIterator<string>;
+
+    expect(await collect(input)).toStrictEqual(["AALTER", "ENFVYIAK", "MLGIIR", "QWERTYK"]);
+  });
+
+  test('test inputIterator carries fasta headers across a file boundary', async () => {
+    const command = new Pept2lca();
+    const files = [file("a.txt", ">protein1", "AALTER"), file("b.txt", "ENFVYIAK")];
+    const input = command["getInputIterator"]([], files) as AsyncIterableIterator<string>;
+
+    // chaining files behaves exactly like concatenating them, so the header keeps applying
+    expect(await collect(input)).toStrictEqual([">protein1", "AALTER", "ENFVYIAK"]);
+  });
+
+  test('test inputIterator names the file it cannot read', async () => {
+    const command = new Pept2lca();
+    const missing = path.join(directory, "missing.txt");
+    const input = command["getInputIterator"]([], [file("a.txt", "AALTER"), missing]) as AsyncIterableIterator<string>;
+
+    // every file is checked before the first line is produced, so nothing is emitted
+    // from the readable file before the failure is reported
+    await expect(input.next()).rejects.toThrow(`Unable to read input file '${missing}': no such file or directory`);
+  });
+
+  test('test arguments take priority over input files', async () => {
+    const command = new Pept2lca();
+    const input = command["getInputIterator"](["MLGIIR"], [file("a.txt", "AALTER")]) as IterableIterator<string>;
+
+    expect([...input]).toStrictEqual(["MLGIIR"]);
+  });
+
+  test('test empty input files are handled without contacting the API', async () => {
+    const command = new Pept2lca();
+    const fetchSpy = vi.spyOn(global, 'fetch');
+
+    await expect(command.run([], { format: "csv", input: [file("a.txt"), file("b.txt")] })).resolves.toBeUndefined();
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   test('test empty input is handled without contacting the API', async () => {

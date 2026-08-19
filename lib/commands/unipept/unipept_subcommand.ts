@@ -1,5 +1,5 @@
 import { Command, Option } from "commander";
-import { createReadStream, createWriteStream } from "fs";
+import { constants, createReadStream, createWriteStream } from "fs";
 import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
@@ -7,7 +7,7 @@ import { FormatterFactory } from "../../formatters/formatter_factory.js";
 import { CSVFormatter } from "../../formatters/csv_formatter.js";
 import path from "path";
 import os from "os";
-import { appendFile, mkdir } from "fs/promises";
+import { access, appendFile, mkdir } from "fs/promises";
 import { version } from "../../version.js";
 
 export abstract class UnipeptSubcommand {
@@ -47,7 +47,7 @@ export abstract class UnipeptSubcommand {
     const command = new Command(name);
 
     command.option("-q, --quiet", "disable service messages");
-    command.option("-i, --input <file>", "read input from file");
+    command.option("-i, --input <file>", "read input from file. Multiple -i (or --input) options may be used.", UnipeptSubcommand.collect);
     command.option("-o, --output <file>", "write output to file");
     command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("csv"));
     command.option("--host <host>", "specify the server running the Unipept web service");
@@ -77,8 +77,17 @@ export abstract class UnipeptSubcommand {
       })
     }
 
-    const iterator = this.getInputIterator(args, options.input as string);
-    const firstLine = (await iterator.next()).value;
+    const iterator = this.getInputIterator(args, options.input as string | string[] | undefined);
+
+    // input files are checked before anything is read, so an unreadable one is reported
+    // as a plain message instead of an unhandled error
+    let firstLine;
+    try {
+      firstLine = (await iterator.next()).value;
+    } catch (e) {
+      this.command.error((e as Error).message);
+      return;
+    }
 
     // empty input has nothing to process, so we exit without contacting the API
     if (firstLine === undefined) return;
@@ -294,15 +303,16 @@ export abstract class UnipeptSubcommand {
   /**
    * Returns an input iterator to use for the request.
    * - if arguments are given, use arguments
-   * - if an input file is given, use the file
+   * - if input files are given, use those files, read one after the other
    * - otherwise, use standard input
    */
-  private getInputIterator(args: string[], input?: string): IterableIterator<string> | AsyncIterableIterator<string> {
+  private getInputIterator(args: string[], input?: string | string[]): IterableIterator<string> | AsyncIterableIterator<string> {
+    const files = input === undefined ? [] : [input].flat();
+
     if (args.length > 0) {
       return args.values();
-    } else if (input) {
-      this.streamInterface = createInterface({ input: createReadStream(input) });
-      return this.streamInterface[Symbol.asyncIterator]();
+    } else if (files.length > 0) {
+      return this.readFiles(files);
     } else {
       if (process.stdin.isTTY) {
         const eofKey = process.platform === "win32" ? "Ctrl+Z, Enter" : "Ctrl+D";
@@ -311,6 +321,59 @@ export abstract class UnipeptSubcommand {
       this.streamInterface = createInterface({ input: process.stdin });
       return this.streamInterface[Symbol.asyncIterator]();
     }
+  }
+
+  /**
+   * Reads the given files one after the other, as a single stream of lines.
+   *
+   * The files are opened one at a time and only while they are being read, so that reading
+   * many or large files does not depend on how many of them there are.
+   */
+  private async *readFiles(files: string[]): AsyncIterableIterator<string> {
+    // check every file up front, so that a missing file halfway through the list is
+    // reported before any of the earlier files have produced output
+    for (const file of files) {
+      await UnipeptSubcommand.assertReadable(file);
+    }
+
+    for (const file of files) {
+      const stream = createReadStream(file);
+      const streamInterface = createInterface({ input: stream });
+      this.streamInterface = streamInterface;
+
+      try {
+        yield* streamInterface;
+      } finally {
+        streamInterface.close();
+        stream.destroy();
+        if (this.streamInterface === streamInterface) {
+          this.streamInterface = undefined;
+        }
+      }
+    }
+  }
+
+  /**
+   * Throws an error naming the file when it cannot be read, instead of letting a bare
+   * errno bubble up from the read stream.
+   */
+  private static async assertReadable(file: string): Promise<void> {
+    try {
+      await access(file, constants.R_OK);
+    } catch (e) {
+      const code = (e as NodeJS.ErrnoException).code;
+      const reason = code === "ENOENT" ? "no such file or directory"
+        : code === "EACCES" ? "permission denied"
+          : code;
+      throw new Error(`Unable to read input file '${file}': ${reason}`, { cause: e });
+    }
+  }
+
+  /**
+   * Gathers repeated options into a list, so that -i can be passed more than once.
+   */
+  private static collect(value: string, previous?: string[]): string[] {
+    return (previous ?? []).concat([value]);
   }
 
   private getHost(): string {

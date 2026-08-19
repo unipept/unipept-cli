@@ -64,7 +64,7 @@ Wraps the Unipept web services. Subcommands starting with `pept` take tryptic pe
 | `taxa2lca`      | Taxonomic lowest common ancestor of a list of taxon ids                             |
 | `taxonomy`      | Taxonomic information from the Unipept taxonomy                                     |
 
-Input can be passed as command line arguments, in a file given with `-i`, or on standard input. The first of these
+Input can be passed as command line arguments, in files given with `-i`, or on standard input. The first of these
 that is present wins.
 
 ```console
@@ -75,6 +75,15 @@ ENFVYIAK,,1,root,no rank
 
 $ cat peptides.txt | unipept pept2lca
 $ unipept pept2lca -i peptides.txt -o results.csv
+```
+
+`-i` may be repeated to read several files, which are processed one after the other as if they had
+been concatenated, so FASTA headers keep applying across a file boundary. The files are read one at
+a time rather than loaded up front, and all of them are checked for readability before any output is
+produced, so an unreadable file is reported before a partial result is written.
+
+```console
+$ unipept pept2lca -i first.txt -i second.txt -o results.csv
 ```
 
 Output is CSV by default; `-f json`, `-f xml` and `-f blast` are also available. Use `-s` (repeatable, and
