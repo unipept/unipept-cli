@@ -66,15 +66,6 @@ The uniprot command yields just the protein sequences as a default, but can retu
   }
 
   /**
-   * Fetches a UniProt entry and writes it to standard output.
-   *
-   * @param accession UniProt Accession Number
-   */
-  static async processUniprotEntry(accession: string, format: string) {
-    process.stdout.write(await Uniprot.getUniprotEntry(accession, format) + "\n");
-  }
-
-  /**
    * Fetches a UniProt entry in the requested format.
    *
    * @param accession UniProt Accession Number

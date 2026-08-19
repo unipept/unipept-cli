@@ -127,6 +127,16 @@ describe('UnipeptSubcommand', () => {
     command['streamInterface']?.close();
   });
 
+  test('test empty input is handled without contacting the API', async () => {
+    const command = new Pept2lca();
+    const fetchSpy = vi.spyOn(global, 'fetch');
+    // @ts-ignore
+    vi.spyOn(command, 'getInputIterator').mockReturnValue([].values());
+
+    await expect(command.run([], { format: "csv" })).resolves.toBeUndefined();
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   test('test inputIterator does NOT print warning when reading from piped stdin (not TTY)', async () => {
     const command = new Pept2lca();
 

@@ -2,13 +2,25 @@
   "name": "unipept-cli",
   "version": "4.1.0",
   "description": "Command line interface to the Unipept web services",
+  "keywords": [
+    "unipept",
+    "metaproteomics",
+    "proteomics",
+    "bioinformatics",
+    "peptide",
+    "taxonomy",
+    "cli"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unipept/unipept-cli.git"
   },
+  "homepage": "https://unipept.ugent.be/clidocs",
+  "bugs": {
+    "url": "https://github.com/unipept/unipept-cli/issues"
+  },
   "author": "Bart Mesuere <Bart.Mesuere@UGent.be>",
   "license": "MIT",
-  "private": false,
   "type": "module",
   "engines": {
     "node": ">=22"
