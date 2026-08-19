@@ -1,5 +1,6 @@
-import { createInterface } from 'node:readline';
 import { BaseCommand } from './base_command.js';
+import { InputSource } from '../io/input.js';
+import { OutputWriter } from '../io/output.js';
 
 export class Peptfilter extends BaseCommand {
 
@@ -18,6 +19,8 @@ The input should have one peptide per line. FASTA headers are preserved in the o
       .option("-l, --lacks <amino acids>", "only retain peptides that lack all of the specified amino acids", (d) => d.split(""))
       .option("-c, --contains <amino acids>", "only retain peptides that contain all of the specified amino acids", (d) => d.split(""))
       .option("-u, --unique", "only retain the first occurrence of each peptide");
+
+    this.addIoOptions();
   }
 
   /**
@@ -38,29 +41,25 @@ The input should have one peptide per line. FASTA headers are preserved in the o
     // does not delay the output either.
     const seen = this.program.opts().unique ? new Set<string>() : undefined;
 
-    // buffering output makes a big difference in performance
-    let output = [];
-    let i = 0;
+    const input = new InputSource();
+    const output = new OutputWriter(this.program.opts().output);
 
-    for await (const line of createInterface({ input: process.stdin })) {
-      i++;
-      if (line.startsWith(">")) { // pass through FASTA headers
-        output.push(line);
-      } else if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
-        if (!seen?.has(line)) {
-          seen?.add(line);
-          output.push(line);
+    try {
+      for await (const line of input.lines([], this.program.opts().input)) {
+        if (line.startsWith(">")) { // pass through FASTA headers
+          output.line(line);
+        } else if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
+          if (!seen?.has(line)) {
+            seen?.add(line);
+            output.line(line);
+          }
         }
       }
-      if (i % 1000 === 0) {
-        output.push(""); //add a newline at the end of the buffer without additional string copy
-        process.stdout.write(output.join("\n"));
-        output = [];
-      }
+    } catch (e) {
+      this.program.error((e as Error).message);
     }
 
-    output.push("");
-    process.stdout.write(output.join("\n"));
+    await output.close();
   }
 
   static checkLength(line: string, minLen: number, maxlen: number): boolean {
