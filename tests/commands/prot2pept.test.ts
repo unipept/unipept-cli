@@ -1,6 +1,15 @@
 import { Prot2pept } from '../../lib/commands/prot2pept.js';
 import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
+const tmpFile = (name: string, ...lines: string[]) => {
+  const file = path.join(mkdtempSync(path.join(tmpdir(), 'unipept-prot2pept-')), name);
+  writeFileSync(file, lines.join("\n") + "\n");
+  return file;
+};
 
 let output: string[];
 let error: string[];
@@ -121,4 +130,20 @@ test('test custom pattern', async () => {
 
   expect(errorSpy).toHaveBeenCalledTimes(0);
   expect(output.join("").trimEnd()).toBe("AALTERAALTER\nPAALTER");
+});
+
+test('test reading from an input file and writing to an output file', async () => {
+  const target = tmpFile("out.txt");
+  const command = new Prot2pept();
+  await command.run(["-i", tmpFile("in.txt", "AALTERSVKAAPKR"), "-o", target]);
+
+  expect(output).toStrictEqual([]);
+  expect(readFileSync(target, "utf8")).toBe("AALTER\nSVK\nAAPK\nR\n");
+});
+
+test('test fasta spanning several input files', async () => {
+  const command = new Prot2pept();
+  await command.run(["-i", tmpFile("a.fa", ">one", "AALTERSVK"), "-i", tmpFile("b.fa", ">two", "AAPKR")]);
+
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual([">one", "AALTER", "SVK", ">two", "AAPK", "R"]);
 });

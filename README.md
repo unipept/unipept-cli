@@ -45,6 +45,14 @@ Run any command with `-h` to see its full help, for example `unipept -h` or `uni
 
 ## Commands
 
+Every command reads from standard input and writes to standard output by default. All four also
+accept `-i/--input` to read from files instead, which may be given more than once to read several
+files as a single stream, and `-o/--output` to write to a file:
+
+```console
+$ peptfilter -i first.txt -i second.txt -o filtered.txt
+```
+
 ### `unipept`
 
 Wraps the Unipept web services. Subcommands starting with `pept` take tryptic peptides, subcommands starting with
@@ -85,6 +93,10 @@ produced, so an unreadable file is reported before a partial result is written.
 ```console
 $ unipept pept2lca -i first.txt -i second.txt -o results.csv
 ```
+
+Use `--log <file>` to send the messages that normally go to standard error, such as retry notices
+and failed requests, to a file instead, and `-q/--quiet` to silence them. Failed requests are
+recorded in `~/.unipept/` either way.
 
 Output is CSV by default; `-f json`, `-f xml` and `-f blast` are also available. Use `-s` (repeatable, and
 comma-separated lists are accepted) to select a subset of the fields, with `*` as a wildcard:

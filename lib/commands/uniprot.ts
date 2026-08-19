@@ -1,6 +1,7 @@
 import { Option } from 'commander';
-import { createInterface } from 'node:readline';
 import { BaseCommand } from './base_command.js';
+import { InputSource } from '../io/input.js';
+import { OutputWriter } from '../io/output.js';
 
 export class Uniprot extends BaseCommand {
   static readonly VALID_FORMATS = ["fasta", "gff", "json", "rdf", "sequence", "xml"];
@@ -24,45 +25,55 @@ The uniprot command yields just the protein sequences as a default, but can retu
       .description(this.description)
       .argument("[accessions...]", "UniProt Accession Numbers")
       .addOption(new Option("-f, --format <format>", `output format`).choices(Uniprot.VALID_FORMATS).default("sequence"));
+
+    this.addIoOptions();
   }
 
   async run(args?: string[]) {
     this.parseArguments(args);
     const format = this.program.opts().format;
-    const accessions = this.program.args;
 
-    // alternatively, we can also wrap the array in a Readable stream with ReadableStream.from()
-    const input = accessions.length !== 0 ? accessions : createInterface({ input: process.stdin });
+    const input = new InputSource();
+    const output = new OutputWriter(this.program.opts().output);
 
     const BATCH_SIZE = 5;
     let batch: string[] = [];
 
-    for await (const line of input) {
-      const accession = line.trim();
-      if (!accession) continue;
+    try {
+      for await (const line of input.lines(this.program.args, this.program.opts().input)) {
+        const accession = line.trim();
+        if (!accession) continue;
 
-      batch.push(accession);
-      if (batch.length >= BATCH_SIZE) {
-        await Uniprot.processBatch(batch, format);
-        batch = [];
+        batch.push(accession);
+        if (batch.length >= BATCH_SIZE) {
+          await Uniprot.processBatch(batch, format, output);
+          batch = [];
+        }
       }
+    } catch (e) {
+      this.program.error((e as Error).message);
     }
 
     if (batch.length > 0) {
-      await Uniprot.processBatch(batch, format);
+      await Uniprot.processBatch(batch, format, output);
     }
+
+    await output.close();
   }
 
   /**
-   * Fetches a batch of UniProt entries and writes them to standard output in order.
+   * Fetches a batch of UniProt entries and writes them to the output in order.
    *
    * @param accessions List of UniProt Accession Numbers
    * @param format output format
+   * @param output where the entries are written
    */
-  static async processBatch(accessions: string[], format: string) {
+  static async processBatch(accessions: string[], format: string, output: OutputWriter) {
     const promises = accessions.map(acc => Uniprot.getUniprotEntry(acc, format));
     const results = await Promise.all(promises);
-    results.forEach(result => process.stdout.write(result + "\n"));
+    // written straight through rather than queued, because entries arrive a batch at a
+    // time and waiting for a full buffer would hold them back behind the network
+    results.forEach(result => output.write(result + "\n"));
   }
 
   /**

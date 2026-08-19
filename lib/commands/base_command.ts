@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { collect } from "../io/input.js";
 import { version } from "../version.js";
 
 /**
@@ -18,6 +19,16 @@ export abstract class BaseCommand {
   }
 
   abstract run(args?: string[]): void;
+
+  /**
+   * Registers the input and output options that every command shares. Commands that read
+   * their input from somewhere call this from their constructor.
+   */
+  protected addIoOptions(): void {
+    this.program
+      .option("-i, --input <file>", "read input from file, may be used more than once", collect)
+      .option("-o, --output <file>", "write output to file");
+  }
 
   /**
    * Create sets up the command line program. Implementing classes can add additional options.

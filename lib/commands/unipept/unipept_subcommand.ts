@@ -1,13 +1,13 @@
 import { Command, Option } from "commander";
-import { constants, createReadStream, createWriteStream } from "fs";
-import { createInterface } from "node:readline";
 import { Interface } from "readline";
 import { Formatter } from "../../formatters/formatter.js";
 import { FormatterFactory } from "../../formatters/formatter_factory.js";
 import { CSVFormatter } from "../../formatters/csv_formatter.js";
 import path from "path";
 import os from "os";
-import { access, appendFile, mkdir } from "fs/promises";
+import { collect, InputSource } from "../../io/input.js";
+import { OutputWriter } from "../../io/output.js";
+import { Messages } from "../../io/messages.js";
 import { version } from "../../version.js";
 
 export abstract class UnipeptSubcommand {
@@ -21,14 +21,20 @@ export abstract class UnipeptSubcommand {
   host = UnipeptSubcommand.DEFAULT_HOST;
   url?: string;
   formatter?: Formatter;
-  outputStream: NodeJS.WritableStream = process.stdout;
+  output?: OutputWriter;
+  messages: Messages = new Messages();
   firstBatch = true;
+  headerWritten = false;
   selectedFields?: RegExp[];
   fasta: boolean;
   castInput = false;
 
-  // we must save this to be able to close it properly in tests
-  private streamInterface?: Interface;
+  private readonly inputSource = new InputSource();
+
+  // we must be able to reach this to close it properly in tests
+  private get streamInterface(): Interface | undefined {
+    return this.inputSource.streamInterface;
+  }
 
   constructor(name: string) {
     this.name = name;
@@ -47,10 +53,11 @@ export abstract class UnipeptSubcommand {
     const command = new Command(name);
 
     command.option("-q, --quiet", "disable service messages");
-    command.option("-i, --input <file>", "read input from file. Multiple -i (or --input) options may be used.", UnipeptSubcommand.collect);
+    command.option("-i, --input <file>", "read input from file. Multiple -i (or --input) options may be used.", collect);
     command.option("-o, --output <file>", "write output to file");
     command.addOption(new Option("-f, --format <format>", "define the output format").choices(UnipeptSubcommand.VALID_FORMATS).default("csv"));
     command.option("--host <host>", "specify the server running the Unipept web service");
+    command.option("--log <file>", "write messages that normally go to standard error to this file");
 
     // internal options
     command.addOption(new Option("--no-header", "disable the header in csv output").hideHelp());
@@ -64,42 +71,42 @@ export abstract class UnipeptSubcommand {
     this.host = this.getHost();
     this.url = `${this.host}/api/v2/${this.name}.json`;
     this.formatter = FormatterFactory.getFormatter(this.options.format);
+    this.messages = new Messages(this.options.log as string | undefined, this.options.quiet as boolean);
+    this.output = new OutputWriter(this.options.output as string | undefined);
 
-    if (this.options.output) {
-      this.outputStream = createWriteStream(this.options.output);
-    } else {
-      // if we write to stdout, we need to handle the EPIPE error
-      // this happens when the output is piped to another command that stops reading
-      process.stdout.on("error", (err) => {
-        if ((err as NodeJS.ErrnoException).code === "EPIPE") {
-          process.exit(0);
-        }
-      })
-    }
-
-    const iterator = this.getInputIterator(args, options.input as string | string[] | undefined);
-
-    // input files are checked before anything is read, so an unreadable one is reported
-    // as a plain message instead of an unhandled error
-    let firstLine;
     try {
-      firstLine = (await iterator.next()).value;
-    } catch (e) {
-      this.command.error((e as Error).message);
-      return;
-    }
+      const iterator = this.getInputIterator(args, options.input as string | string[] | undefined);
 
-    // empty input has nothing to process, so we exit without contacting the API
-    if (firstLine === undefined) return;
+      // input files are checked before anything is read, so an unreadable one is reported
+      // as a plain message instead of an unhandled error
+      let firstLine;
+      try {
+        firstLine = (await iterator.next()).value;
+      } catch (e) {
+        this.command.error((e as Error).message);
+        return;
+      }
 
-    if (this.command.name() === "taxa2lca") {
-      // this subcommand is an exception where the entire input is read before processing
-      await this.simpleInputProcessor(firstLine, iterator);
-    } else if (firstLine.startsWith(">")) {
-      this.fasta = true;
-      await this.fastaInputProcessor(firstLine, iterator);
-    } else {
-      await this.normalInputProcessor(firstLine, iterator);
+      // empty input has nothing to process, so we exit without contacting the API
+      if (firstLine === undefined) return;
+
+      if (this.command.name() === "taxa2lca") {
+        // this subcommand is an exception where the entire input is read before processing
+        await this.simpleInputProcessor(firstLine, iterator);
+      } else if (firstLine.startsWith(">")) {
+        this.fasta = true;
+        await this.fastaInputProcessor(firstLine, iterator);
+      } else {
+        await this.normalInputProcessor(firstLine, iterator);
+      }
+    } finally {
+      // json and xml wrap their results, so the closing part is written once at the very end.
+      // csv has no footer, and writing an empty one would be a pointless write.
+      const footer = this.headerWritten ? this.formatter.footer() : "";
+      if (footer !== "") {
+        this.output.write(footer);
+      }
+      await this.output.close();
     }
   }
 
@@ -132,10 +139,11 @@ export abstract class UnipeptSubcommand {
     result = this.filterResult(result);
 
     if (this.firstBatch && this.options.header) {
-      this.outputStream.write(this.formatter.header(result, this.fasta));
+      this.output?.write(this.formatter.header(result, this.fasta));
+      this.headerWritten = true;
     }
 
-    this.outputStream.write(this.formatter.format(result, fastaMapper, this.firstBatch));
+    this.output?.write(this.formatter.format(result, fastaMapper, this.firstBatch));
 
     if (this.firstBatch) this.firstBatch = false;
   }
@@ -214,14 +222,20 @@ export abstract class UnipeptSubcommand {
   }
 
   /**
-   * Appends the error message to the log file of today and prints it to the console
+   * Records a failed request in the log file, and tells the user about it.
    */
   async saveError(message: string) {
     const errorPath = this.errorFilePath();
-    await mkdir(path.dirname(errorPath), { recursive: true });
-    await appendFile(errorPath, `${message}\n`);
-    console.error(`API request failed: ${message}`);
-    console.error(`Log can be found in ${errorPath}`);
+
+    // the failure is always recorded, even with --quiet, because a log file is not a message
+    await Messages.append(errorPath, `API request failed: ${message}`);
+
+    // with --log the line above already went to the file the user chose, so saying it
+    // again on standard error would only repeat it
+    if (!this.messages.logging) {
+      await this.messages.report(`API request failed: ${message}`);
+      await this.messages.report(`Log can be found in ${errorPath}`);
+    }
   }
 
   /**
@@ -252,7 +266,7 @@ export abstract class UnipeptSubcommand {
         if (shouldRetry) {
           // retry with delay
           const delay = Math.ceil(5000 * Math.random());
-          process.stderr.write(`> Request failed: ${error}. Retrying in ${(delay / 1000).toFixed(1)}s...\n`);
+          await this.messages.report(`> Request failed: ${error}. Retrying in ${(delay / 1000).toFixed(1)}s...`);
           await new Promise(resolve => setTimeout(resolve, delay));
           return this.fetchWithRetry(url, options, retries - 1);
         } else {
@@ -296,6 +310,8 @@ export abstract class UnipeptSubcommand {
   }
 
   private errorFilePath(): string {
+    if (this.messages.file !== undefined) return this.messages.file;
+
     const timestamp = new Date().toISOString().split('T')[0];
     return path.join(os.homedir(), '.unipept', `unipept-${timestamp}.log`);
   }
@@ -307,73 +323,7 @@ export abstract class UnipeptSubcommand {
    * - otherwise, use standard input
    */
   private getInputIterator(args: string[], input?: string | string[]): IterableIterator<string> | AsyncIterableIterator<string> {
-    const files = input === undefined ? [] : [input].flat();
-
-    if (args.length > 0) {
-      return args.values();
-    } else if (files.length > 0) {
-      return this.readFiles(files);
-    } else {
-      if (process.stdin.isTTY) {
-        const eofKey = process.platform === "win32" ? "Ctrl+Z, Enter" : "Ctrl+D";
-        process.stderr.write(`Reading from standard input... (Press ${eofKey} to finish)\n`);
-      }
-      this.streamInterface = createInterface({ input: process.stdin });
-      return this.streamInterface[Symbol.asyncIterator]();
-    }
-  }
-
-  /**
-   * Reads the given files one after the other, as a single stream of lines.
-   *
-   * The files are opened one at a time and only while they are being read, so that reading
-   * many or large files does not depend on how many of them there are.
-   */
-  private async *readFiles(files: string[]): AsyncIterableIterator<string> {
-    // check every file up front, so that a missing file halfway through the list is
-    // reported before any of the earlier files have produced output
-    for (const file of files) {
-      await UnipeptSubcommand.assertReadable(file);
-    }
-
-    for (const file of files) {
-      const stream = createReadStream(file);
-      const streamInterface = createInterface({ input: stream });
-      this.streamInterface = streamInterface;
-
-      try {
-        yield* streamInterface;
-      } finally {
-        streamInterface.close();
-        stream.destroy();
-        if (this.streamInterface === streamInterface) {
-          this.streamInterface = undefined;
-        }
-      }
-    }
-  }
-
-  /**
-   * Throws an error naming the file when it cannot be read, instead of letting a bare
-   * errno bubble up from the read stream.
-   */
-  private static async assertReadable(file: string): Promise<void> {
-    try {
-      await access(file, constants.R_OK);
-    } catch (e) {
-      const code = (e as NodeJS.ErrnoException).code;
-      const reason = code === "ENOENT" ? "no such file or directory"
-        : code === "EACCES" ? "permission denied"
-          : code;
-      throw new Error(`Unable to read input file '${file}': ${reason}`, { cause: e });
-    }
-  }
-
-  /**
-   * Gathers repeated options into a list, so that -i can be passed more than once.
-   */
-  private static collect(value: string, previous?: string[]): string[] {
-    return (previous ?? []).concat([value]);
+    return this.inputSource.lines(args, input);
   }
 
   private getHost(): string {

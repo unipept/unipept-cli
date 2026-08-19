@@ -37,3 +37,22 @@ test('test with fasta', async () => {
   expect(output[1].startsWith(">test,AALTER,1,1,root,no rank")).toBeTruthy();
   expect(output.length).toBeGreaterThanOrEqual(2);
 });
+
+test('test json output is wrapped and parseable', async () => {
+  const command = new Pept2lca();
+  await command.run(["AALTER"], { header: true, format: "json" });
+
+  const json = output.join("").trim();
+  expect(json.startsWith("[")).toBeTruthy();
+  expect(json.endsWith("]")).toBeTruthy();
+  expect(JSON.parse(json).length).toBe(1);
+});
+
+test('test xml output is wrapped', async () => {
+  const command = new Pept2lca();
+  await command.run(["AALTER"], { header: true, format: "xml" });
+
+  const xml = output.join("").trim();
+  expect(xml.startsWith("<results>")).toBeTruthy();
+  expect(xml.endsWith("</results>")).toBeTruthy();
+});

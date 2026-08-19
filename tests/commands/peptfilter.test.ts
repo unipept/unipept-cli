@@ -1,6 +1,15 @@
 import { Peptfilter } from '../../lib/commands/peptfilter.js';
 import { vi } from 'vitest';
 import * as mock from 'mock-stdin';
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+
+const tmpFile = (name: string, ...lines: string[]) => {
+  const file = path.join(mkdtempSync(path.join(tmpdir(), 'unipept-peptfilter-')), name);
+  writeFileSync(file, lines.join("\n") + "\n");
+  return file;
+};
 
 let output: string[];
 let error: string[];
@@ -166,4 +175,28 @@ test('test unique combines with the other filters', async () => {
   await run;
 
   expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER"]);
+});
+
+test('test reading from an input file', async () => {
+  const command = new Peptfilter();
+  await command.run(["-i", tmpFile("a.txt", "AALTER", "AA")]);
+
+  expect(errorSpy).toHaveBeenCalledTimes(0);
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER"]);
+});
+
+test('test reading from several input files in order', async () => {
+  const command = new Peptfilter();
+  await command.run(["-i", tmpFile("a.txt", "AALTER"), "-i", tmpFile("b.txt", "MLGIIRQQ")]);
+
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER", "MLGIIRQQ"]);
+});
+
+test('test writing to an output file', async () => {
+  const target = tmpFile("empty.txt");
+  const command = new Peptfilter();
+  await command.run(["-i", tmpFile("a.txt", "AALTER", "MLGIIRQQ"), "-o", target]);
+
+  expect(output).toStrictEqual([]);
+  expect(readFileSync(target, "utf8")).toBe("AALTER\nMLGIIRQQ\n");
 });
