@@ -16,7 +16,8 @@ The input should have one peptide per line. FASTA headers are preserved in the o
       .option("--minlen <length>", "only retain peptides having at least this many amino acids", (d) => parseInt(d, 10), 5)
       .option("--maxlen <length>", "only retain peptides having at most this many amino acids", (d) => parseInt(d, 10), 50)
       .option("-l, --lacks <amino acids>", "only retain peptides that lack all of the specified amino acids", (d) => d.split(""))
-      .option("-c, --contains <amino acids>", "only retain peptides that contain all of the specified amino acids", (d) => d.split(""));
+      .option("-c, --contains <amino acids>", "only retain peptides that contain all of the specified amino acids", (d) => d.split(""))
+      .option("-u, --unique", "only retain the first occurrence of each peptide");
   }
 
   /**
@@ -31,6 +32,12 @@ The input should have one peptide per line. FASTA headers are preserved in the o
     const lacks = this.program.opts().lacks || [];
     const contains = this.program.opts().contains || [];
 
+    // Only allocate the set of seen peptides when --unique is passed. Without it, this
+    // command runs in constant memory no matter how large the input is, and we want to
+    // keep it that way. Peptides are still written out as they are read, so --unique
+    // does not delay the output either.
+    const seen = this.program.opts().unique ? new Set<string>() : undefined;
+
     // buffering output makes a big difference in performance
     let output = [];
     let i = 0;
@@ -40,7 +47,10 @@ The input should have one peptide per line. FASTA headers are preserved in the o
       if (line.startsWith(">")) { // pass through FASTA headers
         output.push(line);
       } else if (Peptfilter.checkLength(line, minLen, maxlen) && Peptfilter.checkLacks(line, lacks) && Peptfilter.checkContains(line, contains)) {
-        output.push(line);
+        if (!seen?.has(line)) {
+          seen?.add(line);
+          output.push(line);
+        }
       }
       if (i % 1000 === 0) {
         output.push(""); //add a newline at the end of the buffer without additional string copy

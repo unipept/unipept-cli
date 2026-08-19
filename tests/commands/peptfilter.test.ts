@@ -97,3 +97,73 @@ test('test complex example from stdin', async () => {
   expect(output.join("").trimEnd().split("\n").length).toBe(1);
   expect(output[0]).toBe("CCCCCA\n");
 });
+
+test('test unique filter from stdin', async () => {
+  const stdin = mock.stdin();
+
+  const command = new Peptfilter();
+  const run = command.run(["--unique"]);
+
+  stdin.send("AALTER\n");
+  stdin.send("AALTER\n");
+  stdin.send("MLGIIR\n");
+  stdin.send("AALTER\n");
+  stdin.end();
+
+  await run;
+
+  expect(errorSpy).toHaveBeenCalledTimes(0);
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER", "MLGIIR"]);
+});
+
+test('test duplicates are kept without the unique filter', async () => {
+  const stdin = mock.stdin();
+
+  const command = new Peptfilter();
+  const run = command.run();
+
+  stdin.send("AALTER\n");
+  stdin.send("AALTER\n");
+  stdin.end();
+
+  await run;
+
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER", "AALTER"]);
+});
+
+test('test unique deduplicates across fasta headers', async () => {
+  const stdin = mock.stdin();
+
+  const command = new Peptfilter();
+  const run = command.run(["-u"]);
+
+  stdin.send(">p1\n");
+  stdin.send("AALTER\n");
+  stdin.send("MLGIIR\n");
+  stdin.send(">p2\n");
+  stdin.send("AALTER\n");
+  stdin.send("QWERTYK\n");
+  stdin.end();
+
+  await run;
+
+  // headers always pass through, the peptides they bundle are deduplicated globally
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual([">p1", "AALTER", "MLGIIR", ">p2", "QWERTYK"]);
+});
+
+test('test unique combines with the other filters', async () => {
+  const stdin = mock.stdin();
+
+  const command = new Peptfilter();
+  const run = command.run(["-u", "--minlen", "5", "--maxlen", "8"]);
+
+  stdin.send("AALTER\n");
+  stdin.send("AALTER\n");
+  stdin.send("AA\n");
+  stdin.send("QWERTYKLLL\n");
+  stdin.end();
+
+  await run;
+
+  expect(output.join("").trimEnd().split("\n")).toStrictEqual(["AALTER"]);
+});

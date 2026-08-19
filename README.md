@@ -111,7 +111,16 @@ $ printf "AALTER\nAA\nAALTERSVKAAPKRQWERTY\n" | peptfilter --minlen 5 --maxlen 1
 AALTER
 ```
 
-Options: `--minlen` (default 5), `--maxlen` (default 50), `-c/--contains` and `-l/--lacks`.
+```console
+$ printf "AALTER\nAALTER\nMLGIIR\n" | peptfilter --unique
+AALTER
+MLGIIR
+```
+
+Options: `--minlen` (default 5), `--maxlen` (default 50), `-c/--contains`, `-l/--lacks` and
+`-u/--unique`. Deduplication with `-u` is global rather than per FASTA block, and it has to
+remember every distinct peptide it has seen, so it is the one option that makes memory grow with
+the input. Without it the command runs in constant memory.
 
 ### `uniprot`
 
