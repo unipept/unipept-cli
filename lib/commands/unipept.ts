@@ -10,8 +10,12 @@ import { Peptinfo } from './unipept/peptinfo.js';
 import { Protinfo } from './unipept/protinfo.js';
 import { Taxa2lca } from './unipept/taxa2lca.js';
 import { Taxonomy } from './unipept/taxonomy.js';
+import { UnipeptSubcommand } from './unipept/unipept_subcommand.js';
 
 export class Unipept extends BaseCommand {
+  /** How long to wait for the version lookup before falling back to the bare cli version. */
+  static readonly VERSION_LOOKUP_TIMEOUT = 2000;
+
 
   readonly description = `The unipept subcommands are command line wrappers around the Unipept web services.
 
@@ -43,6 +47,42 @@ The command will give priority to the first way the input is passed, in the orde
   }
 
   async run(args?: string[]) {
+    const argv = args ?? process.argv.slice(2);
+
+    // commander prints the version synchronously, so we handle it ourselves to be
+    // able to look up the UniProt release the Unipept database was built from
+    if (argv[0] === "-V" || argv[0] === "--version") {
+      process.stdout.write(`${await this.versionString()}\n`);
+      return;
+    }
+
     this.parseArguments(args);
+  }
+
+  /**
+   * The cli version, annotated with the UniProt release that the Unipept database was
+   * built from. Falls back to the bare cli version when the server cannot be reached,
+   * so that --version keeps working offline.
+   */
+  async versionString(): Promise<string> {
+    const databaseVersion = await Unipept.fetchDatabaseVersion();
+    return databaseVersion ? `${this.version} (UniProt ${databaseVersion})` : this.version;
+  }
+
+  /**
+   * Asks the server which UniProt release its data comes from.
+   *
+   * @returns the release, or undefined when the server cannot be reached in time
+   */
+  static async fetchDatabaseVersion(host: string = UnipeptSubcommand.DEFAULT_HOST): Promise<string | undefined> {
+    try {
+      const response = await fetch(`${host}/private_api/metadata.json`, {
+        signal: AbortSignal.timeout(Unipept.VERSION_LOOKUP_TIMEOUT),
+      });
+      if (!response.ok) return undefined;
+      return (await response.json()).db_version;
+    } catch {
+      return undefined;
+    }
   }
 }
