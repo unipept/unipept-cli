@@ -1,6 +1,6 @@
 {
   "name": "unipept-cli",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Command line interface to the Unipept web services",
   "keywords": [
     "unipept",

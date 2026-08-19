@@ -225,4 +225,33 @@ describe('UnipeptSubcommand', () => {
 
     command['streamInterface']?.close();
   });
+
+  test('test select does not swallow the arguments that follow it', () => {
+    const command = new Pept2lca();
+    const seen: { args: string[], options: Record<string, unknown> }[] = [];
+    vi.spyOn(command, 'run').mockImplementation(async (args, options) => { seen.push({ args, options }); });
+
+    command.command.parse(["-s", "peptide,taxon_id", "AALTER", "ENFVYIAK"], { from: "user" });
+
+    expect(seen[0].args).toStrictEqual(["AALTER", "ENFVYIAK"]);
+    expect(seen[0].options.select).toStrictEqual(["peptide,taxon_id"]);
+  });
+
+  test('test select can be repeated', () => {
+    const command = new Pept2lca();
+    const seen: { args: string[], options: Record<string, unknown> }[] = [];
+    vi.spyOn(command, 'run').mockImplementation(async (args, options) => { seen.push({ args, options }); });
+
+    command.command.parse(["-s", "peptide", "-s", "taxon_name", "AALTER"], { from: "user" });
+
+    expect(seen[0].args).toStrictEqual(["AALTER"]);
+    expect(seen[0].options.select).toStrictEqual(["peptide", "taxon_name"]);
+  });
+
+  test('test selected fields expand from both comma lists and repeats', () => {
+    const command = new Pept2lca();
+
+    command.options.select = ["peptide,taxon_id", "taxon_name"];
+    expect(command["getSelectedFields"]()).toStrictEqual([/^peptide$/, /^taxon_id$/, /^taxon_name$/]);
+  });
 });

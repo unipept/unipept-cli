@@ -1,4 +1,5 @@
 import { Option } from "commander";
+import { collect } from "../../io/input.js";
 import { UnipeptSubcommand } from "./unipept_subcommand.js";
 
 export class Taxa2lca extends UnipeptSubcommand {
@@ -20,7 +21,7 @@ The command will give priority to the first way NCBI Taxonomy Identifiers are pa
       .summary("Compute taxonomic lowest common ancestor for given list of taxa.")
       .description(this.description)
       .option("-a, --all", "report all information fields of NCBI Taxonomy records available in Unipept. Note that this may have a performance penalty.")
-      .addOption(new Option("-s --select <fields...>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used."))
+      .addOption(new Option("-s, --select <fields>", "select the information fields to return. Selected fields are passed as a comma separated list of field names. Multiple -s (or --select) options may be used.").argParser(collect))
       .argument("[taxonids...]", "optionally, 1 or more taxon ids")
       .action((args, options) => this.run(args, options));
   }
